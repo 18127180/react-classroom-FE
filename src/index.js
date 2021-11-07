@@ -4,5 +4,5 @@ import './index.css';
 import LoginForm from './components/Authenticate/LoginForm'
 import RegisterForm from './components/Authenticate/RegisterForm'
 
-ReactDOM.render(<RegisterForm/>,document.getElementById('root'));
+ReactDOM.render(<LoginForm/>,document.getElementById('root'));
 

@@ -13,6 +13,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
+import axios from "axios";
+import config_data from "../../config.json";
 
 function Copyright(props) {
   return (
@@ -39,10 +41,22 @@ const RegisterForm = ({ section, topic, room, name }) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    console.log({
+    const userForm = {
       email: data.get("email"),
       password: data.get("password"),
-    });
+      first_name: data.get("firstName"),
+      last_name: data.get("lastName")
+    }
+    axios
+      .post(
+        `${config_data.API_URL}/register`
+        , userForm)
+      .then((res) => {
+        if (res.status === 201) {
+          // setState({ userInfo, isLoggedIn: true });
+          console.log(res);
+        }
+      });
   };
   return (
     <ThemeProvider theme={theme}>

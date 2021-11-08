@@ -17,7 +17,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { FacebookLoginButton } from "react-social-login-buttons";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import axios from "axios";
-import data from "../../config.json";
+import config_data from "../../config.json";
 
 function Copyright(props) {
   return (
@@ -54,7 +54,7 @@ const LoginForm = ({ section, topic, room, name }) => {
   const responseFacebook = (response) => {
     axios
       .post(
-        `${data.API_URL}/auth/facebook?access_token=${response.accessToken}`
+        `${config_data.API_URL}/auth/facebook?access_token=${response.accessToken}`
       )
       .then((res) => {
         if (res.status === 200) {
@@ -74,19 +74,43 @@ const LoginForm = ({ section, topic, room, name }) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    console.log({
+    // console.log({
+    //   email: data.get("email"),
+    //   password: data.get("password"),
+    // });
+    const userForm = {
       email: data.get("email"),
-      password: data.get("password"),
-    });
+      password: data.get("password")
+    }
+    axios
+      .post(
+        `${config_data.API_URL}/auth`
+        , userForm)
+      .then((res) => {
+        if (res.status === 200) {
+          // setState({ userInfo, isLoggedIn: true });
+          console.log(res);
+        }
+      });
   };
 
   const responseGoogleSuccess = async (response) => {
     let userInfo = {
-      name: response.profileObj.name,
-      emailId: response.profileObj.email,
+      token: response?.tokenId,
+      email: response.profileObj.email
     };
-    console.log(response);
-    setState({ userInfo, isLoggedIn: true });
+    // console.log(response?.tokenId);
+    // setState({ userInfo, isLoggedIn: true });
+    //call API post authenticate
+    axios
+      .post(
+        `${config_data.API_URL}/auth/google`
+        , userInfo)
+      .then((res) => {
+        if (res.status === 200) {
+          setState({ userInfo, isLoggedIn: true });
+        }
+      });
   };
 
   const responseGoogleError = (response) => {

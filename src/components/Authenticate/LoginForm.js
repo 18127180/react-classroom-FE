@@ -14,6 +14,10 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { GoogleLogin, GoogleLogout } from "react-google-login";
 import { Link as RouterLink } from "react-router-dom";
+import { FacebookLoginButton } from "react-social-login-buttons";
+import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
+import axios from "axios";
+import data from "../../config.json";
 
 function Copyright(props) {
   return (
@@ -46,6 +50,25 @@ const LoginForm = ({ section, topic, room, name }) => {
       emailId: "",
     },
   });
+
+  const responseFacebook = (response) => {
+    axios
+      .post(
+        `${data.API_URL}/auth/facebook?access_token=${response.accessToken}`
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res.data);
+          // localStorage.setItem("auth", true);
+          // localStorage.setItem("access_token", res.data.access_token);
+          let userInfo = {
+            name: res.data.last_name + res.data.first_name,
+            emailId: res.data.email,
+          };
+          setState({ userInfo, isLoggedIn: true });
+        }
+      });
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -178,14 +201,36 @@ const LoginForm = ({ section, topic, room, name }) => {
                   ></GoogleLogout>
                 </div>
               ) : (
-                <GoogleLogin
-                  clientId={CLIENT_ID}
-                  buttonText="Sign In with Google"
-                  onSuccess={responseGoogleSuccess}
-                  onFailure={responseGoogleError}
-                  isSignedIn={true}
-                  cookiePolicy={"single_host_origin"}
-                />
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginTop: 10,
+                  }}
+                >
+                  <GoogleLogin
+                    clientId={CLIENT_ID}
+                    buttonText="Sign In with Google"
+                    onSuccess={responseGoogleSuccess}
+                    onFailure={responseGoogleError}
+                    isSignedIn={true}
+                    cookiePolicy={"single_host_origin"}
+                  />
+                  <FacebookLogin
+                    appId="896620704300555"
+                    autoLoad
+                    callback={responseFacebook}
+                    render={(renderProps) => (
+                      <FacebookLoginButton
+                        onClick={renderProps.onClick}
+                        style={{ width: 200, margin: 0, fontSize: 13.5 }}
+                      />
+                      // <button onClick={renderProps.onClick}>
+                      //   This is my custom FB button
+                      // </button>
+                    )}
+                  />
+                </div>
               )}
               <Copyright sx={{ mt: 5 }} />
             </Box>

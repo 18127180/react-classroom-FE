@@ -5,6 +5,7 @@ import LoginForm from "./components/Authenticate/LoginForm";
 import RegisterForm from "./components/Authenticate/RegisterForm";
 import Home from "./components/classroom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import DetailClassroom from "./components/DetailClassroom/index"
 
 ReactDOM.render(
   <BrowserRouter>
@@ -12,6 +13,7 @@ ReactDOM.render(
       <Route index path="login" element={<LoginForm />} />
       <Route path="register" element={<RegisterForm />} />
       <Route path="classroom" element={<Home />} />
+      <Route path="detail-classroom" element={<DetailClassroom />} />
     </Routes>
   </BrowserRouter>,
   document.getElementById("root")

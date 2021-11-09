@@ -98,12 +98,19 @@ const LoginForm = ({ section, topic, room, name }) => {
       token: response?.tokenId,
       email: response.profileObj.email,
     };
-    // console.log(response?.tokenId);
+    console.log(userInfo);
     // setState({ userInfo, isLoggedIn: true });
     //call API post authenticate
     axios.post(`${config_data.API_URL}/auth/google`, userInfo).then((res) => {
       if (res.status === 200) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        localStorage.setItem("access_token", res.data.access_token);
+        let userInfo = {
+          name: res.data.user.name,
+          emailId: res.data.user.email,
+        };
         setState({ userInfo, isLoggedIn: true });
+        navigate("/classroom");
       }
     });
   };

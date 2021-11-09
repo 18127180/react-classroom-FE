@@ -2,7 +2,7 @@ import React from "react";
 import ClassroomList from "./ClassroomList";
 import axios from "axios";
 import config from "../../config.json";
-import MenuAppBar from "./MenuAppBar";
+import MenuAppBar from "../utils/MenuAppBar";
 import UserProvider from "../../contexts/UserProvider";
 
 export const ClassContext = React.createContext();

@@ -9,6 +9,7 @@ import Menu from "@mui/material/Menu";
 import { Avatar } from "@mui/material";
 import UserProvider from "../../contexts/UserProvider";
 import SideBar from "./SideBar";
+import TabHeader  from "./TabHeader";
 
 function stringToColor(string) {
   let hash = 0;
@@ -39,7 +40,7 @@ function stringAvatar(name) {
   };
 }
 
-export default function MenuAppBar() {
+export default function MenuAppBar({route_list, isHaveHeaderTab}) {
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [user, setUser] = React.useContext(UserProvider.context);
@@ -62,6 +63,9 @@ export default function MenuAppBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Classroom
           </Typography>
+          {isHaveHeaderTab && (
+            <TabHeader route = {route_list}/>
+          )}
           {auth && (
             <div>
               <IconButton

@@ -17,6 +17,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { FacebookLoginButton } from "react-social-login-buttons";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import config_data from "../../config.json";
 
 function Copyright(props) {
@@ -28,8 +29,8 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href={config_data.WEB_URL}>
+        ClassroomSPA
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -50,6 +51,7 @@ const LoginForm = ({ section, topic, room, name }) => {
       emailId: "",
     },
   });
+  const navigate = useNavigate();
 
   const responseFacebook = (response) => {
     axios
@@ -58,14 +60,15 @@ const LoginForm = ({ section, topic, room, name }) => {
       )
       .then((res) => {
         if (res.status === 200) {
-          console.log(res.data);
-          // localStorage.setItem("auth", true);
-          // localStorage.setItem("access_token", res.data.access_token);
+          console.log(res.data.user);
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+          localStorage.setItem("access_token", res.data.access_token);
           let userInfo = {
-            name: res.data.last_name + res.data.first_name,
-            emailId: res.data.email,
+            name: res.data.user.name,
+            emailId: res.data.user.email,
           };
           setState({ userInfo, isLoggedIn: true });
+          navigate("/classroom");
         }
       });
   };
@@ -80,37 +83,29 @@ const LoginForm = ({ section, topic, room, name }) => {
     // });
     const userForm = {
       email: data.get("email"),
-      password: data.get("password")
-    }
-    axios
-      .post(
-        `${config_data.API_URL}/auth`
-        , userForm)
-      .then((res) => {
-        if (res.status === 200) {
-          // setState({ userInfo, isLoggedIn: true });
-          console.log(res);
-        }
-      });
+      password: data.get("password"),
+    };
+    axios.post(`${config_data.API_URL}/auth`, userForm).then((res) => {
+      if (res.status === 200) {
+        // setState({ userInfo, isLoggedIn: true });
+        console.log(res);
+      }
+    });
   };
 
   const responseGoogleSuccess = async (response) => {
     let userInfo = {
       token: response?.tokenId,
-      email: response.profileObj.email
+      email: response.profileObj.email,
     };
     // console.log(response?.tokenId);
     // setState({ userInfo, isLoggedIn: true });
     //call API post authenticate
-    axios
-      .post(
-        `${config_data.API_URL}/auth/google`
-        , userInfo)
-      .then((res) => {
-        if (res.status === 200) {
-          setState({ userInfo, isLoggedIn: true });
-        }
-      });
+    axios.post(`${config_data.API_URL}/auth/google`, userInfo).then((res) => {
+      if (res.status === 200) {
+        setState({ userInfo, isLoggedIn: true });
+      }
+    });
   };
 
   const responseGoogleError = (response) => {
@@ -234,7 +229,7 @@ const LoginForm = ({ section, topic, room, name }) => {
                 >
                   <GoogleLogin
                     clientId={CLIENT_ID}
-                    buttonText="Sign In with Google"
+                    buttonText="Log in with Google"
                     onSuccess={responseGoogleSuccess}
                     onFailure={responseGoogleError}
                     isSignedIn={true}
@@ -242,7 +237,8 @@ const LoginForm = ({ section, topic, room, name }) => {
                   />
                   <FacebookLogin
                     appId="896620704300555"
-                    autoLoad
+                    // autoLoad
+                    fields="name,email,picture"
                     callback={responseFacebook}
                     render={(renderProps) => (
                       <FacebookLoginButton

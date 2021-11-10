@@ -9,7 +9,9 @@ import Menu from "@mui/material/Menu";
 import { Avatar } from "@mui/material";
 import UserProvider from "../../contexts/UserProvider";
 import SideBar from "./SideBar";
-import TabHeader  from "./TabHeader";
+import TabHeader from "./TabHeader";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme/theme";
 
 function stringToColor(string) {
   let hash = 0;
@@ -40,7 +42,7 @@ function stringAvatar(name) {
   };
 }
 
-export default function MenuAppBar({route_list, isHaveHeaderTab}) {
+export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [user, setUser] = React.useContext(UserProvider.context);
@@ -56,58 +58,60 @@ export default function MenuAppBar({route_list, isHaveHeaderTab}) {
 
   console.log("render MenuAppBar");
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          <SideBar />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Classroom
-          </Typography>
-          {isHaveHeaderTab && (
-            <TabHeader route = {route_list}/>
-          )}
-          {auth && (
-            <div>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                color="inherit"
-              >
-                {user.avatar ? (
-                  <Avatar
-                    alt={user.first_name + user.last_name}
-                    src={user.avatar}
-                  ></Avatar>
-                ) : (
-                  <Avatar {...stringAvatar(user.first_name + user.last_name)} />
-                )}
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                sx={{ right: 0, top: 36 }}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-              </Menu>
-            </div>
-          )}
-        </Toolbar>
-      </AppBar>
-    </Box>
+    <ThemeProvider theme={theme}>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static" color="secondary">
+          <Toolbar>
+            <SideBar />
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Classroom
+            </Typography>
+            {isHaveHeaderTab && <TabHeader route={route_list} />}
+            {auth && (
+              <div>
+                <IconButton
+                  size="large"
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={handleMenu}
+                  color="inherit"
+                >
+                  {user.avatar ? (
+                    <Avatar
+                      alt={user.first_name + user.last_name}
+                      src={user.avatar}
+                    ></Avatar>
+                  ) : (
+                    <Avatar
+                      {...stringAvatar(user.first_name + user.last_name)}
+                    />
+                  )}
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  sx={{ right: 0, top: 36 }}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  <MenuItem onClick={handleClose}>Profile</MenuItem>
+                  <MenuItem onClick={handleClose}>My account</MenuItem>
+                </Menu>
+              </div>
+            )}
+          </Toolbar>
+        </AppBar>
+      </Box>
+    </ThemeProvider>
   );
 }

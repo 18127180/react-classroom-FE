@@ -7,7 +7,9 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { CircularProgress } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { Box } from "@mui/system";
+import theme from "../../theme/theme";
 
 const useStyles = makeStyles({
   grid: {
@@ -86,8 +88,11 @@ export default function ClassroomList({ classes, loading }) {
                 </Typography>
               </CardContent>
               <CardActions className={styles.actions}>
-                <Button size="small">Share</Button>
-                <Button size="small">Learn More</Button>
+                <ThemeProvider theme={theme}>
+                  <Button size="small" variant="contained" color="primary">
+                    Access
+                  </Button>
+                </ThemeProvider>
               </CardActions>
             </Card>
           );

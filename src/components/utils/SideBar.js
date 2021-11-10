@@ -116,7 +116,7 @@ export default function SideBar() {
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ mr: 2 }}
+            sx={{ mr: 2, zIndex: 10 }}
             onClick={toggleDrawer(anchor, true)}
           >
             <MenuIcon />

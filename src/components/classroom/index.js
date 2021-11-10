@@ -4,6 +4,7 @@ import axios from "axios";
 import config from "../../config.json";
 import MenuAppBar from "../utils/MenuAppBar";
 import UserProvider from "../../contexts/UserProvider";
+import { useNavigate } from "react-router-dom";
 
 export const ClassContext = React.createContext();
 
@@ -11,6 +12,8 @@ const Home = () => {
   const [moreClass, setMoreClass] = React.useState(false);
   const [classes, setClasses] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const navigate = useNavigate();
+
   React.useEffect(() => {
     const access_token = localStorage.getItem("access_token");
     axios
@@ -18,11 +21,24 @@ const Home = () => {
         headers: { Authorization: `Bearer ${access_token}` },
       })
       .then((res) => {
-        setClasses(res.data);
-        setLoading(false);
+        if (res.status === 401) {
+          //token expired or not login yet
+          //so do basic log out process
+          localStorage.removeItem("user");
+          localStorage.removeItem("access_token");
+          navigate("/login");
+        } else {
+          setClasses(res.data);
+          setLoading(false);
+        }
       })
       .catch((err) => {
         console.log(err);
+        //token expired or not login yet
+        //so do basic log out process
+        localStorage.removeItem("user");
+        localStorage.removeItem("access_token");
+        navigate("/login");
       });
   }, [moreClass]);
   console.log("render Home");

@@ -70,6 +70,12 @@ const LoginForm = ({ section, topic, room, name }) => {
           setState({ userInfo, isLoggedIn: true });
           navigate("/classroom");
         }
+        if (res.status === 401) {
+          //basic log out process
+          localStorage.removeItem("user");
+          localStorage.removeItem("access_token");
+          navigate("/login");
+        }
       });
   };
 
@@ -252,9 +258,6 @@ const LoginForm = ({ section, topic, room, name }) => {
                         onClick={renderProps.onClick}
                         style={{ width: 200, margin: 0, fontSize: 13.5 }}
                       />
-                      // <button onClick={renderProps.onClick}>
-                      //   This is my custom FB button
-                      // </button>
                     )}
                   />
                 </div>

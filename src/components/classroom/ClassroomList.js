@@ -9,6 +9,7 @@ import { CircularProgress } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ThemeProvider } from "@mui/material/styles";
 import { Box } from "@mui/system";
+import { useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
 
 const useStyles = makeStyles({
@@ -55,6 +56,7 @@ const useStyles = makeStyles({
 
 export default function ClassroomList({ classes, loading }) {
   const styles = useStyles();
+  const navigate = useNavigate();
 
   return (
     <Box className={styles.grid}>
@@ -89,7 +91,14 @@ export default function ClassroomList({ classes, loading }) {
               </CardContent>
               <CardActions className={styles.actions}>
                 <ThemeProvider theme={theme}>
-                  <Button size="small" variant="contained" color="primary">
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      navigate("/detail-classroom");
+                    }}
+                  >
                     Access
                   </Button>
                 </ThemeProvider>

@@ -14,6 +14,9 @@ export default function TabHeader({ route }) {
 
   const useStyles = makeStyles({
     hover: {
+      fontSize: 17,
+      textTransform: "none",
+      fontFamily: '"Google Sans",Roboto,Arial,sans-serif,',
       "&:hover": {
         color: "#fc2c03",
       },
@@ -32,7 +35,15 @@ export default function TabHeader({ route }) {
   ));
 
   return (
-    <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        justifySelf: "self-start",
+        position: "absolute",
+      }}
+    >
       <Tabs
         value={value}
         onChange={handleChange}

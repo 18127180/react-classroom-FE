@@ -4,14 +4,18 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
+import Divider from "@mui/material/Divider";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import { Avatar } from "@mui/material";
+import { Avatar, Container, ListItemIcon, ListItemText } from "@mui/material";
 import UserProvider from "../../contexts/UserProvider";
 import SideBar from "./SideBar";
 import TabHeader from "./TabHeader";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/theme";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useNavigate } from "react-router-dom";
 
 function stringToColor(string) {
   let hash = 0;
@@ -42,10 +46,21 @@ function stringAvatar(name) {
   };
 }
 
+function notificationsLabel(count) {
+  if (count === 0) {
+    return "no notifications";
+  }
+  if (count > 99) {
+    return "more than 99 notifications";
+  }
+  return `${count} notifications`;
+}
+
 export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [user, setUser] = React.useContext(UserProvider.context);
+  const navigate = useNavigate();
   console.log(user);
 
   const handleMenu = (event) => {
@@ -56,6 +71,12 @@ export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
     setAnchorEl(null);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("access_token");
+    navigate("/login", { replace: true });
+  };
+
   console.log("render MenuAppBar");
   return (
     <ThemeProvider theme={theme}>
@@ -63,14 +84,24 @@ export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
         <AppBar position="static" color="secondary">
           <Toolbar>
             <SideBar />
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{
+                flexGrow: 1,
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                width: "calc(50vw - 260px)",
+              }}
+            >
               Classroom
             </Typography>
             {isHaveHeaderTab && <TabHeader route={route_list} />}
             {auth && (
               <div>
                 <IconButton
-                  size="large"
+                  size="medium"
                   aria-label="account of current user"
                   aria-controls="menu-appbar"
                   aria-haspopup="true"
@@ -81,19 +112,21 @@ export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
                     <Avatar
                       alt={user.first_name + user.last_name}
                       src={user.avatar}
+                      sx={{ width: 40, height: 40 }}
                     ></Avatar>
                   ) : (
                     <Avatar
                       {...stringAvatar(user.first_name + user.last_name)}
+                      sx={{ width: 40, height: 40 }}
                     />
                   )}
                 </IconButton>
                 <Menu
                   id="menu-appbar"
                   anchorEl={anchorEl}
-                  sx={{ right: 0, top: 36 }}
+                  sx={{ top: -10, minWidth: 400 }}
                   anchorOrigin={{
-                    vertical: "top",
+                    vertical: "bottom",
                     horizontal: "right",
                   }}
                   keepMounted
@@ -104,8 +137,38 @@ export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
-                  <MenuItem onClick={handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={handleClose}>My account</MenuItem>
+                  <Container>
+                    <IconButton aria-label={notificationsLabel(100)}>
+                      {user.avatar ? (
+                        <Avatar
+                          alt={user.first_name + user.last_name}
+                          src={user.avatar}
+                          sx={{ width: 60, height: 60 }}
+                        ></Avatar>
+                      ) : (
+                        <Avatar
+                          {...stringAvatar(user.first_name + user.last_name)}
+                          sx={{ width: 60, height: 60 }}
+                        />
+                      )}
+                    </IconButton>
+                    <Typography sx={{ textAlign: "center" }}>
+                      {user && user.first_name + user.last_name}
+                    </Typography>
+                  </Container>
+                  <Divider />
+                  <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                      <AccountBoxIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Profile</ListItemText>
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    <ListItemIcon>
+                      <LogoutIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Log out</ListItemText>
+                  </MenuItem>
                 </Menu>
               </div>
             )}

@@ -1,4 +1,5 @@
 import React from "react";
+import Grid from "@mui/material/Grid";
 
 // const Test = () => {
 //     return (
@@ -18,22 +19,18 @@ const templates = {
 };
 
 const Test = () => (
-    <div>
-        {
-            Object.keys(templates).map(template_name => {
-                return (
-                    <div>
-                        <div>{template_name}</div>
-                        {
-                            templates[template_name].items.map(item => {
-                                return (<div>{item}</div>)
-                            })
-                        }
-                    </div>
-                )
-            })
-        }
-    </div>
+    <Grid
+        container
+        spacing={0}
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+    >
+
+        <Grid item xs={3}>
+        </Grid>
+
+    </Grid>
 );
 
 export default Test;

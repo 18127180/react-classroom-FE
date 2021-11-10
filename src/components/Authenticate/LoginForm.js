@@ -245,7 +245,7 @@ const LoginForm = ({ section, topic, room, name }) => {
                     buttonText="Log in with Google"
                     onSuccess={responseGoogleSuccess}
                     onFailure={responseGoogleError}
-                    isSignedIn={true}
+                    //isSignedIn={true}
                     cookiePolicy={"single_host_origin"}
                   />
                   <FacebookLogin

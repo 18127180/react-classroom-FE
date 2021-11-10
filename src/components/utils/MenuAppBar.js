@@ -110,13 +110,13 @@ export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
                 >
                   {user.avatar ? (
                     <Avatar
-                      alt={user.first_name + user.last_name}
+                      alt={user.first_name + " " + user.last_name}
                       src={user.avatar}
                       sx={{ width: 40, height: 40 }}
                     ></Avatar>
                   ) : (
                     <Avatar
-                      {...stringAvatar(user.first_name + user.last_name)}
+                      {...stringAvatar(user.first_name + " " + user.last_name)}
                       sx={{ width: 40, height: 40 }}
                     />
                   )}
@@ -141,19 +141,21 @@ export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
                     <IconButton aria-label={notificationsLabel(100)}>
                       {user.avatar ? (
                         <Avatar
-                          alt={user.first_name + user.last_name}
+                          alt={user.first_name + " " + user.last_name}
                           src={user.avatar}
                           sx={{ width: 60, height: 60 }}
                         ></Avatar>
                       ) : (
                         <Avatar
-                          {...stringAvatar(user.first_name + user.last_name)}
+                          {...stringAvatar(
+                            user.first_name + " " + user.last_name
+                          )}
                           sx={{ width: 60, height: 60 }}
                         />
                       )}
                     </IconButton>
                     <Typography sx={{ textAlign: "center" }}>
-                      {user && user.first_name + user.last_name}
+                      {user && user.first_name + " " + user.last_name}
                     </Typography>
                   </Container>
                   <Divider />

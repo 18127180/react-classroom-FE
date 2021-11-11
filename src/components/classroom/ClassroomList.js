@@ -103,7 +103,7 @@ export default function ClassroomList({ classes, loading }) {
                         variant="contained"
                         color="primary"
                         onClick={() => {
-                          navigate("/detail-classroom");
+                          navigate(`/detail-classroom/${c.id}`);
                         }}
                       >
                         <WorkOutlineIcon />
@@ -119,7 +119,7 @@ export default function ClassroomList({ classes, loading }) {
                         variant="contained"
                         color="primary"
                         onClick={() => {
-                          navigate("/detail-classroom");
+                          navigate(`/detail-classroom/${c.id}`);
                         }}
                       >
                         <TrendingUpIcon />
@@ -131,7 +131,7 @@ export default function ClassroomList({ classes, loading }) {
                     variant="contained"
                     color="primary"
                     onClick={() => {
-                      navigate("/detail-classroom");
+                      navigate(`/detail-classroom/${c.id}`);
                     }}
                   >
                     Access

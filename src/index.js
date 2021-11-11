@@ -14,7 +14,7 @@ ReactDOM.render(
       <Route path="login" element={<LoginForm />} />
       <Route path="register" element={<RegisterForm />} />
       <Route path="classroom" element={<Home />} />
-      <Route path="/detail-classroom/*" element={<DetailClassroom />} />
+      <Route path="/detail-classroom/:id*" element={<DetailClassroom />} />
     </Routes>
   </BrowserRouter>,
   document.getElementById("root")

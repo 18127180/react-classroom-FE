@@ -1,7 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import IconButton from "@mui/material/IconButton";
-import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded';
+import FormDialog from './FormDialog';
 
 
 const HeaderTopic = ({ name }) => {
@@ -31,15 +30,7 @@ const HeaderTopic = ({ name }) => {
                 {name}
             </Box>
             <Box>
-                <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    color="inherit"
-                >
-                    <PersonAddRoundedIcon style={{ color: '#c26401'}}/>
-                </IconButton>
+                <FormDialog />
             </Box>
         </Box>
     );

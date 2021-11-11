@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -52,6 +52,12 @@ const LoginForm = ({ section, topic, room, name }) => {
     },
   });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("access_token")){
+      navigate("/classroom");
+    }
+  }, []);
 
   const responseFacebook = (response) => {
     axios

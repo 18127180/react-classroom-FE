@@ -40,7 +40,7 @@ const Home = () => {
         localStorage.removeItem("access_token");
         navigate("/login");
       });
-  }, [moreClass]);
+  }, []);
   console.log("render Home");
   return (
     <div>

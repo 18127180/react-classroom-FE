@@ -251,7 +251,7 @@ const LoginForm = ({ section, topic, room, name }) => {
                   <FacebookLogin
                     appId="896620704300555"
                     // autoLoad
-                    fields="name,email,picture"
+                    fields="name,email,picture,gender"
                     callback={responseFacebook}
                     render={(renderProps) => (
                       <FacebookLoginButton

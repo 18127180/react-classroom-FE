@@ -5,12 +5,14 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, IconButton, Tooltip } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ThemeProvider } from "@mui/material/styles";
 import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
+import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 
 const useStyles = makeStyles({
   grid: {
@@ -91,6 +93,39 @@ export default function ClassroomList({ classes, loading }) {
               </CardContent>
               <CardActions className={styles.actions}>
                 <ThemeProvider theme={theme}>
+                  {c.student ? (
+                    <Tooltip
+                      title={`Open your work for ${c.name}`}
+                      disableInteractive
+                    >
+                      <IconButton
+                        size="small"
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                          navigate("/detail-classroom");
+                        }}
+                      >
+                        <WorkOutlineIcon />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip
+                      title={`Open gradebook for ${c.name}`}
+                      disableInteractive
+                    >
+                      <IconButton
+                        size="small"
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                          navigate("/detail-classroom");
+                        }}
+                      >
+                        <TrendingUpIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                   <Button
                     size="small"
                     variant="contained"

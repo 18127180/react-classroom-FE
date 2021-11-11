@@ -16,6 +16,8 @@ import theme from "../../theme/theme";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
+import CreateClassDialog from "../classroom/CreateClassDialog";
 
 function stringToColor(string) {
   let hash = 0;
@@ -46,19 +48,11 @@ function stringAvatar(name) {
   };
 }
 
-function notificationsLabel(count) {
-  if (count === 0) {
-    return "no notifications";
-  }
-  if (count > 99) {
-    return "more than 99 notifications";
-  }
-  return `${count} notifications`;
-}
-
 export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl2, setAnchorEl2] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
   const [user, setUser] = React.useContext(UserProvider.context);
   const navigate = useNavigate();
   console.log(user);
@@ -66,9 +60,23 @@ export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  const handleMenu2 = (event) => {
+    setAnchorEl2(event.currentTarget);
+  };
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const handleAddClass = () => {
+    setAnchorEl2(null);
+    setOpen(true);
+  };
+  const handleJoinClass = () => {
+    setAnchorEl2(null);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
   };
 
   const handleLogout = () => {
@@ -101,6 +109,16 @@ export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
             {auth && (
               <div>
                 <IconButton
+                  size="mediums"
+                  aria-label="control class of current user"
+                  aria-controls="class_control"
+                  aria-haspopup="true"
+                  onClick={handleMenu2}
+                  color="inherit"
+                >
+                  <AddIcon />
+                </IconButton>
+                <IconButton
                   size="medium"
                   aria-label="account of current user"
                   aria-controls="menu-appbar"
@@ -112,19 +130,19 @@ export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
                     <Avatar
                       alt={user.first_name + " " + user.last_name}
                       src={user.avatar}
-                      sx={{ width: 40, height: 40 }}
+                      sx={{ width: 30, height: 30 }}
                     ></Avatar>
                   ) : (
                     <Avatar
                       {...stringAvatar(user.first_name + " " + user.last_name)}
-                      sx={{ width: 40, height: 40 }}
+                      sx={{ width: 30, height: 30 }}
                     />
                   )}
                 </IconButton>
                 <Menu
                   id="menu-appbar"
                   anchorEl={anchorEl}
-                  sx={{ top: -10, minWidth: 400 }}
+                  sx={{ top: 0, minWidth: 400 }}
                   anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "right",
@@ -138,7 +156,7 @@ export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
                   onClose={handleClose}
                 >
                   <Container>
-                    <IconButton aria-label={notificationsLabel(100)}>
+                    <IconButton>
                       {user.avatar ? (
                         <Avatar
                           alt={user.first_name + " " + user.last_name}
@@ -172,11 +190,33 @@ export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
                     <ListItemText>Log out</ListItemText>
                   </MenuItem>
                 </Menu>
+                {/* add class menu */}
+                <Menu
+                  id="class_control"
+                  anchorEl={anchorEl2}
+                  sx={{ top: 5, minWidth: 400 }}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorEl2)}
+                  onClose={() => setAnchorEl2(null)}
+                >
+                  <MenuItem onClick={handleJoinClass}>Join class</MenuItem>
+                  <MenuItem onClick={handleAddClass}>Create class</MenuItem>
+                </Menu>
               </div>
             )}
           </Toolbar>
         </AppBar>
       </Box>
+      {/* dialog */}
+      <CreateClassDialog open={open} handleClose={handleCloseDialog} />
     </ThemeProvider>
   );
 }

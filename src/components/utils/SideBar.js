@@ -11,6 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import HomeIcon from "@mui/icons-material/Home";
 import { ListSubheader } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
+import { useNavigate } from "react-router-dom";
 
 function stringToColor(string) {
   let hash = 0;
@@ -47,6 +48,7 @@ function stringAvatar(name) {
 }
 
 export default function SideBar() {
+  const navigate = useNavigate();
   const [state, setState] = React.useState({
     top: false,
     left: false,
@@ -72,7 +74,7 @@ export default function SideBar() {
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
-      <List>
+      <List onClick={() => navigate("/classroom")}>
         <ListItem button key={"Home"}>
           <ListItemIcon>
             <HomeIcon />

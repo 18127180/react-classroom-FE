@@ -48,11 +48,7 @@ function stringAvatar(name) {
   };
 }
 
-export default function MenuAppBar({
-  route_list,
-  isHaveHeaderTab,
-  canAddClass,
-}) {
+const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorEl2, setAnchorEl2] = React.useState(null);
@@ -224,4 +220,6 @@ export default function MenuAppBar({
       <CreateClassDialog open={open} handleClose={handleCloseDialog} />
     </ThemeProvider>
   );
-}
+};
+
+export default React.memo(MenuAppBar);

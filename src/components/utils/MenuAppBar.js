@@ -217,7 +217,9 @@ const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
         </AppBar>
       </Box>
       {/* dialog */}
-      <CreateClassDialog open={open} handleClose={handleCloseDialog} />
+      {canAddClass && (
+        <CreateClassDialog open={open} handleClose={handleCloseDialog} />
+      )}
     </ThemeProvider>
   );
 };

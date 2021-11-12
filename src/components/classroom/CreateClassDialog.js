@@ -51,6 +51,7 @@ export default function CreateClassDialog({ open, handleClose }) {
         .then((res) => {
           // console.log(res.data);
           setClasses(classes.concat(res.data));
+          formik.resetForm();
         })
         .catch((err) => {
           console.log(err);

@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
 import axios from "axios";
 import config_data from "../../config.json";
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -37,6 +38,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 const RegisterForm = ({ section, topic, room, name }) => {
+  const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -45,16 +47,22 @@ const RegisterForm = ({ section, topic, room, name }) => {
       email: data.get("email"),
       password: data.get("password"),
       first_name: data.get("firstName"),
-      last_name: data.get("lastName")
-    }
+      last_name: data.get("lastName"),
+    };
     axios
-      .post(
-        `${config_data.API_URL}/register`
-        , userForm)
+      .post(`${config_data.API_URL}/register`, userForm)
       .then((res) => {
         if (res.status === 201) {
           // setState({ userInfo, isLoggedIn: true });
           console.log(res);
+          navigate("/login");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.response) {
+          if (err.response.status === 405)
+            alert("Something went wrong. Please try again in a few minutes.");
         }
       });
   };

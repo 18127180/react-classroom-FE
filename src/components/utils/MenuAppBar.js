@@ -48,7 +48,11 @@ function stringAvatar(name) {
   };
 }
 
-export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
+export default function MenuAppBar({
+  route_list,
+  isHaveHeaderTab,
+  canAddClass,
+}) {
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorEl2, setAnchorEl2] = React.useState(null);
@@ -85,7 +89,6 @@ export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
     navigate("/login", { replace: true });
   };
 
-  console.log("render MenuAppBar");
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ flexGrow: 1 }}>
@@ -108,16 +111,18 @@ export default function MenuAppBar({ route_list, isHaveHeaderTab }) {
             {isHaveHeaderTab && <TabHeader route={route_list} />}
             {auth && (
               <div>
-                <IconButton
-                  size="mediums"
-                  aria-label="control class of current user"
-                  aria-controls="class_control"
-                  aria-haspopup="true"
-                  onClick={handleMenu2}
-                  color="inherit"
-                >
-                  <AddIcon />
-                </IconButton>
+                {canAddClass && (
+                  <IconButton
+                    size="mediums"
+                    aria-label="control class of current user"
+                    aria-controls="class_control"
+                    aria-haspopup="true"
+                    onClick={handleMenu2}
+                    color="inherit"
+                  >
+                    <AddIcon />
+                  </IconButton>
+                )}
                 <IconButton
                   size="medium"
                   aria-label="account of current user"

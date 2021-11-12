@@ -51,10 +51,12 @@ export default function CreateClassDialog({ open, handleClose }) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} sx={{ color: "#ababab" }}>
+          <Button onClick={handleClose} sx={{ color: "#000" }}>
             Cancel
           </Button>
-          <Button onClick={handleClose}>Create</Button>
+          <Button onClick={handleClose} variant="contained">
+            Create
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

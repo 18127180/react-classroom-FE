@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 export const ClassContext = React.createContext();
 
 const Home = () => {
-  const [moreClass, setMoreClass] = React.useState(false);
+  // const [moreClass, setMoreClass] = React.useState(false);
   const [classes, setClasses] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const navigate = useNavigate();
@@ -44,9 +44,9 @@ const Home = () => {
   console.log("render Home");
   return (
     <div>
-      <ClassContext.Provider value={[moreClass, setMoreClass]}>
+      <ClassContext.Provider value={[classes, setClasses]}>
         <UserProvider>
-          <MenuAppBar />
+          <MenuAppBar canAddClass={true} />
           <ClassroomList classes={classes} loading={loading} />
         </UserProvider>
       </ClassContext.Provider>

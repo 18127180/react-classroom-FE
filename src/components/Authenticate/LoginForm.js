@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -19,6 +19,7 @@ import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import config_data from "../../config.json";
+import SimpleBackdrop from "../utils/Backdrop";
 
 function Copyright(props) {
   return (
@@ -51,15 +52,17 @@ const LoginForm = ({ section, topic, room, name }) => {
       emailId: "",
     },
   });
+  const [openBackdrop, setOpenBackdrop] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (localStorage.getItem("access_token")){
+    if (localStorage.getItem("access_token")) {
       navigate("/classroom");
     }
   }, []);
 
   const responseFacebook = (response) => {
+    setOpenBackdrop(true);
     axios
       .post(
         `${config_data.API_URL}/auth/facebook?access_token=${response.accessToken}`
@@ -69,11 +72,11 @@ const LoginForm = ({ section, topic, room, name }) => {
           console.log(res.data.user);
           localStorage.setItem("user", JSON.stringify(res.data.user));
           localStorage.setItem("access_token", res.data.access_token);
-          let userInfo = {
-            name: res.data.user.name,
-            emailId: res.data.user.email,
-          };
-          setState({ userInfo, isLoggedIn: true });
+          // let userInfo = {
+          //   name: res.data.user.name,
+          //   emailId: res.data.user.email,
+          // };
+          // setState({ userInfo, isLoggedIn: true });
           navigate("/classroom");
         }
         if (res.status === 401) {
@@ -87,6 +90,7 @@ const LoginForm = ({ section, topic, room, name }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setOpenBackdrop(true);
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
     // console.log({
@@ -100,12 +104,17 @@ const LoginForm = ({ section, topic, room, name }) => {
     axios.post(`${config_data.API_URL}/auth`, userForm).then((res) => {
       if (res.status === 200) {
         // setState({ userInfo, isLoggedIn: true });
+        console.log(res.data);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        localStorage.setItem("access_token", res.data.access_token);
         console.log(res);
+        navigate("/classroom");
       }
     });
   };
 
   const responseGoogleSuccess = async (response) => {
+    setOpenBackdrop(true);
     let userInfo = {
       token: response?.tokenId,
       email: response.profileObj.email,
@@ -117,11 +126,11 @@ const LoginForm = ({ section, topic, room, name }) => {
       if (res.status === 200) {
         localStorage.setItem("user", JSON.stringify(res.data.user));
         localStorage.setItem("access_token", res.data.access_token);
-        let userInfo = {
-          name: res.data.user.name,
-          emailId: res.data.user.email,
-        };
-        setState({ userInfo, isLoggedIn: true });
+        // let userInfo = {
+        //   name: res.data.user.name,
+        //   emailId: res.data.user.email,
+        // };
+        // setState({ userInfo, isLoggedIn: true });
         navigate("/classroom");
       }
     });
@@ -273,6 +282,10 @@ const LoginForm = ({ section, topic, room, name }) => {
           </Box>
         </Grid>
       </Grid>
+      <SimpleBackdrop
+        state={openBackdrop}
+        handleClose={() => setOpenBackdrop(false)}
+      />
     </ThemeProvider>
   );
 };

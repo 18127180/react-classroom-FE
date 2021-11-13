@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import axios from "axios"
+import axios from "axios";
 import MenuAppBar from "../utils/MenuAppBar";
 import UserProvider from "../../contexts/UserProvider";
 import { Routes, Route, useParams } from "react-router-dom";
 import MemberTab from "./MemberTab";
+import StreamTab from "./StreamTab";
 import config from "../../config.json";
 import { useNavigate } from "react-router-dom";
 
@@ -29,12 +30,26 @@ const DetailClassroom = () => {
           if (res.status === 200) {
             setDetailClassData(res.data);
             setRouterTab([
-              { name_header: "Stream", link: `/detail-classroom/${res.data.id}/newfeed`, value: 1 },
               {
-                name_header: "Exercises", link: `/detail-classroom/${res.data.id}/exercises`, value: 2,
+                name_header: "Stream",
+                link: `/detail-classroom/${res.data.id}/stream`,
+                value: 1,
               },
-              { name_header: "People", link: `/detail-classroom/${res.data.id}/member`, value: 3 },
-              { name_header: "Grade", link: `/detail-classroom/${res.data.id}/grades`, value: 4 },
+              {
+                name_header: "Exercises",
+                link: `/detail-classroom/${res.data.id}/exercises`,
+                value: 2,
+              },
+              {
+                name_header: "People",
+                link: `/detail-classroom/${res.data.id}/member`,
+                value: 3,
+              },
+              {
+                name_header: "Grade",
+                link: `/detail-classroom/${res.data.id}/grades`,
+                value: 4,
+              },
             ]);
           }
         }
@@ -48,7 +63,7 @@ const DetailClassroom = () => {
         navigate("/login");
       });
   }, []);
-  console.log(routerTab);
+  console.log(detailClassData);
   return (
     <div>
       <ClassContext.Provider>
@@ -57,6 +72,7 @@ const DetailClassroom = () => {
         </UserProvider>
       </ClassContext.Provider>
       <Routes>
+        <Route path="/stream" element={<StreamTab data={detailClassData} />} />
         <Route path="/member" element={<MemberTab />} />
       </Routes>
     </div>

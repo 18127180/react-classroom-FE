@@ -17,7 +17,7 @@ const Home = () => {
   React.useEffect(() => {
     const access_token = localStorage.getItem("access_token");
     axios
-      .get(config.API_URL + `/classroom?${Date.now()}`, {
+      .get(config.API_URL + `/classroom`, {
         headers: { Authorization: `Bearer ${access_token}` },
       })
       .then((res) => {

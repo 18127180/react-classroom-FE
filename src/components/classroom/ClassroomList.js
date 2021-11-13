@@ -131,7 +131,7 @@ export default function ClassroomList({ classes, loading }) {
                     variant="contained"
                     color="primary"
                     onClick={() => {
-                      navigate(`/detail-classroom/${c.id}`);
+                      navigate(`/detail-classroom/${c.id}/stream`);
                     }}
                   >
                     Access

@@ -12,6 +12,7 @@ const Home = () => {
   // const [moreClass, setMoreClass] = React.useState(false);
   const [classes, setClasses] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const [loadEffect, setEffect] = React.useState(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -26,10 +27,12 @@ const Home = () => {
           //so do basic log out process
           localStorage.removeItem("user");
           localStorage.removeItem("access_token");
+          setEffect(false);
           navigate("/login");
         } else {
           setClasses(res.data);
           setLoading(false);
+          setEffect(true);
         }
       })
       .catch((err) => {
@@ -38,18 +41,23 @@ const Home = () => {
         //so do basic log out process
         localStorage.removeItem("user");
         localStorage.removeItem("access_token");
+        setEffect(false);
         navigate("/login");
       });
   }, []);
-  console.log("render Home");
+
   return (
     <div>
-      <ClassContext.Provider value={[classes, setClasses]}>
-        <UserProvider>
-          <MenuAppBar canAddClass={true} />
-          <ClassroomList classes={classes} loading={loading} />
-        </UserProvider>
-      </ClassContext.Provider>
+      {
+        loadEffect ? (
+          <ClassContext.Provider value={[classes, setClasses]} >
+            <UserProvider>
+              <MenuAppBar canAddClass={true} />
+              <ClassroomList classes={classes} loading={loading} />
+            </UserProvider>
+          </ClassContext.Provider >
+        ) : (<div></div>)
+      }
     </div>
   );
 };

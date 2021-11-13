@@ -13,6 +13,7 @@ export const ClassContext = React.createContext();
 const DetailClassroom = () => {
   const [detailClassData, setDetailClassData] = useState({});
   const [routerTab, setRouterTab] = useState([]);
+  const [loadEffect, setEffect] = React.useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
   React.useEffect(() => {
@@ -25,10 +26,12 @@ const DetailClassroom = () => {
         if (res.status === 401) {
           localStorage.removeItem("user");
           localStorage.removeItem("access_token");
+          setEffect(false);
           navigate("/login");
         } else {
           if (res.status === 200) {
             setDetailClassData(res.data);
+            setEffect(true);
             setRouterTab([
               {
                 name_header: "Stream",
@@ -60,21 +63,27 @@ const DetailClassroom = () => {
         //so do basic log out process
         localStorage.removeItem("user");
         localStorage.removeItem("access_token");
+        setEffect(false);
         navigate("/login");
       });
   }, []);
-  console.log(detailClassData);
   return (
     <div>
-      <ClassContext.Provider>
-        <UserProvider>
-          <MenuAppBar route_list={routerTab} isHaveHeaderTab={true} />
-        </UserProvider>
-      </ClassContext.Provider>
-      <Routes>
-        <Route path="/stream" element={<StreamTab data={detailClassData} />} />
-        <Route path="/member" element={<MemberTab />} />
-      </Routes>
+      {
+        loadEffect ? (
+          <div>
+            <ClassContext.Provider>
+              <UserProvider>
+                <MenuAppBar route_list={routerTab} isHaveHeaderTab={true} />
+              </UserProvider>
+            </ClassContext.Provider>
+            <Routes>
+              <Route path="/stream" element={<StreamTab data={detailClassData} />} />
+              <Route path="/member" element={<MemberTab data={detailClassData} />} />
+            </Routes>
+          </div >
+        ) : (<div></div>)
+      }
     </div>
   );
 };

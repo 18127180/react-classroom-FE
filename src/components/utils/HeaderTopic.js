@@ -1,9 +1,8 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import FormDialog from './FormDialog';
 
 
-const HeaderTopic = ({ name }) => {
+const HeaderTopic = ({ name, FormDialog }) => {
     // const handleCancel = () => {
     //     form.resetFields();
     // };
@@ -30,7 +29,7 @@ const HeaderTopic = ({ name }) => {
                 {name}
             </Box>
             <Box>
-                <FormDialog />
+                {FormDialog}
             </Box>
         </Box>
     );

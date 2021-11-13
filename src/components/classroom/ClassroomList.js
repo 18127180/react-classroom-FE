@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import ClassProvider from "../../contexts/ClassProvider";
 
 const useStyles = makeStyles({
   grid: {
@@ -56,9 +57,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ClassroomList({ classes, loading }) {
+export default function ClassroomList() {
   const styles = useStyles();
   const navigate = useNavigate();
+  const { classState, loading } = React.useContext(ClassProvider.context);
+  const [classes, setClasses] = classState;
 
   return (
     <Box className={styles.grid}>

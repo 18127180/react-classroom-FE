@@ -7,8 +7,7 @@ import MemberTab from "./MemberTab";
 import StreamTab from "./StreamTab";
 import config from "../../config.json";
 import { useNavigate } from "react-router-dom";
-
-export const ClassContext = React.createContext();
+import ClassProvider from "../../contexts/ClassProvider";
 
 const DetailClassroom = () => {
   const [detailClassData, setDetailClassData] = useState({});
@@ -69,21 +68,27 @@ const DetailClassroom = () => {
   }, []);
   return (
     <div>
-      {
-        loadEffect ? (
-          <div>
-            <ClassContext.Provider>
-              <UserProvider>
-                <MenuAppBar route_list={routerTab} isHaveHeaderTab={true} />
-              </UserProvider>
-            </ClassContext.Provider>
-            <Routes>
-              <Route path="/stream" element={<StreamTab data={detailClassData} />} />
-              <Route path="/member" element={<MemberTab data={detailClassData} />} />
-            </Routes>
-          </div >
-        ) : (<div></div>)
-      }
+      {loadEffect ? (
+        <div>
+          <ClassProvider>
+            <UserProvider>
+              <MenuAppBar route_list={routerTab} isHaveHeaderTab={true} />
+            </UserProvider>
+          </ClassProvider>
+          <Routes>
+            <Route
+              path="/stream"
+              element={<StreamTab data={detailClassData} />}
+            />
+            <Route
+              path="/member"
+              element={<MemberTab data={detailClassData} />}
+            />
+          </Routes>
+        </div>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 };

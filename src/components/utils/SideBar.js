@@ -12,6 +12,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import { ListSubheader } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import { useNavigate } from "react-router-dom";
+import ClassProvider from "../../contexts/ClassProvider";
 
 function stringToColor(string) {
   let hash = 0;
@@ -48,6 +49,10 @@ function stringAvatar(name) {
 }
 
 export default function SideBar() {
+  const { classState, loading } = React.useContext(ClassProvider.context);
+  const [classes, setClasses] = classState;
+  console.log("classState", classState);
+  console.log("loading", loading);
   const navigate = useNavigate();
   const [state, setState] = React.useState({
     top: false,
@@ -85,26 +90,36 @@ export default function SideBar() {
       <Divider />
       <List>
         <ListSubheader>{`Teaching`}</ListSubheader>
-        {["Web Programming", "Blockchain"].map((item, index) => (
-          <ListItem button key={`class-${index}-${item}`}>
-            <ListItemIcon>
-              <Avatar {...stringAvatar(item)} />
-            </ListItemIcon>
-            <ListItemText primary={`${item}`} />
-          </ListItem>
-        ))}
+        {classes.map((item, index) => {
+          if (item.teacher) {
+            return (
+              <ListItem button key={`class-${item.id}`}>
+                <ListItemIcon>
+                  <Avatar {...stringAvatar(item.name)} />
+                </ListItemIcon>
+                <ListItemText primary={`${item.name}`} />
+              </ListItem>
+            );
+          }
+          return null;
+        })}
       </List>
       <Divider />
       <List>
         <ListSubheader>{`Enrolled`}</ListSubheader>
-        {["Lớp thầy Phúc", "Sinh hoạt công dân"].map((item, index) => (
-          <ListItem button key={`class-${index}-${item}`}>
-            <ListItemIcon>
-              <Avatar {...stringAvatar(item)} />
-            </ListItemIcon>
-            <ListItemText primary={`${item}`} />
-          </ListItem>
-        ))}
+        {classes.map((item, index) => {
+          if (item.student) {
+            return (
+              <ListItem button key={`class-${item.id}`}>
+                <ListItemIcon>
+                  <Avatar {...stringAvatar(item.name)} />
+                </ListItemIcon>
+                <ListItemText primary={`${item.name}`} />
+              </ListItem>
+            );
+          }
+          return null;
+        })}
       </List>
     </Box>
   );

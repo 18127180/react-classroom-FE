@@ -9,7 +9,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
 import config from "../../config.json";
-import { ClassContext } from ".";
+import ClassProvider from "../../contexts/ClassProvider";
 
 const validationSchema = yup.object({
   name: yup.string("Enter class name").required("Class name is required"),
@@ -21,7 +21,8 @@ const validationSchema = yup.object({
 });
 
 export default function CreateClassDialog({ open, handleClose }) {
-  const [classes, setClasses] = React.useContext(ClassContext);
+  const { classState, loading } = React.useContext(ClassProvider.context);
+  const [classes, setClasses] = classState;
   const access_token = localStorage.getItem("access_token");
   const formik = useFormik({
     initialValues: {
@@ -50,7 +51,8 @@ export default function CreateClassDialog({ open, handleClose }) {
         )
         .then((res) => {
           // console.log(res.data);
-          setClasses(classes.concat(res.data));
+          if (res.status === 200) setClasses(classes.concat(res.data));
+          else alert("Something's wrong. Please try again later");
           formik.resetForm();
         })
         .catch((err) => {

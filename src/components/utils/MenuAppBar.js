@@ -157,7 +157,7 @@ const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
                       onClick={handleMenu}
                       color="inherit"
                     >
-                      {user.avatar ? (
+                      {user && user.avatar ? (
                         <Avatar
                           alt={user.first_name + " " + user.last_name}
                           src={user.avatar}
@@ -190,7 +190,7 @@ const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
                     >
                       <Container>
                         <IconButton>
-                          {user.avatar ? (
+                          {user && user.avatar ? (
                             <Avatar
                               alt={user.first_name + " " + user.last_name}
                               src={user.avatar}

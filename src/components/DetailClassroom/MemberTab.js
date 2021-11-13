@@ -1,8 +1,9 @@
 import React from 'react';
 import Grid from "@mui/material/Grid";
 import HeaderTopic from '../utils/HeaderTopic'
+import FormTeacherDialog from '../utils/FormTeacherDialog';
 
-const MemberTab = ({ form, setSuccess, onSuccess, onFailed }) => {
+const MemberTab = ({data}) => {
     // const handleCancel = () => {
     //     form.resetFields();
     // };
@@ -15,7 +16,7 @@ const MemberTab = ({ form, setSuccess, onSuccess, onFailed }) => {
             alignItems="center"
             justifyContent="center"
         >
-        <HeaderTopic name="Giáo viên"/>
+        <HeaderTopic name="Giáo viên" dataClass={data} FormDialog={<FormTeacherDialog data={data}/>}/>
         <HeaderTopic name="Sinh viên"/>
         </Grid>
     );

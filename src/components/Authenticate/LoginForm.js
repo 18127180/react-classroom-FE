@@ -53,12 +53,13 @@ const LoginForm = ({ section, topic, room, name }) => {
     },
   });
   const [openBackdrop, setOpenBackdrop] = useState(false);
-  const navigate = useNavigate();
+  let navigate = useNavigate();
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
       navigate("/classroom");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const responseFacebook = (response) => {

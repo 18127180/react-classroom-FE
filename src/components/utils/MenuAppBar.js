@@ -18,6 +18,8 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import CreateClassDialog from "../classroom/CreateClassDialog";
+import useScrollTrigger from "@mui/material/useScrollTrigger";
+import CssBaseline from "@mui/material/CssBaseline";
 
 function stringToColor(string) {
   let hash = 0;
@@ -46,6 +48,22 @@ function stringAvatar(name) {
     },
     children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
   };
+}
+
+function ElevationScroll(props) {
+  const { children, window } = props;
+  // Note that you normally won't need to set the window ref as useScrollTrigger
+  // will default to window.
+  // This is only being set here because the demo is in an iframe.
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 0,
+    target: window ? window() : undefined,
+  });
+
+  return React.cloneElement(children, {
+    elevation: trigger ? 4 : 0,
+  });
 }
 
 const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
@@ -86,141 +104,157 @@ const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static" color="secondary">
-          <Toolbar>
-            <SideBar />
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{
-                flexGrow: 1,
-                textOverflow: "ellipsis",
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                width: "calc(50vw - 260px)",
-              }}
+    <React.Fragment>
+      <ThemeProvider theme={theme}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            marginBottom: 8,
+          }}
+        >
+          <CssBaseline />
+          <ElevationScroll>
+            <AppBar
+              position="fixed"
+              color="secondary"
+              sx={{ borderBottom: "0.1px solid rgba(0,0,0,0.2)" }}
             >
-              Classroom
-            </Typography>
-            {isHaveHeaderTab && <TabHeader route={route_list} />}
-            {auth && (
-              <div>
-                {canAddClass && (
-                  <IconButton
-                    size="mediums"
-                    aria-label="control class of current user"
-                    aria-controls="class_control"
-                    aria-haspopup="true"
-                    onClick={handleMenu2}
-                    color="inherit"
-                  >
-                    <AddIcon />
-                  </IconButton>
-                )}
-                <IconButton
-                  size="medium"
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleMenu}
-                  color="inherit"
-                >
-                  {user.avatar ? (
-                    <Avatar
-                      alt={user.first_name + " " + user.last_name}
-                      src={user.avatar}
-                      sx={{ width: 30, height: 30 }}
-                    ></Avatar>
-                  ) : (
-                    <Avatar
-                      {...stringAvatar(user.first_name + " " + user.last_name)}
-                      sx={{ width: 30, height: 30 }}
-                    />
-                  )}
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  sx={{ top: 0, minWidth: 400 }}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
+              <Toolbar>
+                <SideBar />
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{
+                    flexGrow: 1,
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    width: "calc(50vw - 260px)",
                   }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
                 >
-                  <Container>
-                    <IconButton>
+                  Classroom
+                </Typography>
+                {isHaveHeaderTab && <TabHeader route={route_list} />}
+                {auth && (
+                  <div>
+                    {canAddClass && (
+                      <IconButton
+                        size="mediums"
+                        aria-label="control class of current user"
+                        aria-controls="class_control"
+                        aria-haspopup="true"
+                        onClick={handleMenu2}
+                        color="inherit"
+                      >
+                        <AddIcon />
+                      </IconButton>
+                    )}
+                    <IconButton
+                      size="medium"
+                      aria-label="account of current user"
+                      aria-controls="menu-appbar"
+                      aria-haspopup="true"
+                      onClick={handleMenu}
+                      color="inherit"
+                    >
                       {user.avatar ? (
                         <Avatar
                           alt={user.first_name + " " + user.last_name}
                           src={user.avatar}
-                          sx={{ width: 60, height: 60 }}
+                          sx={{ width: 30, height: 30 }}
                         ></Avatar>
                       ) : (
                         <Avatar
                           {...stringAvatar(
                             user.first_name + " " + user.last_name
                           )}
-                          sx={{ width: 60, height: 60 }}
+                          sx={{ width: 30, height: 30 }}
                         />
                       )}
                     </IconButton>
-                    <Typography sx={{ textAlign: "center" }}>
-                      {user && user.first_name + " " + user.last_name}
-                    </Typography>
-                  </Container>
-                  <Divider />
-                  <MenuItem onClick={handleClose}>
-                    <ListItemIcon>
-                      <AccountBoxIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Profile</ListItemText>
-                  </MenuItem>
-                  <MenuItem onClick={handleLogout}>
-                    <ListItemIcon>
-                      <LogoutIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Log out</ListItemText>
-                  </MenuItem>
-                </Menu>
-                {/* add class menu */}
-                <Menu
-                  id="class_control"
-                  anchorEl={anchorEl2}
-                  sx={{ top: 5, minWidth: 400 }}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={Boolean(anchorEl2)}
-                  onClose={() => setAnchorEl2(null)}
-                >
-                  <MenuItem onClick={handleJoinClass}>Join class</MenuItem>
-                  <MenuItem onClick={handleAddClass}>Create class</MenuItem>
-                </Menu>
-              </div>
-            )}
-          </Toolbar>
-        </AppBar>
-      </Box>
-      {/* dialog */}
-      {canAddClass && (
-        <CreateClassDialog open={open} handleClose={handleCloseDialog} />
-      )}
-    </ThemeProvider>
+                    <Menu
+                      id="menu-appbar"
+                      anchorEl={anchorEl}
+                      sx={{ top: 0, minWidth: 400 }}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      keepMounted
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      open={Boolean(anchorEl)}
+                      onClose={handleClose}
+                    >
+                      <Container>
+                        <IconButton>
+                          {user.avatar ? (
+                            <Avatar
+                              alt={user.first_name + " " + user.last_name}
+                              src={user.avatar}
+                              sx={{ width: 60, height: 60 }}
+                            ></Avatar>
+                          ) : (
+                            <Avatar
+                              {...stringAvatar(
+                                user.first_name + " " + user.last_name
+                              )}
+                              sx={{ width: 60, height: 60 }}
+                            />
+                          )}
+                        </IconButton>
+                        <Typography sx={{ textAlign: "center" }}>
+                          {user && user.first_name + " " + user.last_name}
+                        </Typography>
+                      </Container>
+                      <Divider />
+                      <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                          <AccountBoxIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Profile</ListItemText>
+                      </MenuItem>
+                      <MenuItem onClick={handleLogout}>
+                        <ListItemIcon>
+                          <LogoutIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Log out</ListItemText>
+                      </MenuItem>
+                    </Menu>
+                    {/* add class menu */}
+                    <Menu
+                      id="class_control"
+                      anchorEl={anchorEl2}
+                      sx={{ top: 5, minWidth: 400 }}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      keepMounted
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      open={Boolean(anchorEl2)}
+                      onClose={() => setAnchorEl2(null)}
+                    >
+                      <MenuItem onClick={handleJoinClass}>Join class</MenuItem>
+                      <MenuItem onClick={handleAddClass}>Create class</MenuItem>
+                    </Menu>
+                  </div>
+                )}
+              </Toolbar>
+            </AppBar>
+          </ElevationScroll>
+        </Box>
+        {/* dialog */}
+        {canAddClass && (
+          <CreateClassDialog open={open} handleClose={handleCloseDialog} />
+        )}
+      </ThemeProvider>
+    </React.Fragment>
   );
 };
 

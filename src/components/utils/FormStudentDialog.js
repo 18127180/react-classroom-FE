@@ -14,6 +14,9 @@ import { useNavigate } from "react-router-dom";
 import config from "../../config.json";
 import UserBar from './UserBar';
 import Grid from '@mui/material/Grid';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import AddIcon from '@mui/icons-material/Add';
+import List from '@mui/material/List';
 
 
 const FormStudentDialog = ({ name, data }) => {
@@ -23,9 +26,14 @@ const FormStudentDialog = ({ name, data }) => {
     const [open, setOpen] = React.useState(false);
     const [emailTextField, setEmailTextField] = React.useState("");
     const [listEmail, setListEmail] = React.useState([]);
-    const link_public_invite = config.WEB_URL+`/detail-classroom/${data.id}?cjc=${data.invitecode}`
+    const [count, setCount] = React.useState(1);
+    const link_public_invite = config.WEB_URL + `/detail-classroom/${data.id}?cjc=${data.invitecode}`
 
     const navigate = useNavigate();
+
+    const copyToClipBoard = () =>{
+        navigator.clipboard.writeText(link_public_invite);
+    }
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -39,9 +47,13 @@ const FormStudentDialog = ({ name, data }) => {
 
     const _handleAddEmail = () => {
         const cloneList = [...listEmail];
-        cloneList.push(emailTextField);
+        cloneList.push({
+            id: count,
+            email: emailTextField
+        });
         setListEmail(cloneList);
         setEmailTextField("");
+        setCount(count + 1);
     }
 
     const handleSubmit = () => {
@@ -93,68 +105,91 @@ const FormStudentDialog = ({ name, data }) => {
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Mời học sinh</DialogTitle>
                 <DialogContent>
+
                     <Box sx={{
                         display: 'flex',
-                        justifyContent: 'space-between'
+                        alignItems: 'flex-end',
+                        justifyContent: 'center',
+                        width: 400
                     }}>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="name"
-                            label="Invite link"
-                            type="link_public"
-                            fullWidth
-                            variant="standard"
-                            value={link_public_invite}
-                        />
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            color="inherit"
-                        >
-                            <PersonAddRoundedIcon style={{ color: '#c26401' }} />
-                        </IconButton>
+                        <Grid item xs={11}>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="name"
+                                label="Invite link"
+                                type="link_public"
+                                fullWidth
+                                variant="standard"
+                                value={link_public_invite}
+                            />
+                        </Grid>
+                        <Grid item xs={1} mb={1}>
+                            <IconButton
+                                size="small"
+                                aria-label="account of current user"
+                                aria-controls="menu-appbar"
+                                aria-haspopup="true"
+                                color="inherit"
+                                iconStyle={{ width: 2, height: 2 }}
+                                onClick={copyToClipBoard}
+                            >
+                                <ContentCopyIcon />
+                            </IconButton>
+                        </Grid>
                     </Box>
 
                     <Box sx={{
                         display: 'flex',
-                        justifyContent: 'space-between'
+                        alignItems: 'flex-end',
+                        justifyContent: 'center',
+                        width: 400
                     }}>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="name"
-                            label="Email Address"
-                            type="email"
-                            fullWidth
-                            variant="standard"
-                            value={emailTextField}
-                            onChange={_handleTextFieldChange}
-                        />
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            color="inherit"
-                            onClick={_handleAddEmail}
-                        >
-                            <PersonAddRoundedIcon style={{ color: '#c26401' }} />
-                        </IconButton>
-                    </Box>
-                    <Divider />
-                    <Box
-                        sx={{
-                            bgcolor: 'background.paper',
-                            width: '25rem'
-                        }}
-                    >
-                        <Grid item xs={12} md={11}>
-                            <UserBar list={listEmail} />
+                        <Grid item xs={11}>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="name"
+                                fullWidth
+                                label="Email Address"
+                                type="email"
+                                variant="standard"
+                                value={emailTextField}
+                                onChange={_handleTextFieldChange}
+                            />
+                        </Grid>
+
+                        <Grid item xs={1} mb={1}>
+                            <IconButton
+                                size="small"
+                                aria-label="account of current user"
+                                aria-controls="menu-appbar"
+                                aria-haspopup="true"
+                                color="inherit"
+                                onClick={_handleAddEmail}
+                                iconStyle={{ width: 2, height: 2 }}
+                            >
+                                <AddIcon />
+                            </IconButton>
                         </Grid>
                     </Box>
+
+                    <Divider />
+                    <List
+                        sx={{
+                            width: '100%',
+                            bgcolor: 'background.paper',
+                            position: 'relative',
+                            overflow: 'auto',
+                            maxHeight: 300,
+                            height: 300,
+                            '& ul': { padding: 0 }
+                        }}
+                    >
+                        <Grid item xs={12}>
+                            <UserBar list={listEmail} setList={setListEmail} />
+                        </Grid>
+                    </List>
                     <Divider />
                 </DialogContent>
                 <DialogActions>

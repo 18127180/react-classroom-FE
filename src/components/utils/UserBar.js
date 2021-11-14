@@ -10,26 +10,34 @@ import Grid from '@mui/material/Grid';
 import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-export default function UserBar({ list }) {
+export default function UserBar({ list, setList }) {
     // const [listEmail, setListEmail] = React.useState(list);
+    const handleRemove = (id) => {
+        const newList = list.filter((item) => item.id !== id);
+        setList(newList);
+    }
 
-    const itemList = list.map((item, index) => (
-        <ListItem
-            secondaryAction={
-                <IconButton edge="end" aria-label="delete">
-                    <DeleteIcon />
-                </IconButton>
-            }
-        >
-            <ListItemAvatar>
-                <Avatar>
-                    <FolderIcon />
-                </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-                primary={item}
-            />
-        </ListItem>
+    // console.log(list);
+
+    const itemList = list.map((item) => (
+        <Box key={item.id} pt={0.5} pb={0.5} sx={{ boxShadow: 0.5 }} style={{ borderBottom: "1px solid #D7DAE9" }}>
+            <ListItem
+                secondaryAction={
+                    <IconButton edge="end" aria-label="delete" onClick={() => handleRemove(item.id)}>
+                        <DeleteIcon />
+                    </IconButton>
+                }
+            >
+                <ListItemAvatar>
+                    <Avatar>
+                        <FolderIcon />
+                    </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                    primary={item.email}
+                />
+            </ListItem>
+        </Box>
     ));
     // console.log(list);
 
@@ -37,10 +45,9 @@ export default function UserBar({ list }) {
         <Box
             sx={{
                 width: "100%",
-                backgroundColor: 'red'
             }}
         >
-            <Grid item xs={12} md={8}>
+            <Grid item xs={12}>
                 <List dense={true}>
                     {itemList}
                 </List>

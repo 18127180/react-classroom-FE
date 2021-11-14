@@ -70,15 +70,20 @@ const LoginForm = ({ section, topic, room, name }) => {
       )
       .then((res) => {
         if (res.status === 200) {
-          console.log(res.data.user);
           localStorage.setItem("user", JSON.stringify(res.data.user));
           localStorage.setItem("access_token", res.data.access_token);
+          const current_link = localStorage.getItem("current_link");
+          if(current_link){
+            localStorage.removeItem("current_link");
+            navigate(current_link);
+          }else{
+            navigate("/classroom");
+          }
           // let userInfo = {
           //   name: res.data.user.name,
           //   emailId: res.data.user.email,
           // };
           // setState({ userInfo, isLoggedIn: true });
-          navigate("/classroom");
         }
         if (res.status === 401) {
           //basic log out process
@@ -108,8 +113,13 @@ const LoginForm = ({ section, topic, room, name }) => {
         console.log(res.data);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         localStorage.setItem("access_token", res.data.access_token);
-        console.log(res);
-        navigate("/classroom");
+        const current_link = localStorage.getItem("current_link");
+        if(current_link){
+          localStorage.removeItem("current_link");
+          navigate(current_link);
+        }else{
+          navigate("/classroom");
+        }
       }
     });
   };
@@ -132,7 +142,13 @@ const LoginForm = ({ section, topic, room, name }) => {
         //   emailId: res.data.user.email,
         // };
         // setState({ userInfo, isLoggedIn: true });
-        navigate("/classroom");
+        const current_link = localStorage.getItem("current_link");
+        if(current_link){
+          localStorage.removeItem("current_link");
+          navigate(current_link);
+        }else{
+          navigate("/classroom");
+        }
       }
     });
   };

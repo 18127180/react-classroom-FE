@@ -6,8 +6,10 @@ import { Routes, Route, useParams } from "react-router-dom";
 import MemberTab from "./MemberTab";
 import StreamTab from "./StreamTab";
 import config from "../../config.json";
-import { useNavigate } from "react-router-dom";
 import ClassProvider from "../../contexts/ClassProvider";
+import { useNavigate, useLocation } from "react-router-dom";
+
+export const ClassContext = React.createContext();
 
 const DetailClassroom = () => {
   const [detailClassData, setDetailClassData] = useState({});
@@ -15,8 +17,36 @@ const DetailClassroom = () => {
   const [loadEffect, setEffect] = React.useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
+  const { search } = useLocation();
   React.useEffect(() => {
+    const query = new URLSearchParams(search);
+    const invite_code = query.get('cjc');
     const access_token = localStorage.getItem("access_token");
+    const user = JSON.parse(localStorage.getItem("user"));
+    //Join class
+    if (invite_code) {
+      axios
+        .post(config.API_URL + `/classroom/join`, {
+          email: user?.email,
+          invite_code
+        }, {
+          headers: { Authorization: `Bearer ${access_token}` },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log("Join class success!")
+          }
+        })
+        .catch((err) => {
+          if (err.response.status === 401) {
+            localStorage.removeItem("user");
+            localStorage.removeItem("access_token");
+            localStorage.setItem("current_link", `/detail-classroom/${id}?cjc=${invite_code}`);
+            setEffect(false);
+            navigate("/login");
+          }
+        });
+    }
     axios
       .get(config.API_URL + `/classroom/detail/${id}`, {
         headers: { Authorization: `Bearer ${access_token}` },
@@ -66,6 +96,7 @@ const DetailClassroom = () => {
         navigate("/login");
       });
   }, []);
+
   return (
     <div>
       {loadEffect ? (

@@ -16,13 +16,14 @@ import UserBar from './UserBar';
 import Grid from '@mui/material/Grid';
 
 
-const FormTeacherDialog = ({ name, data }) => {
+const FormStudentDialog = ({ name, data }) => {
     // const handleCancel = () => {
     //     form.resetFields();
     // };
     const [open, setOpen] = React.useState(false);
     const [emailTextField, setEmailTextField] = React.useState("");
     const [listEmail, setListEmail] = React.useState([]);
+    const link_public_invite = config.WEB_URL+`/detail-classroom/${data.id}?cjc=${data.invitecode}`
 
     const navigate = useNavigate();
 
@@ -36,7 +37,7 @@ const FormTeacherDialog = ({ name, data }) => {
         setOpen(false);
     };
 
-    const _handleAddEmail = () =>{
+    const _handleAddEmail = () => {
         const cloneList = [...listEmail];
         cloneList.push(emailTextField);
         setListEmail(cloneList);
@@ -90,8 +91,33 @@ const FormTeacherDialog = ({ name, data }) => {
                 <PersonAddRoundedIcon style={{ color: '#c26401' }} />
             </IconButton>
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Mời giáo viên</DialogTitle>
+                <DialogTitle>Mời học sinh</DialogTitle>
                 <DialogContent>
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between'
+                    }}>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="name"
+                            label="Invite link"
+                            type="link_public"
+                            fullWidth
+                            variant="standard"
+                            value={link_public_invite}
+                        />
+                        <IconButton
+                            size="large"
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            color="inherit"
+                        >
+                            <PersonAddRoundedIcon style={{ color: '#c26401' }} />
+                        </IconButton>
+                    </Box>
+
                     <Box sx={{
                         display: 'flex',
                         justifyContent: 'space-between'
@@ -126,18 +152,18 @@ const FormTeacherDialog = ({ name, data }) => {
                         }}
                     >
                         <Grid item xs={12} md={11}>
-                            <UserBar list={listEmail}/>
+                            <UserBar list={listEmail} />
                         </Grid>
                     </Box>
                     <Divider />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Hủy bỏ</Button>
-                    <Button onClick={handleSubmit}>Chấp nhận</Button>
+                    <Button onClick={handleSubmit}>Mời</Button>
                 </DialogActions>
             </Dialog>
         </Box>
     );
 }
 
-export default FormTeacherDialog;
+export default FormStudentDialog;

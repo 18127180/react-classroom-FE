@@ -20,13 +20,6 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const styles = {
-  paperContainer: {
-    height: 250,
-    width: "100%",
-    background:
-      "linear-gradient(to bottom, rgba(0,0,0,0) 70%, rgba(0,0,0,1)), url('https://source.unsplash.com/random/1000x250')",
-    alignItems: "end",
-  },
   infoLabel: {
     minWidth: 120,
     display: "inline-block",
@@ -57,7 +50,12 @@ const StreamTab = ({ data }) => {
                   <AccordionSummary
                     id="panel1a-header"
                     aria-controls="panel1a-content"
-                    sx={styles.paperContainer}
+                    sx={{
+                      height: 250,
+                      width: "100%",
+                      background: `linear-gradient(to bottom, rgba(0,0,0,0) 70%, rgba(0,0,0,1)), url('https://picsum.photos/1000/250?random=${data.id}')`,
+                      alignItems: "end",
+                    }}
                   >
                     <Typography
                       sx={{

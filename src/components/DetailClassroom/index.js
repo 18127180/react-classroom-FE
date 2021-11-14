@@ -16,32 +16,40 @@ const DetailClassroom = () => {
   const [routerTab, setRouterTab] = useState([]);
   const [loadEffect, setEffect] = React.useState(false);
   const { id } = useParams();
+  console.log("param", id);
   const navigate = useNavigate();
   const { search } = useLocation();
   React.useEffect(() => {
     const query = new URLSearchParams(search);
-    const invite_code = query.get('cjc');
+    const invite_code = query.get("cjc");
     const access_token = localStorage.getItem("access_token");
     const user = JSON.parse(localStorage.getItem("user"));
     //Join class
     if (invite_code) {
       axios
-        .post(config.API_URL + `/classroom/join`, {
-          email: user?.email,
-          invite_code
-        }, {
-          headers: { Authorization: `Bearer ${access_token}` },
-        })
+        .post(
+          config.API_URL + `/classroom/join`,
+          {
+            email: user?.email,
+            invite_code,
+          },
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        )
         .then((res) => {
           if (res.status === 200) {
-            console.log("Join class success!")
+            console.log("Join class success!");
           }
         })
         .catch((err) => {
           if (err.response.status === 401) {
             localStorage.removeItem("user");
             localStorage.removeItem("access_token");
-            localStorage.setItem("current_link", `/detail-classroom/${id}?cjc=${invite_code}`);
+            localStorage.setItem(
+              "current_link",
+              `/detail-classroom/${id}?cjc=${invite_code}`
+            );
             setEffect(false);
             navigate("/login");
           }
@@ -95,8 +103,8 @@ const DetailClassroom = () => {
         setEffect(false);
         navigate("/login");
       });
-  }, []);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
   return (
     <div>
       {loadEffect ? (

@@ -93,7 +93,11 @@ export default function SideBar() {
         {classes.map((item, index) => {
           if (item.teacher) {
             return (
-              <ListItem button key={`class-${item.id}`}>
+              <ListItem
+                button
+                key={`class-${item.id}`}
+                onClick={() => navigate(`/detail-classroom/${item.id}/stream`)}
+              >
                 <ListItemIcon>
                   <Avatar {...stringAvatar(item.name)} />
                 </ListItemIcon>
@@ -110,7 +114,11 @@ export default function SideBar() {
         {classes.map((item, index) => {
           if (item.student) {
             return (
-              <ListItem button key={`class-${item.id}`}>
+              <ListItem
+                button
+                key={`class-${item.id}`}
+                onClick={() => navigate(`/detail-classroom/${item.id}/stream`)}
+              >
                 <ListItemIcon>
                   <Avatar {...stringAvatar(item.name)} />
                 </ListItemIcon>

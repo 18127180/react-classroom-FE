@@ -112,7 +112,7 @@ const DetailClassroom = () => {
       <div>
         <ClassProvider>
           <UserProvider>
-            <MenuAppBar route_list={routerTab} isHaveHeaderTab={true} />
+            <MenuAppBar name={detailClassData.name} route_list={routerTab} isHaveHeaderTab={true} />
           </UserProvider>
         </ClassProvider>
         {!loadEffect && <LinearProgress />}

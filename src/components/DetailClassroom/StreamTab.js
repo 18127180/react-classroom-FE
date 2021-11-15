@@ -38,10 +38,7 @@ const StreamTab = ({ data }) => {
 
   return (
     <div>
-      <Container
-        maxWidth="lg"
-        sx={{ marginTop: 11, maxWidth: "1000px !important" }}
-      >
+      <Container maxWidth="lg" sx={{ marginTop: 11, maxWidth: "1000px !important" }}>
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -77,9 +74,7 @@ const StreamTab = ({ data }) => {
                     </Typography>
                     <Typography>
                       <b style={styles.infoLabel}>Description:</b>
-                      <span style={styles.sizeText}>
-                        {data.description || ""}
-                      </span>
+                      <span style={styles.sizeText}>{data.description || ""}</span>
                     </Typography>
                   </AccordionDetails>
                 </Accordion>

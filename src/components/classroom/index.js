@@ -72,7 +72,7 @@ const Home = () => {
       {loadEffect && (
         <ClassProvider>
           <UserProvider>
-            <MenuAppBar canAddClass={true} />
+            <MenuAppBar name="Classroom" canAddClass={true} />
             <ClassroomList />
           </UserProvider>
         </ClassProvider>

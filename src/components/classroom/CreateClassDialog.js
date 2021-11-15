@@ -120,6 +120,7 @@ export default function CreateClassDialog({ open, handleClose }) {
               id="description"
               name="description"
               label="Class description"
+              rows={3}
               value={formik.values.description}
               onChange={formik.handleChange}
               error={Boolean(formik.errors.description)}

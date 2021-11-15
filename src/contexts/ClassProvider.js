@@ -37,9 +37,7 @@ const ClassProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <context.Provider
-      value={{ classState: [classes, setClasses], loading: loading }}
-    >
+    <context.Provider value={{ classState: [classes, setClasses], loading: loading }}>
       {children}
     </context.Provider>
   );

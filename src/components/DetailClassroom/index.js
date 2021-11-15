@@ -8,18 +8,20 @@ import StreamTab from "./StreamTab";
 import config from "../../config.json";
 import ClassProvider from "../../contexts/ClassProvider";
 import { useNavigate, useLocation } from "react-router-dom";
+import LinearProgress from "@mui/material/LinearProgress";
 
 export const ClassContext = React.createContext();
 
 const DetailClassroom = () => {
   const [detailClassData, setDetailClassData] = useState({});
   const [routerTab, setRouterTab] = useState([]);
-  const [loadEffect, setEffect] = React.useState(false);
+  const [loadEffect, setEffect] = useState(false);
   const { id } = useParams();
-  console.log("param", id);
   const navigate = useNavigate();
   const { search } = useLocation();
   React.useEffect(() => {
+    setEffect(false);
+    console.log("detail-useEffect" + String(loadEffect));
     const query = new URLSearchParams(search);
     const invite_code = query.get("cjc");
     const access_token = localStorage.getItem("access_token");
@@ -46,10 +48,7 @@ const DetailClassroom = () => {
           if (err.response.status === 401) {
             localStorage.removeItem("user");
             localStorage.removeItem("access_token");
-            localStorage.setItem(
-              "current_link",
-              `/detail-classroom/${id}?cjc=${invite_code}`
-            );
+            localStorage.setItem("current_link", `/detail-classroom/${id}?cjc=${invite_code}`);
             setEffect(false);
             navigate("/login");
           }
@@ -67,6 +66,7 @@ const DetailClassroom = () => {
           navigate("/login");
         } else {
           if (res.status === 200) {
+            console.log("detail-classroom useEffect");
             setDetailClassData(res.data);
             setEffect(true);
             setRouterTab([
@@ -105,29 +105,21 @@ const DetailClassroom = () => {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
   return (
     <div>
-      {loadEffect ? (
-        <div>
-          <ClassProvider>
-            <UserProvider>
-              <MenuAppBar route_list={routerTab} isHaveHeaderTab={true} />
-            </UserProvider>
-          </ClassProvider>
-          <Routes>
-            <Route
-              path="/stream"
-              element={<StreamTab data={detailClassData} />}
-            />
-            <Route
-              path="/member"
-              element={<MemberTab data={detailClassData} />}
-            />
-          </Routes>
-        </div>
-      ) : (
-        <div></div>
-      )}
+      <div>
+        <ClassProvider>
+          <UserProvider>
+            <MenuAppBar route_list={routerTab} isHaveHeaderTab={true} />
+          </UserProvider>
+        </ClassProvider>
+        {!loadEffect && <LinearProgress />}
+        <Routes>
+          <Route path="/stream" element={<StreamTab data={detailClassData} />} />
+          <Route path="/member" element={<MemberTab data={detailClassData} />} />
+        </Routes>
+      </div>
     </div>
   );
 };

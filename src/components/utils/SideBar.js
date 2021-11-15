@@ -48,11 +48,11 @@ function stringAvatar(name) {
   };
 }
 
-export default function SideBar() {
+const SideBar = () => {
+  // eslint-disable-next-line no-unused-vars
   const { classState, loading } = React.useContext(ClassProvider.context);
+  // eslint-disable-next-line no-unused-vars
   const [classes, setClasses] = classState;
-  console.log("classState", classState);
-  console.log("loading", loading);
   const navigate = useNavigate();
   const [state, setState] = React.useState({
     top: false,
@@ -62,10 +62,7 @@ export default function SideBar() {
   });
 
   const toggleDrawer = (anchor, open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
+    if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
       return;
     }
 
@@ -146,15 +143,13 @@ export default function SideBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Drawer
-            anchor={anchor}
-            open={state[anchor]}
-            onClose={toggleDrawer(anchor, false)}
-          >
+          <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
             {list(anchor)}
           </Drawer>
         </React.Fragment>
       ))}
     </div>
   );
-}
+};
+
+export default React.memo(SideBar);

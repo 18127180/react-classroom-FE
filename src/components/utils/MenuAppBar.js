@@ -66,14 +66,15 @@ function ElevationScroll(props) {
   });
 }
 
-const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
+const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
+  // eslint-disable-next-line no-unused-vars
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorEl2, setAnchorEl2] = React.useState(null);
   const [open, setOpen] = React.useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [user, setUser] = React.useContext(UserProvider.context);
   const navigate = useNavigate();
-  console.log(user);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -81,10 +82,10 @@ const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
   const handleMenu2 = (event) => {
     setAnchorEl2(event.currentTarget);
   };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleAddClass = () => {
     setAnchorEl2(null);
     setOpen(true);
@@ -97,6 +98,12 @@ const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
     setOpen(false);
   };
 
+  const handleProfile = () => {
+    if (name !== "Profile") {
+      navigate("/profile");
+    }
+    setAnchorEl(null);
+  };
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("access_token");
@@ -132,7 +139,7 @@ const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
                     width: "calc(50vw - 260px)",
                   }}
                 >
-                  Classroom
+                  {name || "Classroom"}
                 </Typography>
                 {isHaveHeaderTab && <TabHeader route={route_list} />}
                 {auth && (
@@ -165,9 +172,7 @@ const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
                         ></Avatar>
                       ) : (
                         <Avatar
-                          {...stringAvatar(
-                            user.first_name + " " + user.last_name
-                          )}
+                          {...stringAvatar(user.first_name + " " + user.last_name)}
                           sx={{ width: 30, height: 30 }}
                         />
                       )}
@@ -198,9 +203,7 @@ const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
                             ></Avatar>
                           ) : (
                             <Avatar
-                              {...stringAvatar(
-                                user.first_name + " " + user.last_name
-                              )}
+                              {...stringAvatar(user.first_name + " " + user.last_name)}
                               sx={{ width: 60, height: 60 }}
                             />
                           )}
@@ -210,7 +213,7 @@ const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
                         </Typography>
                       </Container>
                       <Divider />
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem onClick={handleProfile}>
                         <ListItemIcon>
                           <AccountBoxIcon fontSize="small" />
                         </ListItemIcon>
@@ -250,9 +253,7 @@ const MenuAppBar = ({ route_list, isHaveHeaderTab, canAddClass }) => {
           </ElevationScroll>
         </Box>
         {/* dialog */}
-        {canAddClass && (
-          <CreateClassDialog open={open} handleClose={handleCloseDialog} />
-        )}
+        {canAddClass && <CreateClassDialog open={open} handleClose={handleCloseDialog} />}
       </ThemeProvider>
     </React.Fragment>
   );

@@ -31,7 +31,7 @@ const FormStudentDialog = ({ name, data }) => {
 
     const navigate = useNavigate();
 
-    const copyToClipBoard = () =>{
+    const copyToClipBoard = () => {
         navigator.clipboard.writeText(link_public_invite);
     }
 
@@ -59,7 +59,7 @@ const FormStudentDialog = ({ name, data }) => {
     const handleSubmit = () => {
         const access_token = localStorage.getItem("access_token");
         axios
-            .post(config.API_URL + `/classroom/invite_teacher`, {
+            .post(config.API_URL + `/classroom/invite_student`, {
                 list_email: listEmail,
                 invite_code: data.invitecode
             }, {
@@ -92,16 +92,18 @@ const FormStudentDialog = ({ name, data }) => {
 
     return (
         <Box>
-            <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                color="inherit"
-                onClick={handleClickOpen}
-            >
-                <PersonAddRoundedIcon style={{ color: '#c26401' }} />
-            </IconButton>
+            {data.isTeacher ?
+                <IconButton
+                    size="large"
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    color="inherit"
+                    onClick={handleClickOpen}
+                >
+                    <PersonAddRoundedIcon style={{ color: '#c26401' }} />
+                </IconButton> : <div></div>
+            }
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Mời học sinh</DialogTitle>
                 <DialogContent>

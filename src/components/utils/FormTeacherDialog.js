@@ -85,16 +85,18 @@ const FormTeacherDialog = ({ name, data }) => {
 
     return (
         <Box>
-            <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                color="inherit"
-                onClick={handleClickOpen}
-            >
-                <PersonAddRoundedIcon style={{ color: '#c26401' }} />
-            </IconButton>
+            {data.isTeacher ?
+                <IconButton
+                    size="large"
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    color="inherit"
+                    onClick={handleClickOpen}
+                >
+                    <PersonAddRoundedIcon style={{ color: '#c26401' }} />
+                </IconButton> : <div></div>
+                }
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Mời giáo viên</DialogTitle>
                 <DialogContent>

@@ -3,12 +3,9 @@ import Grid from "@mui/material/Grid";
 import HeaderTopic from '../utils/HeaderTopic'
 import FormTeacherDialog from '../utils/FormTeacherDialog';
 import FormStudentDialog from '../utils/FormStudentDialog';
+import UserBarInClass from '../utils/UserBarInClass';
 
 const MemberTab = ({data}) => {
-    // const handleCancel = () => {
-    //     form.resetFields();
-    // };
-
     return (
         <Grid
             container
@@ -18,7 +15,9 @@ const MemberTab = ({data}) => {
             justifyContent="center"
         >
         <HeaderTopic name="Giáo viên" dataClass={data} FormDialog={<FormTeacherDialog data={data}/>}/>
+        <UserBarInClass list={data.teacherList}/>
         <HeaderTopic name="Sinh viên" dataClass={data} FormDialog={<FormStudentDialog data={data}/>}/>
+        <UserBarInClass list={data.studentList}/>
         </Grid>
     );
 }

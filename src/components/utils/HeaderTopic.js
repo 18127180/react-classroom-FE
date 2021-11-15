@@ -11,10 +11,8 @@ const HeaderTopic = ({ name, FormDialog }) => {
         <Box
             sx={{
                 bgcolor: 'background.paper',
-                m: 1,
-                p: 3,
+                mt:2,
                 width: '60%',
-                height: '5rem',
                 display: 'flex',
                 justifyContent: 'space-between',
                 borderBottom: '1px solid',

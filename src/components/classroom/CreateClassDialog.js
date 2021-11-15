@@ -13,9 +13,7 @@ import ClassProvider from "../../contexts/ClassProvider";
 
 const validationSchema = yup.object({
   name: yup.string("Enter class name").required("Class name is required"),
-  section: yup
-    .string("Enter class section")
-    .required("Class section is required"),
+  section: yup.string("Enter class section").required("Class section is required"),
   topic: yup.string("Enter class topic"),
   description: yup.string("Enter class description"),
 });
@@ -51,7 +49,7 @@ export default function CreateClassDialog({ open, handleClose }) {
         )
         .then((res) => {
           // console.log(res.data);
-          if (res.status === 200) setClasses(classes.concat(res.data));
+          if (res.status === 201) setClasses(classes.concat(res.data));
           else alert("Something's wrong. Please try again later");
           formik.resetForm();
         })

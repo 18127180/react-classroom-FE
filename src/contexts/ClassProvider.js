@@ -35,7 +35,7 @@ const ClassProvider = ({ children }) => {
         navigate("/login");
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [classes]);
   return (
     <context.Provider value={{ classState: [classes, setClasses], loading: loading }}>
       {children}

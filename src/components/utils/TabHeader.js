@@ -7,6 +7,9 @@ import { makeStyles } from "@mui/styles";
 
 export default function TabHeader({ route }) {
   const [value, setValue] = React.useState(1);
+  React.useEffect(() => {
+    setValue(1);
+  }, [route]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

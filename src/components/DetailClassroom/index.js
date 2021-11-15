@@ -41,8 +41,8 @@ const DetailClassroom = () => {
           }
         )
         .then((res) => {
-          if (res.status === 200) {
-            console.log("Join class success!");
+          if (res.status === 201) {
+            navigate(`/detail-classroom/${id}/stream`);
           }
         })
         .catch((err) => {
@@ -96,17 +96,19 @@ const DetailClassroom = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        //token expired or not login yet
-        //so do basic log out process
-        localStorage.removeItem("user");
-        localStorage.removeItem("access_token");
-        setEffect(false);
-        navigate("/login");
+        if (err.response.status === 403){
+          navigate("/classroom");
+        }
+        if (err.response.status === 401)
+        {
+          localStorage.removeItem("user");
+          localStorage.removeItem("access_token");
+          setEffect(false);
+          navigate("/login");
+        }
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
-
   return (
     <div>
       <div>

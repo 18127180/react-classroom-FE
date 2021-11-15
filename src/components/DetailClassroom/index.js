@@ -9,6 +9,7 @@ import config from "../../config.json";
 import ClassProvider from "../../contexts/ClassProvider";
 import { useNavigate, useLocation } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
+import InviteTab from "./InviteTab";
 
 export const ClassContext = React.createContext();
 
@@ -118,6 +119,7 @@ const DetailClassroom = () => {
         <Routes>
           <Route path="/stream" element={<StreamTab data={detailClassData} />} />
           <Route path="/member" element={<MemberTab data={detailClassData} />} />
+          <Route path="/invite" element={<InviteTab data={detailClassData} />} />
         </Routes>
       </div>
     </div>

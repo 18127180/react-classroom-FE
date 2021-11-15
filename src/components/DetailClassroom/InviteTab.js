@@ -1,5 +1,7 @@
-import { Avatar, Button, Box, Paper, Typography } from "@mui/material";
+import { Avatar, Button, Box, Paper, Typography, Chip } from "@mui/material";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
+import FaceIcon from "@mui/icons-material/Face";
+import FaceOutlinedIcon from "@mui/icons-material/FaceOutlined";
 import React from "react";
 
 const InviteTab = () => {
@@ -33,11 +35,33 @@ const InviteTab = () => {
             <AddReactionIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Do you really want to join Blockchain ?
+            Blockchain
           </Typography>
-          <Button variant="contained" color="error">
-            Accept
-          </Button>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              gap: "20px",
+              marginTop: "10px",
+            }}
+          >
+            <Chip label="1 Teacher" avatar={<FaceIcon />} />
+            <Chip label="3 Student" avatar={<FaceOutlinedIcon />} />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "end",
+              gap: "20px",
+              marginTop: "20px",
+            }}
+          >
+            <Button color="error">Cancel</Button>
+            <Button variant="contained" color="error">
+              Join class
+            </Button>
+          </Box>
         </Paper>
       </Box>
     </div>

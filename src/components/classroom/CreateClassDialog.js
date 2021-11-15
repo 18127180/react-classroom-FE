@@ -49,8 +49,13 @@ export default function CreateClassDialog({ open, handleClose }) {
         )
         .then((res) => {
           // console.log(res.data);
-          if (res.status === 201) setClasses(classes.concat(res.data));
-          else alert("Something's wrong. Please try again later");
+          if (res.status === 201) {
+            const user = JSON.parse(localStorage.getItem("user"));
+            const new_class = res.data;
+            new_class["student"] = null;
+            new_class["teacher"] = user.id;
+            setClasses(classes.concat(new_class));
+          } else alert("Something's wrong. Please try again later");
           formik.resetForm();
         })
         .catch((err) => {

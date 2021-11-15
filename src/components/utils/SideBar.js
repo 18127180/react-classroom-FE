@@ -69,65 +69,68 @@ const SideBar = () => {
     setState({ ...state, [anchor]: open });
   };
 
-  const list = (anchor) => (
-    <Box
-      sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 250 }}
-      role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
-    >
-      <List onClick={() => navigate("/classroom")}>
-        <ListItem button key={"Home"}>
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-          <ListItemText primary={"Home"} />
-        </ListItem>
-      </List>
-      <Divider />
-      <List>
-        <ListSubheader>{`Teaching`}</ListSubheader>
-        {classes.map((item, index) => {
-          if (item.teacher) {
-            return (
-              <ListItem
-                button
-                key={`class-${item.id}`}
-                onClick={() => navigate(`/detail-classroom/${item.id}/stream`)}
-              >
-                <ListItemIcon>
-                  <Avatar {...stringAvatar(item.name)} />
-                </ListItemIcon>
-                <ListItemText primary={`${item.name}`} />
-              </ListItem>
-            );
-          }
-          return null;
-        })}
-      </List>
-      <Divider />
-      <List>
-        <ListSubheader>{`Enrolled`}</ListSubheader>
-        {classes.map((item, index) => {
-          if (item.student) {
-            return (
-              <ListItem
-                button
-                key={`class-${item.id}`}
-                onClick={() => navigate(`/detail-classroom/${item.id}/stream`)}
-              >
-                <ListItemIcon>
-                  <Avatar {...stringAvatar(item.name)} />
-                </ListItemIcon>
-                <ListItemText primary={`${item.name}`} />
-              </ListItem>
-            );
-          }
-          return null;
-        })}
-      </List>
-    </Box>
-  );
+  const list = (anchor) => {
+    console.log("here", classes);
+    return (
+      <Box
+        sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 250 }}
+        role="presentation"
+        onClick={toggleDrawer(anchor, false)}
+        onKeyDown={toggleDrawer(anchor, false)}
+      >
+        <List onClick={() => navigate("/classroom")}>
+          <ListItem button key={"Home"}>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Home"} />
+          </ListItem>
+        </List>
+        <Divider />
+        <List>
+          <ListSubheader>{`Teaching`}</ListSubheader>
+          {classes.map((item, index) => {
+            if (item.teacher) {
+              return (
+                <ListItem
+                  button
+                  key={`class-${item.id}`}
+                  onClick={() => navigate(`/detail-classroom/${item.id}/stream`)}
+                >
+                  <ListItemIcon>
+                    <Avatar {...stringAvatar(item.name)} />
+                  </ListItemIcon>
+                  <ListItemText primary={`${item.name}`} />
+                </ListItem>
+              );
+            }
+            return null;
+          })}
+        </List>
+        <Divider />
+        <List>
+          <ListSubheader>{`Enrolled`}</ListSubheader>
+          {classes.map((item, index) => {
+            if (item.student) {
+              return (
+                <ListItem
+                  button
+                  key={`class-${item.id}`}
+                  onClick={() => navigate(`/detail-classroom/${item.id}/stream`)}
+                >
+                  <ListItemIcon>
+                    <Avatar {...stringAvatar(item.name)} />
+                  </ListItemIcon>
+                  <ListItemText primary={`${item.name}`} />
+                </ListItem>
+              );
+            }
+            return null;
+          })}
+        </List>
+      </Box>
+    );
+  };
 
   return (
     <div>

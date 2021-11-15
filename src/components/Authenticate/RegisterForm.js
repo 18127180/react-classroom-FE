@@ -16,15 +16,12 @@ import { Link as RouterLink } from "react-router-dom";
 import axios from "axios";
 import config_data from "../../config.json";
 import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 function Copyright(props) {
   return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
+    <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
         Your Website
@@ -37,35 +34,56 @@ function Copyright(props) {
 
 const theme = createTheme();
 
+const validationSchema = yup.object({
+  first_name: yup.string("Enter user's first name").max(255).required("First name is required"),
+  last_name: yup.string("Enter user's last name").max(255).required("Last name is required"),
+  email: yup
+    .string("Enter user's email")
+    .max(255)
+    .email("Email is invalid")
+    .required("Email is required"),
+  password: yup
+    .string("Enter user password")
+    .min(6, "Password must have at least 6 characters")
+    .max(255)
+    .required("Password is required"),
+});
+
 const RegisterForm = ({ section, topic, room, name }) => {
   const navigate = useNavigate();
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    const userForm = {
-      email: data.get("email"),
-      password: data.get("password"),
-      first_name: data.get("firstName"),
-      last_name: data.get("lastName"),
-    };
-    axios
-      .post(`${config_data.API_URL}/register`, userForm)
-      .then((res) => {
-        if (res.status === 201) {
-          // setState({ userInfo, isLoggedIn: true });
-          console.log(res);
-          navigate("/login");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err.response) {
-          if (err.response.status === 405)
-            alert("Something went wrong. Please try again in a few minutes.");
-        }
-      });
-  };
+  const formik = useFormik({
+    initialValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      axios
+        .post(`${config_data.API_URL}/register`, {
+          first_name: values.first_name,
+          last_name: values.last_name,
+          email: values.email,
+          password: values.password,
+        })
+        .then((res) => {
+          if (res.status === 201) {
+            // setState({ userInfo, isLoggedIn: true });
+            console.log(res);
+            navigate("/login");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response) {
+            if (err.response.status === 405)
+              alert("Something went wrong. Please try again in a few minutes.");
+          }
+        });
+    },
+  });
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -84,70 +102,69 @@ const RegisterForm = ({ section, topic, room, name }) => {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            sx={{ mt: 3 }}
-          >
+          <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
+                  // autoComplete="given-name"
+                  name="first_name"
                   fullWidth
-                  id="firstName"
+                  id="first_name"
                   label="First Name"
+                  value={formik.values.first_name}
+                  onChange={formik.handleChange}
+                  error={formik.touched.first_name && Boolean(formik.errors.first_name)}
+                  helperText={formik.touched.first_name && formik.errors.first_name}
                   autoFocus
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  required
                   fullWidth
-                  id="lastName"
+                  id="last_name"
                   label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
+                  name="last_name"
+                  value={formik.values.last_name}
+                  onChange={formik.handleChange}
+                  error={formik.touched.last_name && Boolean(formik.errors.last_name)}
+                  helperText={formik.touched.last_name && formik.errors.last_name}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  required
                   fullWidth
                   id="email"
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  helperText={formik.touched.email && formik.errors.email}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  required
                   fullWidth
                   name="password"
                   label="Password"
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  error={formik.touched.password && Boolean(formik.errors.password)}
+                  helperText={formik.touched.password && formik.errors.password}
                 />
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
-                  control={
-                    <Checkbox value="allowExtraEmails" color="primary" />
-                  }
+                  control={<Checkbox value="allowExtraEmails" color="primary" />}
                   label="I want to receive inspiration, marketing promotions and updates via email."
                 />
               </Grid>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               Sign Up
             </Button>
             <Grid container justifyContent="flex-end">

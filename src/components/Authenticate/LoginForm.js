@@ -20,15 +20,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import config_data from "../../config.json";
 import SimpleBackdrop from "../utils/Backdrop";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 function Copyright(props) {
   return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
+    <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {"Copyright © "}
       <Link color="inherit" href={config_data.WEB_URL}>
         ClassroomSPA
@@ -41,8 +38,16 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-const CLIENT_ID =
-  "780592097647-hif1svldddrkc4jpojqc44paile3l8da.apps.googleusercontent.com";
+const CLIENT_ID = "780592097647-hif1svldddrkc4jpojqc44paile3l8da.apps.googleusercontent.com";
+
+const validationSchema = yup.object({
+  email: yup
+    .string("Enter user's email")
+    .max(255)
+    .email("Email is invalid")
+    .required("Email is required"),
+  password: yup.string("Enter user password").max(255).required("Password is required"),
+});
 
 const LoginForm = ({ section, topic, room, name }) => {
   const [state, setState] = useState({
@@ -65,18 +70,16 @@ const LoginForm = ({ section, topic, room, name }) => {
   const responseFacebook = (response) => {
     setOpenBackdrop(true);
     axios
-      .post(
-        `${config_data.API_URL}/auth/facebook?access_token=${response.accessToken}`
-      )
+      .post(`${config_data.API_URL}/auth/facebook?access_token=${response.accessToken}`)
       .then((res) => {
         if (res.status === 200) {
           localStorage.setItem("user", JSON.stringify(res.data.user));
           localStorage.setItem("access_token", res.data.access_token);
           const current_link = localStorage.getItem("current_link");
-          if(current_link){
+          if (current_link) {
             localStorage.removeItem("current_link");
             navigate(current_link);
-          }else{
+          } else {
             navigate("/classroom");
           }
           // let userInfo = {
@@ -94,35 +97,39 @@ const LoginForm = ({ section, topic, room, name }) => {
       });
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setOpenBackdrop(true);
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    // console.log({
-    //   email: data.get("email"),
-    //   password: data.get("password"),
-    // });
-    const userForm = {
-      email: data.get("email"),
-      password: data.get("password"),
-    };
-    axios.post(`${config_data.API_URL}/auth`, userForm).then((res) => {
-      if (res.status === 200) {
-        // setState({ userInfo, isLoggedIn: true });
-        console.log(res.data);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        localStorage.setItem("access_token", res.data.access_token);
-        const current_link = localStorage.getItem("current_link");
-        if(current_link){
-          localStorage.removeItem("current_link");
-          navigate(current_link);
-        }else{
-          navigate("/classroom");
-        }
-      }
-    });
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      setOpenBackdrop(true);
+      axios
+        .post(`${config_data.API_URL}/auth`, {
+          email: values.email,
+          password: values.password,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            // setState({ userInfo, isLoggedIn: true });
+            console.log(res.data);
+            localStorage.setItem("user", JSON.stringify(res.data.user));
+            localStorage.setItem("access_token", res.data.access_token);
+            const current_link = localStorage.getItem("current_link");
+            if (current_link) {
+              localStorage.removeItem("current_link");
+              navigate(current_link);
+            } else {
+              navigate("/classroom");
+            }
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  });
 
   const responseGoogleSuccess = async (response) => {
     setOpenBackdrop(true);
@@ -143,10 +150,10 @@ const LoginForm = ({ section, topic, room, name }) => {
         // };
         // setState({ userInfo, isLoggedIn: true });
         const current_link = localStorage.getItem("current_link");
-        if(current_link){
+        if (current_link) {
           localStorage.removeItem("current_link");
           navigate(current_link);
-        }else{
+        } else {
           navigate("/classroom");
         }
       }
@@ -179,9 +186,7 @@ const LoginForm = ({ section, topic, room, name }) => {
             backgroundImage: "url(https://source.unsplash.com/random)",
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
-              t.palette.mode === "light"
-                ? t.palette.grey[50]
-                : t.palette.grey[900],
+              t.palette.mode === "light" ? t.palette.grey[50] : t.palette.grey[900],
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -202,42 +207,38 @@ const LoginForm = ({ section, topic, room, name }) => {
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Box
-              component="form"
-              noValidate
-              onSubmit={handleSubmit}
-              sx={{ mt: 1 }}
-            >
+            <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
               <TextField
                 margin="normal"
-                required
                 fullWidth
                 id="email"
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
                 autoFocus
               />
               <TextField
                 margin="normal"
-                required
                 fullWidth
                 name="password"
                 label="Password"
                 type="password"
                 id="password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                error={formik.touched.password && Boolean(formik.errors.password)}
+                helperText={formik.touched.password && formik.errors.password}
                 autoComplete="current-password"
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
+              <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                 Sign In
               </Button>
               <Grid container>
@@ -299,10 +300,7 @@ const LoginForm = ({ section, topic, room, name }) => {
           </Box>
         </Grid>
       </Grid>
-      <SimpleBackdrop
-        state={openBackdrop}
-        handleClose={() => setOpenBackdrop(false)}
-      />
+      <SimpleBackdrop state={openBackdrop} handleClose={() => setOpenBackdrop(false)} />
     </ThemeProvider>
   );
 };

@@ -18,7 +18,7 @@ div#container {
   top: 0;
 }
 
-main {
+div#main {
   height: 100%;
   display: flex;
   margin: 0 20px;
@@ -27,32 +27,25 @@ main {
   align-items: center;
   justify-content: center;
 }
-main h1 {
+div#main h1 {
   font-size: 3em;
   font-weight: 100;
   color: #f44;
   margin: 0;
 }
-main h2 {
+div#main h2 {
   font-size: 1.5em;
   font-weight: 100;
   margin-bottom: 0;
 }
-main h3 {
+div#main h3 {
   font-size: 1.5em;
   font-weight: 100;
   margin-top: 0;
 }
-main a {
+div#main a {
   font-size: 1.5em;
   font-weight: 300;
   color: #f44;
   text-decoration: none;
-}
-
-footer {
-  position: absolute;
-  bottom: 0;
-  margin: 10px;
-  font-weight: 300;
 }

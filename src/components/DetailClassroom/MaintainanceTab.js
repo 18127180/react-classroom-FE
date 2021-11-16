@@ -1,10 +1,10 @@
 import React from "react";
-import "../../styles/maintainance.css";
+import styles from "../../styles/maintainance.css";
 
 const MaintainanceTab = () => {
   return (
     <div id="container">
-      <main>
+      <div id="main">
         <svg xmlns="http://www.w3.org/2000/svg" width="100" height="70" viewBox="0 0 100 68">
           <g id="large">
             <path
@@ -43,7 +43,7 @@ const MaintainanceTab = () => {
         <h2>Sorry for the inconvenience.</h2>
         <h3>To contact us in the meantime please email:</h3>
         <a href="mailto:nhanluu838@gmail.com">nhanluu838@gmail.com</a>
-      </main>
+      </div>
     </div>
   );
 };

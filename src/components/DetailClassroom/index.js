@@ -10,6 +10,12 @@ import ClassProvider from "../../contexts/ClassProvider";
 import { useNavigate, useLocation } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
 import MaintainanceTab from "./MaintainanceTab";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 export const ClassContext = React.createContext();
 
@@ -20,6 +26,15 @@ const DetailClassroom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { search } = useLocation();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
   React.useEffect(() => {
     setEffect(false);
     console.log("detail-useEffect" + String(loadEffect));
@@ -99,11 +114,10 @@ const DetailClassroom = () => {
         if (err.response.status === 403) {
           navigate("/classroom");
         }
-        if (err.response.status === 401) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("access_token");
-          setEffect(false);
-          navigate("/login");
+        if (err.response.status === 404) {
+          // alert("You do not have permission to access this class");
+          setOpen(true);
+          setTimeout(() => navigate("/classroom", { replace: true }), 5000);
         }
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -123,6 +137,11 @@ const DetailClassroom = () => {
           <Route path="/member" element={<MemberTab data={detailClassData} />} />
           <Route path="/grades" element={<MaintainanceTab />} />
         </Routes>
+        <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+            You do not have permission to access this class !!
+          </Alert>
+        </Snackbar>
       </div>
     </div>
   );

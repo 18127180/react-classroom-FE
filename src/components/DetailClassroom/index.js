@@ -9,7 +9,7 @@ import config from "../../config.json";
 import ClassProvider from "../../contexts/ClassProvider";
 import { useNavigate, useLocation } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
-import InviteTab from "./InviteTab";
+import MaintainanceTab from "./MaintainanceTab";
 
 export const ClassContext = React.createContext();
 
@@ -96,11 +96,10 @@ const DetailClassroom = () => {
         }
       })
       .catch((err) => {
-        if (err.response.status === 403){
+        if (err.response.status === 403) {
           navigate("/classroom");
         }
-        if (err.response.status === 401)
-        {
+        if (err.response.status === 401) {
           localStorage.removeItem("user");
           localStorage.removeItem("access_token");
           setEffect(false);
@@ -120,8 +119,9 @@ const DetailClassroom = () => {
         {!loadEffect && <LinearProgress />}
         <Routes>
           <Route path="/stream" element={<StreamTab data={detailClassData} />} />
+          <Route path="/exercises" element={<MaintainanceTab />} />
           <Route path="/member" element={<MemberTab data={detailClassData} />} />
-          <Route path="/invite" element={<InviteTab data={detailClassData} />} />
+          <Route path="/grades" element={<MaintainanceTab />} />
         </Routes>
       </div>
     </div>

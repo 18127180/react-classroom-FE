@@ -22,6 +22,12 @@ import config_data from "../../config.json";
 import SimpleBackdrop from "../utils/Backdrop";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function Copyright(props) {
   return (
@@ -58,6 +64,15 @@ const LoginForm = ({ section, topic, room, name }) => {
     },
   });
   const [openBackdrop, setOpenBackdrop] = useState(false);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -126,6 +141,10 @@ const LoginForm = ({ section, topic, room, name }) => {
           }
         })
         .catch((err) => {
+          if (err.response.status === 401) {
+            setOpenBackdrop(false);
+            setOpen(true);
+          }
           console.log(err);
         });
     },
@@ -302,6 +321,11 @@ const LoginForm = ({ section, topic, room, name }) => {
         </Grid>
       </Grid>
       <SimpleBackdrop state={openBackdrop} handleClose={() => setOpenBackdrop(false)} />
+      <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+          User account cannot be signed in.
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 };

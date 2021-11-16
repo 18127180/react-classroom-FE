@@ -193,7 +193,7 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
                       open={Boolean(anchorEl)}
                       onClose={handleClose}
                     >
-                      <Container>
+                      <Container sx={{ textAlign: "center" }}>
                         <IconButton>
                           {user && user.avatar ? (
                             <Avatar
@@ -208,8 +208,16 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
                             />
                           )}
                         </IconButton>
-                        <Typography sx={{ textAlign: "center" }}>
+                        <Typography
+                          sx={{ textAlign: "center", color: "#202124", letterSpacing: "0.29px" }}
+                        >
                           {user && user.first_name + " " + user.last_name}
+                        </Typography>
+                        <Typography
+                          sx={{ textAlign: "center", color: "#5f6368", mb: "10px" }}
+                          variant="body2"
+                        >
+                          {user && user.email}
                         </Typography>
                       </Container>
                       <Divider />
@@ -243,7 +251,7 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
                       open={Boolean(anchorEl2)}
                       onClose={() => setAnchorEl2(null)}
                     >
-                      <MenuItem onClick={handleJoinClass}>Join class</MenuItem>
+                      {/* <MenuItem onClick={handleJoinClass}>Join class</MenuItem> */}
                       <MenuItem onClick={handleAddClass}>Create class</MenuItem>
                     </Menu>
                   </div>

@@ -25,6 +25,12 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+function validateEmail(email) {
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+}
+
 const FormTeacherDialog = ({ name, data }) => {
   // const handleCancel = () => {
   //     form.resetFields();
@@ -35,13 +41,22 @@ const FormTeacherDialog = ({ name, data }) => {
   const [count, setCount] = React.useState(1);
   const [openBackdrop, setOpenBackdrop] = React.useState(false);
   const [openSuccess, setOpenSuccess] = React.useState(false);
+  const [openError, setOpenError] = React.useState(false);
+  const [error, setError] = React.useState("");
   const handleCloseSuccess = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
-
     setOpenSuccess(false);
   };
+
+  const handleCloseError = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenError(false);
+  };
+
   const handleCloseBackdrop = () => {
     setOpenBackdrop(false);
   };
@@ -59,6 +74,11 @@ const FormTeacherDialog = ({ name, data }) => {
   };
 
   const _handleAddEmail = () => {
+    if (!validateEmail(emailTextField)) {
+      setError("Invalid email. Please try again");
+      setOpenError(true);
+      return;
+    }
     const cloneList = [...listEmail];
     cloneList.push({
       id: count,
@@ -200,6 +220,11 @@ const FormTeacherDialog = ({ name, data }) => {
       <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleCloseSuccess}>
         <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: "100%" }}>
           Invite has been sent !!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openError} autoHideDuration={3000} onClose={handleCloseError}>
+        <Alert onClose={handleCloseError} severity="error" sx={{ width: "100%" }}>
+          {error}
         </Alert>
       </Snackbar>
     </Box>

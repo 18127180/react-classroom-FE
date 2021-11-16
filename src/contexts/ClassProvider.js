@@ -32,7 +32,7 @@ const ClassProvider = ({ children }) => {
         //so do basic log out process
         localStorage.removeItem("user");
         localStorage.removeItem("access_token");
-        navigate("/login");
+        navigate("/error");
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

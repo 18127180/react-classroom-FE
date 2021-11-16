@@ -142,7 +142,7 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
                   {name || "Classroom"}
                 </Typography>
                 {isHaveHeaderTab && <TabHeader route={route_list} />}
-                {auth && (
+                {user && (
                   <div>
                     {canAddClass && (
                       <IconButton
@@ -164,7 +164,7 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
                       onClick={handleMenu}
                       color="inherit"
                     >
-                      {user && user.avatar ? (
+                      {user.avatar ? (
                         <Avatar
                           alt={user.first_name + " " + user.last_name}
                           src={user.avatar}
@@ -195,7 +195,7 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
                     >
                       <Container sx={{ textAlign: "center" }}>
                         <IconButton>
-                          {user && user.avatar ? (
+                          {user.avatar ? (
                             <Avatar
                               alt={user.first_name + " " + user.last_name}
                               src={user.avatar}
@@ -211,13 +211,13 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
                         <Typography
                           sx={{ textAlign: "center", color: "#202124", letterSpacing: "0.29px" }}
                         >
-                          {user && user.first_name + " " + user.last_name}
+                          {user.first_name + " " + user.last_name}
                         </Typography>
                         <Typography
                           sx={{ textAlign: "center", color: "#5f6368", mb: "10px" }}
                           variant="body2"
                         >
-                          {user && user.email}
+                          {user.email}
                         </Typography>
                       </Container>
                       <Divider />

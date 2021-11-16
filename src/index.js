@@ -7,6 +7,7 @@ import Home from "./components/classroom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DetailClassroom from "./components/DetailClassroom/";
 import Profile from "./components/Profile";
+import Error from "./components/error/Error";
 
 ReactDOM.render(
   <BrowserRouter>
@@ -17,6 +18,7 @@ ReactDOM.render(
       <Route path="profile" element={<Profile />} />
       <Route path="classroom" element={<Home />} />
       <Route path="/detail-classroom/:id*" element={<DetailClassroom />} />
+      <Route path="error" element={<Error />} />
     </Routes>
   </BrowserRouter>,
   document.getElementById("root")

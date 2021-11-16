@@ -8,12 +8,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DetailClassroom from "./components/DetailClassroom/";
 import Profile from "./components/Profile";
 import Error from "./components/error/Error";
+import InviteTab from "./components/DetailClassroom/InviteTab";
 
 ReactDOM.render(
   <BrowserRouter>
     <Routes>
       <Route exact path="/" element={<Home />} />
       <Route path="login" element={<LoginForm />} />
+      <Route path="invite/:id" element={<InviteTab />} />
       <Route path="register" element={<RegisterForm />} />
       <Route path="profile" element={<Profile />} />
       <Route path="classroom" element={<Home />} />

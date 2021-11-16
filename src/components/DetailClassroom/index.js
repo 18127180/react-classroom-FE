@@ -37,39 +37,11 @@ const DetailClassroom = () => {
   };
   React.useEffect(() => {
     setEffect(false);
-    console.log("detail-useEffect" + String(loadEffect));
     const query = new URLSearchParams(search);
     const invite_code = query.get("cjc");
     const access_token = localStorage.getItem("access_token");
     const user = JSON.parse(localStorage.getItem("user"));
     //Join class
-    if (invite_code) {
-      axios
-        .post(
-          config.API_URL + `/classroom/join`,
-          {
-            email: user?.email,
-            invite_code,
-          },
-          {
-            headers: { Authorization: `Bearer ${access_token}` },
-          }
-        )
-        .then((res) => {
-          if (res.status === 201) {
-            navigate(`/detail-classroom/${id}/stream`);
-          }
-        })
-        .catch((err) => {
-          if (err.response.status === 401) {
-            localStorage.removeItem("user");
-            localStorage.removeItem("access_token");
-            localStorage.setItem("current_link", `/detail-classroom/${id}?cjc=${invite_code}`);
-            setEffect(false);
-            navigate("/login");
-          }
-        });
-    }
     axios
       .get(config.API_URL + `/classroom/detail/${id}`, {
         headers: { Authorization: `Bearer ${access_token}` },
@@ -125,11 +97,13 @@ const DetailClassroom = () => {
   return (
     <div>
       <div>
-        <ClassProvider>
-          <UserProvider>
-            <MenuAppBar name={detailClassData.name} route_list={routerTab} isHaveHeaderTab={true} />
-          </UserProvider>
-        </ClassProvider>
+        {loadEffect ?
+          <ClassProvider>
+            <UserProvider>
+              <MenuAppBar name={detailClassData.name} route_list={routerTab} isHaveHeaderTab={true} />
+            </UserProvider>
+          </ClassProvider>
+          : <div></div>}
         {!loadEffect && <LinearProgress />}
         <Routes>
           <Route path="/stream" element={<StreamTab data={detailClassData} />} />

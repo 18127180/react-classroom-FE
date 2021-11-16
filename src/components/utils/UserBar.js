@@ -7,8 +7,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
-import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export default function UserBar({ list, setList }) {
     // const [listEmail, setListEmail] = React.useState(list);
@@ -30,7 +30,7 @@ export default function UserBar({ list, setList }) {
             >
                 <ListItemAvatar>
                     <Avatar>
-                        <FolderIcon />
+                        <AccountCircleIcon />
                     </Avatar>
                 </ListItemAvatar>
                 <ListItemText

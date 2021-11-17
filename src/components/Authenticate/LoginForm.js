@@ -156,10 +156,10 @@ const LoginForm = ({ section, topic, room, name }) => {
       token: response?.tokenId,
       email: response.profileObj.email,
     };
-    console.log(userInfo);
     // setState({ userInfo, isLoggedIn: true });
     //call API post authenticate
     axios.post(`${config_data.API_URL}/auth/google`, userInfo).then((res) => {
+      console.log(res);
       if (res.status === 200) {
         localStorage.setItem("user", JSON.stringify(res.data.user));
         localStorage.setItem("access_token", res.data.access_token);

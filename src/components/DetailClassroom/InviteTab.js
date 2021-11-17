@@ -12,6 +12,7 @@ const InviteTab = () => {
   const { id } = useParams();
   const [loadEffect, setEffect] = useState(false);
   const { search } = useLocation();
+  const [data, setData] = useState();
   const navigate = useNavigate();
 
   const handleJoin = () => {
@@ -90,6 +91,7 @@ const InviteTab = () => {
         })
         .then((res) => {
           if (res.status === 200) {
+            setData(res.data);
             setEffect(true);
           }
         })
@@ -116,6 +118,7 @@ const InviteTab = () => {
       })
       .then((res) => {
         if (res.status === 200) {
+          setData(res.data);
           setEffect(true);
         }
       })
@@ -165,7 +168,7 @@ const InviteTab = () => {
               <AddReactionIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Blockchain
+              {data.name}
             </Typography>
             <Box
               sx={{
@@ -175,8 +178,8 @@ const InviteTab = () => {
                 marginTop: "10px",
               }}
             >
-              <Chip label="1 Teacher" avatar={<FaceIcon />} />
-              <Chip label="3 Student" avatar={<FaceOutlinedIcon />} />
+              <Chip label={data?.teacherNum + " Teacher"} avatar={<FaceIcon />} />
+              <Chip label={data?.studentNum + " Student"} avatar={<FaceOutlinedIcon />} />
             </Box>
             <Box
               sx={{

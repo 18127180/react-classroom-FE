@@ -147,7 +147,7 @@ const FormTeacherDialog = ({ name, data }) => {
         <div></div>
       )}
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Mời giáo viên</DialogTitle>
+        <DialogTitle>Invite teacher</DialogTitle>
         <DialogContent>
           <Box
             sx={{
@@ -205,8 +205,8 @@ const FormTeacherDialog = ({ name, data }) => {
           <Divider />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Hủy bỏ</Button>
-          <Button onClick={handleSubmit}>Chấp nhận</Button>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleSubmit}>Invite</Button>
         </DialogActions>
       </Dialog>
       {/* display success or fail state */}

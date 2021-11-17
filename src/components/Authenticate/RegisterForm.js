@@ -96,6 +96,7 @@ const RegisterForm = ({ section, topic, room, name }) => {
               // alert("Something went wrong. Please try again in a few minutes.");
               setError("This email has been registered. Please use another email");
               setOpenError(true);
+              formik.resetForm();
             }
           }
         });

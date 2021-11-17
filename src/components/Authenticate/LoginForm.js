@@ -33,7 +33,7 @@ function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {"Copyright © "}
-      <Link color="inherit" href={config_data.WEB_URL}>
+      <Link color="inherit" href="/">
         ClassroomSPA
       </Link>{" "}
       {new Date().getFullYear()}

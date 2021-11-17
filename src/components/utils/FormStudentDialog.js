@@ -40,7 +40,7 @@ const FormStudentDialog = ({ name, data }) => {
   const [emailTextField, setEmailTextField] = React.useState("");
   const [listEmail, setListEmail] = React.useState([]);
   const [count, setCount] = React.useState(1);
-  const link_public_invite = config.WEB_URL + `/invite/${data.id}?cjc=${data.invitecode}`;
+  const link_public_invite = window.location.host + `/invite/${data.id}?cjc=${data.invitecode}`;
   const [openBackdrop, setOpenBackdrop] = React.useState(false);
   const [error, setError] = React.useState("Invalid email. Please try again");
   const [openError, setOpenError] = React.useState(false);

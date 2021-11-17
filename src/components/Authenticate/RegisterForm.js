@@ -18,6 +18,12 @@ import config_data from "../../config.json";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function Copyright(props) {
   return (
@@ -51,6 +57,15 @@ const validationSchema = yup.object({
 
 const RegisterForm = ({ section, topic, room, name }) => {
   const navigate = useNavigate();
+  const [error, setError] = React.useState("Invalid email. Please try again");
+  const [openError, setOpenError] = React.useState(false);
+  const handleCloseError = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenError(false);
+  };
+
   const formik = useFormik({
     initialValues: {
       first_name: "",
@@ -77,8 +92,11 @@ const RegisterForm = ({ section, topic, room, name }) => {
         .catch((err) => {
           console.log(err);
           if (err.response) {
-            if (err.response.status === 405)
-              alert("Something went wrong. Please try again in a few minutes.");
+            if (err.response.status === 405) {
+              // alert("Something went wrong. Please try again in a few minutes.");
+              setError("This email has been registered. Please use another email");
+              setOpenError(true);
+            }
           }
         });
     },
@@ -180,6 +198,11 @@ const RegisterForm = ({ section, topic, room, name }) => {
         </Box>
         <Copyright sx={{ mt: 5 }} />
       </Container>
+      <Snackbar open={openError} autoHideDuration={3000} onClose={handleCloseError}>
+        <Alert onClose={handleCloseError} severity="error" sx={{ width: "100%" }}>
+          {error}
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 };

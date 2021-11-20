@@ -14,7 +14,6 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
 import axios from "axios";
-import config_data from "../../config.json";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -76,7 +75,7 @@ const RegisterForm = ({ section, topic, room, name }) => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       axios
-        .post(`${config_data.API_URL}/register`, {
+        .post(`${process.env.REACT_APP_API_URL}/register`, {
           first_name: values.first_name,
           last_name: values.last_name,
           email: values.email,

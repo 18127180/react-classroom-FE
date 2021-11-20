@@ -7,7 +7,6 @@ import { Avatar, Button, Container, TextField, Typography } from "@mui/material"
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
-import config from "../../config.json";
 import UserProvider from "../../contexts/UserProvider";
 
 const styles = {
@@ -46,7 +45,7 @@ const ProfileForm = () => {
     onSubmit: (values) => {
       axios
         .post(
-          config.API_URL + "/user",
+          process.env.REACT_APP_API_URL + "/user",
           {
             first_name: values.first_name,
             last_name: values.last_name,

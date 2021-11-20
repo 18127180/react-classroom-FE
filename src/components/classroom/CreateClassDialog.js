@@ -8,7 +8,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
-import config from "../../config.json";
 import ClassProvider from "../../contexts/ClassProvider";
 
 const validationSchema = yup.object({
@@ -34,7 +33,7 @@ export default function CreateClassDialog({ open, handleClose }) {
     onSubmit: (values) => {
       axios
         .post(
-          config.API_URL + "/classroom",
+          process.env.REACT_APP_API_URL + "/classroom",
           {
             name: values.name,
             section: values.section,

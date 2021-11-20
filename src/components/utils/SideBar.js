@@ -70,7 +70,6 @@ const SideBar = () => {
   };
 
   const list = (anchor) => {
-    console.log("here", classes);
     return (
       <Box
         sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 250 }}

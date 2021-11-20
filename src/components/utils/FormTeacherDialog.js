@@ -11,7 +11,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Divider from "@mui/material/Divider";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import config from "../../config.json";
 import UserBar from "./UserBar";
 import Grid from "@mui/material/Grid";
 import AddIcon from "@mui/icons-material/Add";
@@ -95,7 +94,7 @@ const FormTeacherDialog = ({ name, data }) => {
     setOpenBackdrop(true);
     axios
       .post(
-        config.API_URL + `/classroom/invite_teacher`,
+        process.env.REACT_APP_API_URL + `/classroom/invite_teacher`,
         {
           list_email: listEmail,
           invite_code: data.invitecode,

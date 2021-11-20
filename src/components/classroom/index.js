@@ -1,7 +1,6 @@
 import React from "react";
 import ClassroomList from "./ClassroomList";
 import axios from "axios";
-import config from "../../config.json";
 import MenuAppBar from "../utils/MenuAppBar";
 import UserProvider from "../../contexts/UserProvider";
 import ClassProvider from "../../contexts/ClassProvider";
@@ -20,7 +19,7 @@ const Home = () => {
   // React.useEffect(() => {
   //   const access_token = localStorage.getItem("access_token");
   //   axios
-  //     .get(config.API_URL + `/classroom`, {
+  //     .get(process.env.REACT_APP_API_URL + `/classroom`, {
   //       headers: { Authorization: `Bearer ${access_token}` },
   //     })
   //     .then((res) => {

@@ -5,7 +5,6 @@ import FaceIcon from "@mui/icons-material/Face";
 import FaceOutlinedIcon from "@mui/icons-material/FaceOutlined";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import config from "../../config.json";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const InviteTab = () => {
@@ -23,15 +22,19 @@ const InviteTab = () => {
     const cjc = query.get("cjc");
     if (role_user === "TEACHER") {
       axios
-        .post(config.API_URL + `/sendMail/accept-teacher`, {
-          email: user?.email,
-          class_id: id
-        }, {
-          headers: { Authorization: `Bearer ${access_token}` },
-        })
+        .post(
+          process.env.REACT_APP_API_URL + `/sendMail/accept-teacher`,
+          {
+            email: user?.email,
+            class_id: id,
+          },
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        )
         .then((res) => {
           if (res.status === 200) {
-            navigate(`/detail-classroom/${id}/stream`)
+            navigate(`/detail-classroom/${id}/stream`);
           }
         })
         .catch((err) => {
@@ -48,15 +51,19 @@ const InviteTab = () => {
     }
     if (role_user === "STUDENT" || cjc) {
       axios
-        .post(config.API_URL + `/sendMail/accept-student`, {
-          email: user?.email,
-          class_id: id
-        }, {
-          headers: { Authorization: `Bearer ${access_token}` },
-        })
+        .post(
+          process.env.REACT_APP_API_URL + `/sendMail/accept-student`,
+          {
+            email: user?.email,
+            class_id: id,
+          },
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        )
         .then((res) => {
           if (res.status === 200) {
-            navigate(`/detail-classroom/${id}/stream`)
+            navigate(`/detail-classroom/${id}/stream`);
           }
         })
         .catch((err) => {
@@ -71,7 +78,7 @@ const InviteTab = () => {
           }
         });
     }
-  }
+  };
 
   React.useEffect(() => {
     const query = new URLSearchParams(search);
@@ -79,16 +86,19 @@ const InviteTab = () => {
     const access_token = localStorage.getItem("access_token");
     const user = JSON.parse(localStorage.getItem("user"));
     const cjc = query.get("cjc");
-    if (cjc)
-    {
+    if (cjc) {
       axios
-        .post(config.API_URL + `/classroom/add-queue`, {
-          email: user?.email,
-          class_id: id,
-          role: "STUDENT"
-        }, {
-          headers: { Authorization: `Bearer ${access_token}` },
-        })
+        .post(
+          process.env.REACT_APP_API_URL + `/classroom/add-queue`,
+          {
+            email: user?.email,
+            class_id: id,
+            role: "STUDENT",
+          },
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        )
         .then((res) => {
           if (res.status === 200) {
             setData(res.data);
@@ -97,7 +107,7 @@ const InviteTab = () => {
         })
         .catch((err) => {
           if (err.response.status === 404) {
-            navigate("/detail-classroom/"+id+"/stream");
+            navigate("/detail-classroom/" + id + "/stream");
           }
           if (err.response.status === 401) {
             localStorage.removeItem("user");
@@ -107,40 +117,44 @@ const InviteTab = () => {
             navigate("/login");
           }
         });
-    }else{
+    } else {
       axios
-      .post(config.API_URL + `/classroom/invitation`, {
-        email: user?.email,
-        class_id: id,
-        role: role_user
-      }, {
-        headers: { Authorization: `Bearer ${access_token}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          setData(res.data);
-          setEffect(true);
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 404) {
-          navigate("/classroom");
-        }
-        if (err.response.status === 401) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("access_token");
-          localStorage.setItem("current_link", "/invite/" + id + "?role=" + role_user);
-          setEffect(false);
-          navigate("/login");
-        }
-      });
+        .post(
+          process.env.REACT_APP_API_URL + `/classroom/invitation`,
+          {
+            email: user?.email,
+            class_id: id,
+            role: role_user,
+          },
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            setData(res.data);
+            setEffect(true);
+          }
+        })
+        .catch((err) => {
+          if (err.response.status === 404) {
+            navigate("/classroom");
+          }
+          if (err.response.status === 401) {
+            localStorage.removeItem("user");
+            localStorage.removeItem("access_token");
+            localStorage.setItem("current_link", "/invite/" + id + "?role=" + role_user);
+            setEffect(false);
+            navigate("/login");
+          }
+        });
     }
   }, []);
 
   return (
     <div>
-      {loadEffect ?
-        (<Box
+      {loadEffect ? (
+        <Box
           sx={{
             width: "100vw",
             height: "100vh",
@@ -190,14 +204,23 @@ const InviteTab = () => {
                 marginTop: "20px",
               }}
             >
-              <Button color="error" onClick={()=>{navigate("/classroom")}}>Cancel</Button>
+              <Button
+                color="error"
+                onClick={() => {
+                  navigate("/classroom");
+                }}
+              >
+                Cancel
+              </Button>
               <Button variant="contained" color="error" onClick={handleJoin}>
                 Join class
               </Button>
             </Box>
           </Paper>
-        </Box>) : (<div></div>)
-      }
+        </Box>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 };

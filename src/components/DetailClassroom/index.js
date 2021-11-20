@@ -5,13 +5,13 @@ import UserProvider from "../../contexts/UserProvider";
 import { Routes, Route, useParams } from "react-router-dom";
 import MemberTab from "./MemberTab";
 import StreamTab from "./StreamTab";
-import config from "../../config.json";
 import ClassProvider from "../../contexts/ClassProvider";
 import { useNavigate, useLocation } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
 import MaintainanceTab from "./MaintainanceTab";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import AssignmentTab from "./AssignmentTab";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -43,50 +43,47 @@ const DetailClassroom = () => {
     const user = JSON.parse(localStorage.getItem("user"));
     //Join class
     axios
-      .get(config.API_URL + `/classroom/detail/${id}`, {
+      .get(process.env.REACT_APP_API_URL + `/classroom/detail/${id}`, {
         headers: { Authorization: `Bearer ${access_token}` },
       })
       .then((res) => {
-        if (res.status === 401) {
+        if (res.status === 200) {
+          console.log("detail-classroom useEffect");
+          setDetailClassData(res.data);
+          setEffect(true);
+          setRouterTab([
+            {
+              name_header: "Stream",
+              link: `/detail-classroom/${res.data.id}/stream`,
+              value: 1,
+            },
+            {
+              name_header: "Exercises",
+              link: `/detail-classroom/${res.data.id}/exercises`,
+              value: 2,
+            },
+            {
+              name_header: "People",
+              link: `/detail-classroom/${res.data.id}/member`,
+              value: 3,
+            },
+            {
+              name_header: "Grade",
+              link: `/detail-classroom/${res.data.id}/grades`,
+              value: 4,
+            },
+          ]);
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
           localStorage.removeItem("user");
           localStorage.removeItem("access_token");
           setEffect(false);
           navigate("/login");
-        } else {
-          if (res.status === 200) {
-            console.log("detail-classroom useEffect");
-            setDetailClassData(res.data);
-            setEffect(true);
-            setRouterTab([
-              {
-                name_header: "Stream",
-                link: `/detail-classroom/${res.data.id}/stream`,
-                value: 1,
-              },
-              {
-                name_header: "Exercises",
-                link: `/detail-classroom/${res.data.id}/exercises`,
-                value: 2,
-              },
-              {
-                name_header: "People",
-                link: `/detail-classroom/${res.data.id}/member`,
-                value: 3,
-              },
-              {
-                name_header: "Grade",
-                link: `/detail-classroom/${res.data.id}/grades`,
-                value: 4,
-              },
-            ]);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 403) {
+        } else if (err.response.status === 403) {
           navigate("/classroom");
-        }
-        if (err.response.status === 404) {
+        } else if (err.response.status === 404) {
           // alert("You do not have permission to access this class");
           setOpen(true);
           setTimeout(() => navigate("/classroom", { replace: true }), 5000);
@@ -97,17 +94,26 @@ const DetailClassroom = () => {
   return (
     <div>
       <div>
-        {loadEffect ?
+        {loadEffect ? (
           <ClassProvider>
             <UserProvider>
-              <MenuAppBar name={detailClassData.name} route_list={routerTab} isHaveHeaderTab={true} />
+              <MenuAppBar
+                name={detailClassData.name}
+                route_list={routerTab}
+                isHaveHeaderTab={true}
+              />
             </UserProvider>
           </ClassProvider>
-          : <div></div>}
+        ) : (
+          <div></div>
+        )}
         {!loadEffect && <LinearProgress />}
         <Routes>
           <Route path="/stream" element={<StreamTab data={detailClassData} />} />
-          <Route path="/exercises" element={<MaintainanceTab />} />
+          <Route
+            path="/exercises"
+            element={<AssignmentTab data={detailClassData} classId={id} />}
+          />
           <Route path="/member" element={<MemberTab data={detailClassData} />} />
           <Route path="/grades" element={<MaintainanceTab />} />
         </Routes>

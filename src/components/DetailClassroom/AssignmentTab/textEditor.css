@@ -1,0 +1,32 @@
+div.quill {
+  display: flex;
+  flex-direction: column-reverse;
+}
+div.quill:hover div.ql-container.ql-snow,
+div.quill:hover div.ql-toolbar.ql-snow {
+  background-color: rgba(0, 0, 0, 0.09);
+}
+
+/* div.quill:focus-within > div.ql-container.ql-snow {
+  border: 2px solid red !important;
+  border-bottom: 0px !important;
+} */
+div.quill:focus-within > div.ql-toolbar.ql-snow {
+  border-bottom: 2px solid red !important;
+}
+
+.ql-container.ql-snow {
+  background: #f0f0f0;
+  min-height: 100px;
+  border: 1px solid #f0f0f0 !important;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.ql-toolbar.ql-snow {
+  background: #f0f0f0;
+  border: 0;
+  border-top: 1px solid #ccc !important;
+  border-bottom: 1.4px solid #919191;
+  transition: border 0.1s linear;
+}

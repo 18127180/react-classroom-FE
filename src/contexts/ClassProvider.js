@@ -1,6 +1,5 @@
 import React, { createContext } from "react";
 import { useNavigate } from "react-router-dom";
-import config from "../config.json";
 import axios from "axios";
 const context = createContext(null);
 
@@ -11,7 +10,7 @@ const ClassProvider = ({ children }) => {
   React.useEffect(() => {
     const access_token = localStorage.getItem("access_token");
     axios
-      .get(config.API_URL + `/classroom`, {
+      .get(process.env.REACT_APP_API_URL + `/classroom`, {
         headers: { Authorization: `Bearer ${access_token}` },
       })
       .then((res) => {

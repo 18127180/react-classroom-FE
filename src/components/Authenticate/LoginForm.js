@@ -18,7 +18,6 @@ import { FacebookLoginButton } from "react-social-login-buttons";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import config_data from "../../config.json";
 import SimpleBackdrop from "../utils/Backdrop";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -85,7 +84,7 @@ const LoginForm = ({ section, topic, room, name }) => {
   const responseFacebook = (response) => {
     setOpenBackdrop(true);
     axios
-      .post(`${config_data.API_URL}/auth/facebook?access_token=${response.accessToken}`)
+      .post(`${process.env.REACT_APP_API_URL}/auth/facebook?access_token=${response.accessToken}`)
       .then((res) => {
         if (res.status === 200) {
           localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -117,11 +116,12 @@ const LoginForm = ({ section, topic, room, name }) => {
       email: "",
       password: "",
     },
+    isInitialValid: false,
     validationSchema: validationSchema,
     onSubmit: (values) => {
       setOpenBackdrop(true);
       axios
-        .post(`${config_data.API_URL}/auth`, {
+        .post(`${process.env.REACT_APP_API_URL}/auth`, {
           email: values.email,
           password: values.password,
         })
@@ -158,7 +158,7 @@ const LoginForm = ({ section, topic, room, name }) => {
     };
     // setState({ userInfo, isLoggedIn: true });
     //call API post authenticate
-    axios.post(`${config_data.API_URL}/auth/google`, userInfo).then((res) => {
+    axios.post(`${process.env.REACT_APP_API_URL}/auth/google`, userInfo).then((res) => {
       console.log(res);
       if (res.status === 200) {
         localStorage.setItem("user", JSON.stringify(res.data.user));

@@ -1,0 +1,7 @@
+.assignment .menu-button {
+  display: none;
+}
+
+.assignment:hover .menu-button {
+  display: block;
+}

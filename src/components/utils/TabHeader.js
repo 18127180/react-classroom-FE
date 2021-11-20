@@ -4,11 +4,14 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
+import { useLocation } from "react-router-dom";
 
 export default function TabHeader({ route }) {
   const [value, setValue] = React.useState(1);
+  const location = useLocation();
   React.useEffect(() => {
-    setValue(1);
+    const idx = route.findIndex((r) => r.link === location.pathname);
+    setValue(idx + 1);
   }, [route]);
 
   const handleChange = (event, newValue) => {

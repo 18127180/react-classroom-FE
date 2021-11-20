@@ -1,3 +1,7 @@
+.assignment::before {
+  background-color: #fff !important;
+}
+
 .assignment .menu-button {
   display: none;
 }

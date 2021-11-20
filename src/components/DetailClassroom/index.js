@@ -35,8 +35,12 @@ const DetailClassroom = () => {
 
     setOpen(false);
   };
+
+  const location = useLocation();
   React.useEffect(() => {
     setEffect(false);
+
+    console.log("location - ", location);
     const query = new URLSearchParams(search);
     const invite_code = query.get("cjc");
     const access_token = localStorage.getItem("access_token");
@@ -91,6 +95,7 @@ const DetailClassroom = () => {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
   return (
     <div>
       <div>

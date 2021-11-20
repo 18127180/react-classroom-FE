@@ -4,10 +4,8 @@ import {
   Button,
   Container,
   Dialog,
-  ListItem,
-  ListItemText,
-  List,
-  Divider,
+  Menu,
+  MenuItem,
   AppBar,
   Toolbar,
   IconButton,
@@ -46,7 +44,52 @@ const AssignmentTab = ({ data, classId }) => {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [assignment, setAssignment] = React.useState([]);
+  const [expanded, setExpanded] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [curMenu, setCurMenu] = React.useState(null);
+  const access_token = localStorage.getItem("access_token");
 
+  //handle the menu item]
+  const handleClickMenu = (event) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+    setCurMenu(Number(event.currentTarget.getAttribute("data-id")));
+  };
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+  const handleEdit = () => {
+    setAnchorEl(null);
+  };
+  const handleRemove = () => {
+    axios
+      .delete(
+        process.env.REACT_APP_API_URL + `/classroom/class/${classId}/assignment/${curMenu}`,
+        // {
+        //   classId: classId,
+        //   assignmentId: curMenu,
+        // },
+        {
+          headers: { Authorization: "Bearer " + access_token },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setAssignment(assignment.filter((ass) => ass.id !== curMenu));
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    setAnchorEl(null);
+  };
+
+  //handle the current accordion
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+
+  //handle the add assignment dialog
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -55,7 +98,6 @@ const AssignmentTab = ({ data, classId }) => {
     setOpen(false);
   };
 
-  const access_token = localStorage.getItem("access_token");
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -83,6 +125,7 @@ const AssignmentTab = ({ data, classId }) => {
         .then((res) => {
           // console.log(res.data);
           if (res.status === 201) {
+            setAssignment(assignment.concat(res.data));
             setOpen(false);
             setValue("");
             formik.resetForm();
@@ -130,20 +173,24 @@ const AssignmentTab = ({ data, classId }) => {
           <Grid container direction="column" sx={{ mt: 4 }}>
             <Grid item>
               {assignment &&
-                assignment.map((ass) => (
+                assignment.map((ass, index) => (
                   <Accordion
-                    disableGutters={true}
+                    // disableGutters={true}
+                    key={ass.id}
                     sx={{
+                      mb: 0.5,
                       boxShadow:
                         "0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%)",
                       borderRadius: "0.5rem",
                       "&:not(:hover)": { boxShadow: "none" },
                     }}
                     className="assignment"
+                    expanded={expanded === "panel" + index}
+                    onChange={handleChange("panel" + index)}
                   >
                     <AccordionSummary>
                       <Grid container alignItems="center">
-                        <Avatar>
+                        <Avatar sx={{ backgroundColor: "#ff2c03" }}>
                           <AssignmentOutlinedIcon />
                         </Avatar>
                         <Typography
@@ -159,16 +206,53 @@ const AssignmentTab = ({ data, classId }) => {
                         <IconButton
                           sx={{ ml: "auto", height: 40, width: 40 }}
                           className="menu-button"
+                          data-id={ass.id}
+                          onClick={handleClickMenu}
                         >
                           <MoreVertOutlinedIcon />
                         </IconButton>
                       </Grid>
                     </AccordionSummary>
-                    <AccordionDetails></AccordionDetails>
+                    <AccordionDetails sx={{ borderTop: "1px solid #ccc", padding: 0 }}>
+                      <Grid container direction="row">
+                        <Grid
+                          item
+                          xs={8}
+                          sx={{
+                            p: 2,
+                            pl: 4,
+                            fontSize: "13px",
+                            lineHeight: "20px",
+                            letterSpacing: "normal",
+                            borderRight: "1px solid #ccc",
+                          }}
+                          dangerouslySetInnerHTML={{ __html: ass.description }}
+                        ></Grid>
+                        <Grid item xs={4}></Grid>
+                      </Grid>
+                    </AccordionDetails>
                   </Accordion>
                 ))}
             </Grid>
           </Grid>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleCloseMenu}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "center",
+            }}
+            sx={{ right: 20 }}
+          >
+            <MenuItem onClick={handleEdit}>Edit</MenuItem>
+            <MenuItem onClick={handleRemove}>Remove</MenuItem>
+          </Menu>
           <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
             <form onSubmit={formik.handleSubmit}>
               <AppBar sx={{ position: "relative" }} color="secondary">
@@ -257,4 +341,4 @@ const AssignmentTab = ({ data, classId }) => {
   );
 };
 
-export default AssignmentTab;
+export default React.memo(AssignmentTab);

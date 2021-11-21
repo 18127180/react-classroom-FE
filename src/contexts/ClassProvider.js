@@ -14,24 +14,20 @@ const ClassProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${access_token}` },
       })
       .then((res) => {
-        if (res.status === 401) {
-          //token expired or not login yet
-          //so do basic log out process
-          localStorage.removeItem("user");
-          localStorage.removeItem("access_token");
-          navigate("/login");
-        } else {
+        if (res.status === 200) {
           setClasses(res.data);
           setLoading(false);
         }
       })
       .catch((err) => {
         console.log(err);
-        //token expired or not login yet
-        //so do basic log out process
-        localStorage.removeItem("user");
-        localStorage.removeItem("access_token");
-        navigate("/error");
+        if (err.response.status === 401) {
+          //token expired or not login yet
+          //so do basic log out process
+          localStorage.removeItem("user");
+          localStorage.removeItem("access_token");
+          navigate("/error");
+        }
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

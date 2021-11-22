@@ -12,6 +12,7 @@ import MaintainanceTab from "./MaintainanceTab";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import AssignmentTab from "./AssignmentTab";
+import GradeTab from "./GradeTab";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -120,7 +121,7 @@ const DetailClassroom = () => {
             element={<AssignmentTab data={detailClassData} classId={id} />}
           />
           <Route path="/member" element={<MemberTab data={detailClassData} />} />
-          <Route path="/grades" element={<MaintainanceTab />} />
+          <Route path="/grades" element={<GradeTab />} />
         </Routes>
         <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
           <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>

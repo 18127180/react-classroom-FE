@@ -11,6 +11,7 @@ import React from "react";
 import theme from "../../../theme/theme";
 import CreateAssignment from "./CreateAssignment";
 import "../../../styles/assignment.css";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const AssignmentTab = ({ data, classId }) => {
   const [open, setOpen] = React.useState(false);
@@ -78,6 +79,42 @@ const AssignmentTab = ({ data, classId }) => {
       });
   }, [access_token, classId]);
 
+  function handleOnDragEnd(result) {
+    if (!result.destination) return;
+    const items = Array.from(assignment);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    setAssignment(items);
+  }
+
+  React.useEffect(() => {
+    return () => {
+      const newOrder = assignment.map(({ id }, index) => ({ id: id, order: index }));
+      axios
+        .put(
+          process.env.REACT_APP_API_URL + "/classroom/assignment/order",
+          {
+            classId: classId,
+            newOrder: newOrder,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + access_token,
+            },
+          }
+        )
+        .then((res) => {
+          // console.log(res.data);
+          if (res.status === 200) {
+            //console.log("ok");
+          }
+        })
+        .catch((err) => {
+          //console.log(err);
+        });
+    };
+  }, [assignment]);
+
   return (
     <ThemeProvider theme={theme}>
       <Grid container spacing={0} direction="column" alignItems="center" justifyContent="center">
@@ -89,69 +126,81 @@ const AssignmentTab = ({ data, classId }) => {
             curAssignmentState={[curAssignment, setCurAssignment]}
           />
           <Grid container direction="column" sx={{ mt: 4 }}>
-            <Grid item>
-              {assignment &&
-                assignment.map((ass, index) => (
-                  <Accordion
-                    // disableGutters={true}
-                    key={ass.id}
-                    sx={{
-                      mb: 0.5,
-                      boxShadow:
-                        "0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%)",
-                      borderRadius: "0.5rem",
-                      "&:not(:hover)": { boxShadow: "none" },
-                    }}
-                    className="assignment"
-                    expanded={expanded === "panel" + index}
-                    onChange={handleChange("panel" + index)}
-                  >
-                    <AccordionSummary>
-                      <Grid container alignItems="center">
-                        <Avatar sx={{ backgroundColor: "#ff2c03" }}>
-                          <AssignmentOutlinedIcon />
-                        </Avatar>
-                        <Typography
-                          sx={{
-                            ml: 2,
-                            color: "#3c404a",
-                            fontSize: "0.875rem",
-                            letterSpacing: ".01785714em",
-                          }}
-                        >
-                          {ass.title}
-                        </Typography>
-                        <IconButton
-                          sx={{ ml: "auto", height: 40, width: 40 }}
-                          className="menu-button"
-                          data-id={ass.id}
-                          onClick={handleClickMenu}
-                        >
-                          <MoreVertOutlinedIcon />
-                        </IconButton>
-                      </Grid>
-                    </AccordionSummary>
-                    <AccordionDetails sx={{ borderTop: "1px solid #ccc", padding: 0 }}>
-                      <Grid container direction="row">
-                        <Grid
-                          item
-                          xs={8}
-                          sx={{
-                            p: 2,
-                            pl: 4,
-                            fontSize: "13px",
-                            lineHeight: "20px",
-                            letterSpacing: "normal",
-                            borderRight: "1px solid #ccc",
-                          }}
-                          dangerouslySetInnerHTML={{ __html: ass.description }}
-                        ></Grid>
-                        <Grid item xs={4}></Grid>
-                      </Grid>
-                    </AccordionDetails>
-                  </Accordion>
-                ))}
-            </Grid>
+            <DragDropContext onDragEnd={handleOnDragEnd}>
+              <Droppable droppableId="assigns">
+                {(provided) => (
+                  <Grid item {...provided.droppableProps} ref={provided.innerRef}>
+                    {assignment &&
+                      assignment.map((ass, index) => (
+                        <Draggable key={ass.id} draggableId={String(ass.id)} index={index}>
+                          {(provided) => (
+                            <Accordion
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              ref={provided.innerRef}
+                              // disableGutters={true}
+                              sx={{
+                                mb: 0.5,
+                                boxShadow:
+                                  "0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%)",
+                                borderRadius: "0.5rem",
+                                "&:not(:hover)": { boxShadow: "none" },
+                              }}
+                              className="assignment"
+                              expanded={expanded === "panel" + index}
+                              onChange={handleChange("panel" + index)}
+                            >
+                              <AccordionSummary>
+                                <Grid container alignItems="center">
+                                  <Avatar sx={{ backgroundColor: "#ff2c03" }}>
+                                    <AssignmentOutlinedIcon />
+                                  </Avatar>
+                                  <Typography
+                                    sx={{
+                                      ml: 2,
+                                      color: "#3c404a",
+                                      fontSize: "0.875rem",
+                                      letterSpacing: ".01785714em",
+                                    }}
+                                  >
+                                    {ass.title}
+                                  </Typography>
+                                  <IconButton
+                                    sx={{ ml: "auto", height: 40, width: 40 }}
+                                    className="menu-button"
+                                    data-id={ass.id}
+                                    onClick={handleClickMenu}
+                                  >
+                                    <MoreVertOutlinedIcon />
+                                  </IconButton>
+                                </Grid>
+                              </AccordionSummary>
+                              <AccordionDetails sx={{ borderTop: "1px solid #ccc", padding: 0 }}>
+                                <Grid container direction="row">
+                                  <Grid
+                                    item
+                                    xs={8}
+                                    sx={{
+                                      p: 2,
+                                      pl: 4,
+                                      fontSize: "13px",
+                                      lineHeight: "20px",
+                                      letterSpacing: "normal",
+                                      borderRight: "1px solid #ccc",
+                                    }}
+                                    dangerouslySetInnerHTML={{ __html: ass.description }}
+                                  ></Grid>
+                                  <Grid item xs={4}></Grid>
+                                </Grid>
+                              </AccordionDetails>
+                            </Accordion>
+                          )}
+                        </Draggable>
+                      ))}
+                  </Grid>
+                )}
+              </Droppable>
+            </DragDropContext>
           </Grid>
           <Menu
             id="basic-menu"

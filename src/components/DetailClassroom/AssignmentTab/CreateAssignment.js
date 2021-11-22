@@ -107,6 +107,7 @@ const CreateAssignment = ({ classId, openState, assignmentState, curAssignmentSt
               title: values.title,
               description: description,
               point: values.point,
+              count: assignment.length,
             },
             {
               headers: {

@@ -13,9 +13,10 @@ import CreateAssignment from "./CreateAssignment";
 import "../../../styles/assignment.css";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
-const AssignmentTab = ({ data, classId }) => {
+const AssignmentTab = ({ data, classId, assignmentState, visitedState }) => {
   const [open, setOpen] = React.useState(false);
-  const [assignment, setAssignment] = React.useState([]);
+  const [assignment, setAssignment] = assignmentState;
+  const [visited, setVisited] = visitedState;
   const [expanded, setExpanded] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [curMenu, setCurMenu] = React.useState(null);
@@ -65,19 +66,25 @@ const AssignmentTab = ({ data, classId }) => {
   };
 
   React.useEffect(() => {
-    axios
-      .get(process.env.REACT_APP_API_URL + `/classroom/assignment/${classId}`, {
-        headers: { Authorization: `Bearer ${access_token}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          setAssignment(res.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [access_token, classId]);
+    console.log("visit", visited[1]);
+    if (visited[1] === false) {
+      axios
+        .get(process.env.REACT_APP_API_URL + `/classroom/assignment/${classId}`, {
+          headers: { Authorization: `Bearer ${access_token}` },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            setAssignment(res.data);
+            const tempVisited = visited;
+            tempVisited[1] = true;
+            setVisited(tempVisited);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, []);
 
   function handleOnDragEnd(result) {
     if (!result.destination) return;
@@ -86,34 +93,6 @@ const AssignmentTab = ({ data, classId }) => {
     items.splice(result.destination.index, 0, reorderedItem);
     setAssignment(items);
   }
-
-  React.useEffect(() => {
-    return () => {
-      const newOrder = assignment.map(({ id }, index) => ({ id: id, order: index }));
-      axios
-        .put(
-          process.env.REACT_APP_API_URL + "/classroom/assignment/order",
-          {
-            classId: classId,
-            newOrder: newOrder,
-          },
-          {
-            headers: {
-              Authorization: "Bearer " + access_token,
-            },
-          }
-        )
-        .then((res) => {
-          // console.log(res.data);
-          if (res.status === 200) {
-            //console.log("ok");
-          }
-        })
-        .catch((err) => {
-          //console.log(err);
-        });
-    };
-  }, [assignment]);
 
   return (
     <ThemeProvider theme={theme}>

@@ -23,6 +23,8 @@ export const ClassContext = React.createContext();
 const DetailClassroom = () => {
   const [detailClassData, setDetailClassData] = useState({});
   const [routerTab, setRouterTab] = useState([]);
+  const [visited, setVisited] = useState([true, false, false, false]);
+  const [assignment, setAssignment] = useState([]);
   const [loadEffect, setEffect] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -97,6 +99,38 @@ const DetailClassroom = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
+  React.useEffect(() => {
+    return () => {
+      console.log("here");
+      const newOrder = assignment.map(({ id }, index) => ({ id: id, order: index }));
+      if (newOrder && newOrder.length > 0) {
+        const access_token = localStorage.getItem("access_token");
+        axios
+          .put(
+            process.env.REACT_APP_API_URL + "/classroom/assignment/order",
+            {
+              classId: id,
+              newOrder: newOrder,
+            },
+            {
+              headers: {
+                Authorization: "Bearer " + access_token,
+              },
+            }
+          )
+          .then((res) => {
+            // console.log(res.data);
+            if (res.status === 200) {
+              //console.log("ok");
+            }
+          })
+          .catch((err) => {
+            //console.log(err);
+          });
+      }
+    };
+  }, []);
+
   return (
     <div>
       <div>
@@ -118,7 +152,14 @@ const DetailClassroom = () => {
           <Route path="/stream" element={<StreamTab data={detailClassData} />} />
           <Route
             path="/exercises"
-            element={<AssignmentTab data={detailClassData} classId={id} />}
+            element={
+              <AssignmentTab
+                data={detailClassData}
+                classId={id}
+                assignmentState={[assignment, setAssignment]}
+                visitedState={[visited, setVisited]}
+              />
+            }
           />
           <Route path="/member" element={<MemberTab data={detailClassData} />} />
           <Route path="/grades" element={<GradeTab />} />

@@ -32,6 +32,7 @@ export default function TabHeader({ route }) {
 
   const listLink = route.map((link_routing, index) => (
     <Tab
+      key={index}
       value={link_routing.value}
       label={link_routing.name_header}
       to={link_routing.link}

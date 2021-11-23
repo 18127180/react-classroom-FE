@@ -99,54 +99,14 @@ const DetailClassroom = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  React.useEffect(() => {
-    return () => {
-      console.log("here");
-      const newOrder = assignment.map(({ id }, index) => ({ id: id, order: index }));
-      if (newOrder && newOrder.length > 0) {
-        const access_token = localStorage.getItem("access_token");
-        axios
-          .put(
-            process.env.REACT_APP_API_URL + "/classroom/assignment/order",
-            {
-              classId: id,
-              newOrder: newOrder,
-            },
-            {
-              headers: {
-                Authorization: "Bearer " + access_token,
-              },
-            }
-          )
-          .then((res) => {
-            // console.log(res.data);
-            if (res.status === 200) {
-              //console.log("ok");
-            }
-          })
-          .catch((err) => {
-            //console.log(err);
-          });
-      }
-    };
-  }, []);
-
   return (
     <div>
       <div>
-        {loadEffect ? (
-          <ClassProvider>
-            <UserProvider>
-              <MenuAppBar
-                name={detailClassData.name}
-                route_list={routerTab}
-                isHaveHeaderTab={true}
-              />
-            </UserProvider>
-          </ClassProvider>
-        ) : (
-          <div></div>
-        )}
+        <ClassProvider>
+          <UserProvider>
+            <MenuAppBar name={detailClassData.name} route_list={routerTab} isHaveHeaderTab={true} />
+          </UserProvider>
+        </ClassProvider>
         {!loadEffect && <LinearProgress />}
         <Routes>
           <Route path="/stream" element={<StreamTab data={detailClassData} />} />
@@ -155,6 +115,7 @@ const DetailClassroom = () => {
             element={
               <AssignmentTab
                 data={detailClassData}
+                setEffect={setEffect}
                 classId={id}
                 assignmentState={[assignment, setAssignment]}
                 visitedState={[visited, setVisited]}

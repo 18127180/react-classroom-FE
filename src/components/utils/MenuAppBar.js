@@ -127,7 +127,7 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
               sx={{ borderBottom: "0.1px solid rgba(0,0,0,0.2)" }}
             >
               <Toolbar>
-                <SideBar />
+                <SideBar name={name} />
                 <Typography
                   variant="h6"
                   component="div"

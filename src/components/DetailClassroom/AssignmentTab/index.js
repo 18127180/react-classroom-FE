@@ -13,7 +13,7 @@ import CreateAssignment from "./CreateAssignment";
 import "../../../styles/assignment.css";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
-const AssignmentTab = ({ data, classId, assignmentState, visitedState }) => {
+const AssignmentTab = ({ data, classId, setEffect, assignmentState, visitedState }) => {
   const [open, setOpen] = React.useState(false);
   const [assignment, setAssignment] = assignmentState;
   const [visited, setVisited] = visitedState;
@@ -68,6 +68,7 @@ const AssignmentTab = ({ data, classId, assignmentState, visitedState }) => {
   React.useEffect(() => {
     console.log("visit", visited[1]);
     if (visited[1] === false) {
+      setEffect(false);
       axios
         .get(process.env.REACT_APP_API_URL + `/classroom/assignment/${classId}`, {
           headers: { Authorization: `Bearer ${access_token}` },
@@ -78,6 +79,7 @@ const AssignmentTab = ({ data, classId, assignmentState, visitedState }) => {
             const tempVisited = visited;
             tempVisited[1] = true;
             setVisited(tempVisited);
+            setEffect(true);
           }
         })
         .catch((err) => {
@@ -92,6 +94,33 @@ const AssignmentTab = ({ data, classId, assignmentState, visitedState }) => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
     setAssignment(items);
+
+    const newOrder = items.map(({ id }, index) => ({ id: id, order: index }));
+    if (newOrder && newOrder.length > 0) {
+      const access_token = localStorage.getItem("access_token");
+      axios
+        .put(
+          process.env.REACT_APP_API_URL + "/classroom/assignment/order",
+          {
+            classId: classId,
+            newOrder: newOrder,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + access_token,
+            },
+          }
+        )
+        .then((res) => {
+          // console.log(res.data);
+          if (res.status === 200) {
+            //console.log("ok");
+          }
+        })
+        .catch((err) => {
+          //console.log(err);
+        });
+    }
   }
 
   return (

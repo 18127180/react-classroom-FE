@@ -48,7 +48,7 @@ function stringAvatar(name) {
   };
 }
 
-const SideBar = () => {
+const SideBar = ({ name }) => {
   // eslint-disable-next-line no-unused-vars
   const { classState, loading } = React.useContext(ClassProvider.context);
   // eslint-disable-next-line no-unused-vars
@@ -90,11 +90,12 @@ const SideBar = () => {
           <ListSubheader>{`Teaching`}</ListSubheader>
           {classes.map((item, index) => {
             if (item.teacher) {
+              const url = name !== item.name;
               return (
                 <ListItem
                   button
                   key={`class-${item.id}`}
-                  onClick={() => navigate(`/detail-classroom/${item.id}/stream`)}
+                  onClick={() => url && navigate(`/detail-classroom/${item.id}/stream`)}
                 >
                   <ListItemIcon>
                     <Avatar {...stringAvatar(item.name)} />
@@ -111,11 +112,14 @@ const SideBar = () => {
           <ListSubheader>{`Enrolled`}</ListSubheader>
           {classes.map((item, index) => {
             if (item.student) {
+              const url = name !== item.name;
               return (
                 <ListItem
                   button
                   key={`class-${item.id}`}
-                  onClick={() => navigate(`/detail-classroom/${item.id}/stream`)}
+                  onClick={() =>
+                    url && navigate(`/detail-classroom/${item.id}/stream`, { replace: true })
+                  }
                 >
                   <ListItemIcon>
                     <Avatar {...stringAvatar(item.name)} />

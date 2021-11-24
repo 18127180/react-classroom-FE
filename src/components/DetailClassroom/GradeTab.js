@@ -19,12 +19,17 @@ import { Topic } from "@mui/icons-material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
+import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
 const GradeTab = ({ data }) => {
   const [characters, updateCharacters] = React.useState([]);
   const [topic, setTopic] = React.useState('Grade structure');
   const [description, setDescription] = React.useState('Description');
   const [loadEffect, setEffect] = React.useState(false);
+  const [idStructure, setIdStructure] = React.useState(0);
+  const [visable, setVisable] = React.useState(false);
   const navigate = useNavigate();
 
   const handleChangeTopic = (event) => {
@@ -41,7 +46,7 @@ const GradeTab = ({ data }) => {
 
   const handleChangeName = (i, event) => {
     const arr = [...characters];
-    arr[i].name = event.target.value;
+    arr[i].subject_name = event.target.value;
     updateCharacters(arr);
   };
 
@@ -49,7 +54,7 @@ const GradeTab = ({ data }) => {
     let items = Array.from(characters);
     items.push({
       id: "" + (characters.length + 1),
-      name: "",
+      subject_name: "",
       grade: 0
     })
     updateCharacters(items);
@@ -61,6 +66,10 @@ const GradeTab = ({ data }) => {
     updateCharacters(newList);
   }
 
+  const handleHide = () => {
+    setVisable(!visable);
+  }
+
   const handleOnDragEnd = (result) => {
     if (!result.destination) return;
     const items = Array.from(characters);
@@ -69,33 +78,68 @@ const GradeTab = ({ data }) => {
     updateCharacters(items);
   };
 
+  const handleUpdate = () => {
+    const access_token = localStorage.getItem("access_token");
+    axios
+      .put(
+        process.env.REACT_APP_API_URL + "/classroom/grade-structure",
+        {
+          id: idStructure,
+          class_id: data.id,
+          topic: topic,
+          description: description,
+          list_syllabus: characters
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + access_token,
+          },
+        }
+      )
+      .then((res) => {
+        // console.log(res.data);
+        if (res.status === 200) {
+          //console.log("ok");
+          setVisable(false);
+        }
+      })
+      .catch((err) => {
+        //console.log(err);
+      });
+  }
+
   const itemList = characters.map((item, index) => (
-    <Draggable key={""+item.id} draggableId={""+item.id} index={index}>
+    <Draggable key={"" + item.id} draggableId={"" + item.id} index={index} isDragDisabled={!visable}>
       {(provided) => (
         <Accordion
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
+          sx={{
+            mt: 2
+          }}
         >
           <AccordionSummary aria-controls="panel1a-content" id="panel1a-header">
-            <FormControl variant="standard">
+            <FormControl variant="standard" sx={{ flex: 4, mt:2 }}>
               {/* <InputLabel htmlFor="component-simple">Name</InputLabel> */}
-              <Input id="component-simple" value={item.subject_name} onChange={e => handleChangeName(index, e)} />
+              <Input id="component-simple" value={item.subject_name} onChange={e => handleChangeName(index, e)} placeholder="Topic"/>
             </FormControl>
-            <FormControl variant="standard">
-              {/* <InputLabel htmlFor="component-simple">Name</InputLabel> */}
-              <Input id="component-simple" value={item.grade} onChange={e => handleChangeGrade(index, e)} />
-            </FormControl>
+            <Box sx={{ flex: 1 }}>
+              <TextField
+                id="outlined-number"
+                label="Grade"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={item.grade}
+                onChange={e => handleChangeGrade(index, e)}
+              />
+            </Box>
             <IconButton aria-label="delete" onClick={() => handleRemove(item.id)}>
               <DeleteIcon />
             </IconButton>
           </AccordionSummary>
-          <AccordionDetails>
-            <Typography>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus
-              ex, sit amet blandit leo lobortis eget.
-            </Typography>
-          </AccordionDetails>
         </Accordion>
       )}
     </Draggable>
@@ -115,6 +159,7 @@ const GradeTab = ({ data }) => {
           updateCharacters(res.data?.list_syllabus);
           setTopic(res.data?.topic);
           setDescription(res.data?.description);
+          setIdStructure(res.data?.id);
           setEffect(true);
         }
       })
@@ -135,29 +180,36 @@ const GradeTab = ({ data }) => {
           <Grid container direction="column" alignItems="center" justifyContent="space-between" >
             <Box sx={{
               width: "60%",
-              mt: 10
+              mt: 2,
+              display: 'flex',
+              flexDirection: 'row-reverse',
             }}>
-              <FormControl variant="standard" fullWidth size="medium">
-                <Input id="component-simple" value={topic} onChange={handleChangeTopic} />
+              <Button variant="outlined" onClick={handleHide}>Edit</Button>
+            </Box>
+            <Box sx={{
+              width: "60%",
+            }}>
+              <FormControl variant="standard" fullWidth size="medium" >
+                <Input id="component-simple" sx={{ fontSize: 40 }} value={topic} onChange={handleChangeTopic} placeholder="Topic" />
               </FormControl>
               <FormControl variant="standard" fullWidth>
-                <Input id="component-simple" value={description} onChange={handleChangeDescription} placeholder="Description" />
+                <Input id="component-simple" sx={{ fontSize: 20, mt: 2 }} value={description} onChange={handleChangeDescription} placeholder="Description" />
               </FormControl>
             </Box>
             <Box
               sx={{
                 width: "60%",
                 justifyContent: 'center',
-                display: 'flex'
+                mt: 2
               }}
             >
               <DragDropContext onDragEnd={handleOnDragEnd}>
                 <Droppable droppableId="characters">
                   {(provided) => (
-                    <Grid {...provided.droppableProps} ref={provided.innerRef}>
+                    <Box {...provided.droppableProps} ref={provided.innerRef}>
                       <List dense={true}>{itemList}</List>
                       {provided.placeholder}
-                    </Grid>
+                    </Box>
                   )}
                 </Droppable>
               </DragDropContext>
@@ -169,12 +221,18 @@ const GradeTab = ({ data }) => {
                 display: 'flex'
               }}
             >
-              <IconButton color="primary" aria-label="add to shopping cart" onClick={handleAddItem}>
-                <AddShoppingCartIcon />
-              </IconButton>
-              <IconButton color="primary" aria-label="add to shopping cart">
-                <CheckCircleOutlineIcon />
-              </IconButton>
+              {
+                visable ? (
+                  <div>
+                    <IconButton color="primary" onClick={handleAddItem}>
+                      <AddCircleRoundedIcon />
+                    </IconButton>
+                    <IconButton color="primary" onClick={handleUpdate}>
+                      <CheckCircleOutlineIcon />
+                    </IconButton>
+                  </div>
+                ) : (<div>
+                </div>)}
             </Box>
           </Grid >
         ) : (

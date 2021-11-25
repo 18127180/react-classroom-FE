@@ -1,6 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { Accordion, AccordionSummary, Typography, AccordionDetails } from "@mui/material";
+import { Accordion, AccordionSummary, Typography, AccordionDetails, Link } from "@mui/material";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
@@ -11,33 +11,33 @@ import Grid from "@mui/material/Grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import FormControl from '@mui/material/FormControl';
-import Input from '@mui/material/Input';
-import InputLabel from '@mui/material/InputLabel';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import FormControl from "@mui/material/FormControl";
+import Input from "@mui/material/Input";
+import InputLabel from "@mui/material/InputLabel";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { Topic } from "@mui/icons-material";
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
-import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 
 const GradeTab = ({ data }) => {
   const [characters, updateCharacters] = React.useState([]);
-  const [topic, setTopic] = React.useState('Grade structure');
-  const [description, setDescription] = React.useState('Description');
+  const [topic, setTopic] = React.useState("Grade structure");
+  const [description, setDescription] = React.useState("Description");
   const [loadEffect, setEffect] = React.useState(false);
   const [idStructure, setIdStructure] = React.useState(0);
   const [visable, setVisable] = React.useState(false);
   const navigate = useNavigate();
 
   const handleChangeTopic = (event) => {
-    setTopic(event.target.value)
-  }
+    setTopic(event.target.value);
+  };
   const handleChangeDescription = (event) => {
-    setDescription(event.target.value)
-  }
+    setDescription(event.target.value);
+  };
   const handleChangeGrade = (i, event) => {
     const arr = [...characters];
     arr[i].grade = Number(event.target.value);
@@ -55,20 +55,20 @@ const GradeTab = ({ data }) => {
     items.push({
       id: "" + (characters.length + 1),
       subject_name: "",
-      grade: 0
-    })
+      grade: 0,
+    });
     updateCharacters(items);
     console.log(items);
-  }
+  };
 
   const handleRemove = (id) => {
     const newList = characters.filter((item) => item.id !== id);
     updateCharacters(newList);
-  }
+  };
 
   const handleHide = () => {
     setVisable(!visable);
-  }
+  };
 
   const handleOnDragEnd = (result) => {
     if (!result.destination) return;
@@ -88,7 +88,7 @@ const GradeTab = ({ data }) => {
           class_id: data.id,
           topic: topic,
           description: description,
-          list_syllabus: characters
+          list_syllabus: characters,
         },
         {
           headers: {
@@ -106,23 +106,33 @@ const GradeTab = ({ data }) => {
       .catch((err) => {
         //console.log(err);
       });
-  }
+  };
 
   const itemList = characters.map((item, index) => (
-    <Draggable key={"" + item.id} draggableId={"" + item.id} index={index} isDragDisabled={!visable}>
+    <Draggable
+      key={"" + item.id}
+      draggableId={"" + item.id}
+      index={index}
+      isDragDisabled={!visable}
+    >
       {(provided) => (
         <Accordion
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
           sx={{
-            mt: 2
+            mt: 2,
           }}
         >
           <AccordionSummary aria-controls="panel1a-content" id="panel1a-header">
-            <FormControl variant="standard" sx={{ flex: 4, mt:2 }}>
+            <FormControl variant="standard" sx={{ flex: 4, mt: 2 }}>
               {/* <InputLabel htmlFor="component-simple">Name</InputLabel> */}
-              <Input id="component-simple" value={item.subject_name} onChange={e => handleChangeName(index, e)} placeholder="Topic"/>
+              <Input
+                id="component-simple"
+                value={item.subject_name}
+                onChange={(e) => handleChangeName(index, e)}
+                placeholder="Topic"
+              />
             </FormControl>
             <Box sx={{ flex: 1 }}>
               <TextField
@@ -133,7 +143,7 @@ const GradeTab = ({ data }) => {
                   shrink: true,
                 }}
                 value={item.grade}
-                onChange={e => handleChangeGrade(index, e)}
+                onChange={(e) => handleChangeGrade(index, e)}
               />
             </Box>
             <IconButton aria-label="delete" onClick={() => handleRemove(item.id)}>
@@ -148,12 +158,9 @@ const GradeTab = ({ data }) => {
   React.useEffect(() => {
     const access_token = localStorage.getItem("access_token");
     axios
-      .get(
-        process.env.REACT_APP_API_URL + `/classroom/grade-structure?class_id=${data.id}`,
-        {
-          headers: { Authorization: `Bearer ${access_token}` },
-        }
-      )
+      .get(process.env.REACT_APP_API_URL + `/classroom/grade-structure?class_id=${data.id}`, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      })
       .then((res) => {
         if (res.status === 200) {
           updateCharacters(res.data?.list_syllabus);
@@ -173,71 +180,110 @@ const GradeTab = ({ data }) => {
       });
   }, []);
 
+  const onDownload = () => {
+    const link = document.createElement("a");
+    link.target = "_blank";
+    link.download = "Student list";
+    link.href = "/file_template/student_map.xlsx";
+    link.click();
+  };
+
+  const onDownload2 = () => {
+    const link = document.createElement("a");
+    link.target = "_blank";
+    link.download = "Grades for an assignment";
+    link.href = "/file_template/grade_map.xlsx";
+    link.click();
+  };
+
   return (
     <div>
-      {
-        loadEffect ? (
-          <Grid container direction="column" alignItems="center" justifyContent="space-between" >
-            <Box sx={{
+      {loadEffect ? (
+        <Grid container direction="column" alignItems="center" justifyContent="space-between">
+          <Button onClick={onDownload} variant="contained" color="primary">
+            Student list
+          </Button>
+          <Button onClick={onDownload2} variant="contained" color="primary">
+            Grades list
+          </Button>
+          <Box
+            sx={{
               width: "60%",
               mt: 2,
-              display: 'flex',
-              flexDirection: 'row-reverse',
-            }}>
-              <Button variant="outlined" onClick={handleHide}>Edit</Button>
-            </Box>
-            <Box sx={{
+              display: "flex",
+              flexDirection: "row-reverse",
+            }}
+          >
+            <Button variant="outlined" onClick={handleHide}>
+              Edit
+            </Button>
+          </Box>
+          <Box
+            sx={{
               width: "60%",
-            }}>
-              <FormControl variant="standard" fullWidth size="medium" >
-                <Input id="component-simple" sx={{ fontSize: 40 }} value={topic} onChange={handleChangeTopic} placeholder="Topic" />
-              </FormControl>
-              <FormControl variant="standard" fullWidth>
-                <Input id="component-simple" sx={{ fontSize: 20, mt: 2 }} value={description} onChange={handleChangeDescription} placeholder="Description" />
-              </FormControl>
-            </Box>
-            <Box
-              sx={{
-                width: "60%",
-                justifyContent: 'center',
-                mt: 2
-              }}
-            >
-              <DragDropContext onDragEnd={handleOnDragEnd}>
-                <Droppable droppableId="characters">
-                  {(provided) => (
-                    <Box {...provided.droppableProps} ref={provided.innerRef}>
-                      <List dense={true}>{itemList}</List>
-                      {provided.placeholder}
-                    </Box>
-                  )}
-                </Droppable>
-              </DragDropContext>
-            </Box>
-            <Box
-              sx={{
-                width: "60%",
-                justifyContent: 'center',
-                display: 'flex'
-              }}
-            >
-              {
-                visable ? (
-                  <div>
-                    <IconButton color="primary" onClick={handleAddItem}>
-                      <AddCircleRoundedIcon />
-                    </IconButton>
-                    <IconButton color="primary" onClick={handleUpdate}>
-                      <CheckCircleOutlineIcon />
-                    </IconButton>
-                  </div>
-                ) : (<div>
-                </div>)}
-            </Box>
-          </Grid >
-        ) : (
-          <div></div>
-        )}
+            }}
+          >
+            <FormControl variant="standard" fullWidth size="medium">
+              <Input
+                id="component-simple"
+                sx={{ fontSize: 40 }}
+                value={topic}
+                onChange={handleChangeTopic}
+                placeholder="Topic"
+              />
+            </FormControl>
+            <FormControl variant="standard" fullWidth>
+              <Input
+                id="component-simple"
+                sx={{ fontSize: 20, mt: 2 }}
+                value={description}
+                onChange={handleChangeDescription}
+                placeholder="Description"
+              />
+            </FormControl>
+          </Box>
+          <Box
+            sx={{
+              width: "60%",
+              justifyContent: "center",
+              mt: 2,
+            }}
+          >
+            <DragDropContext onDragEnd={handleOnDragEnd}>
+              <Droppable droppableId="characters">
+                {(provided) => (
+                  <Box {...provided.droppableProps} ref={provided.innerRef}>
+                    <List dense={true}>{itemList}</List>
+                    {provided.placeholder}
+                  </Box>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </Box>
+          <Box
+            sx={{
+              width: "60%",
+              justifyContent: "center",
+              display: "flex",
+            }}
+          >
+            {visable ? (
+              <div>
+                <IconButton color="primary" onClick={handleAddItem}>
+                  <AddCircleRoundedIcon />
+                </IconButton>
+                <IconButton color="primary" onClick={handleUpdate}>
+                  <CheckCircleOutlineIcon />
+                </IconButton>
+              </div>
+            ) : (
+              <div></div>
+            )}
+          </Box>
+        </Grid>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 };

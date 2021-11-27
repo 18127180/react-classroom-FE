@@ -180,32 +180,32 @@ const GradeTab = ({ data }) => {
       });
   }, []);
 
-  const onDownload = () => {
-    const link = document.createElement("a");
-    link.target = "_blank";
-    link.download = "Student list";
-    link.href = "/file_template/student_map.xlsx";
-    link.click();
-  };
+  // const onDownload = () => {
+  //   const link = document.createElement("a");
+  //   link.target = "_blank";
+  //   link.download = "Student list";
+  //   link.href = "/file_template/student_map.xlsx";
+  //   link.click();
+  // };
 
-  const onDownload2 = () => {
-    const link = document.createElement("a");
-    link.target = "_blank";
-    link.download = "Grades for an assignment";
-    link.href = "/file_template/grade_map.xlsx";
-    link.click();
-  };
+  // const onDownload2 = () => {
+  //   const link = document.createElement("a");
+  //   link.target = "_blank";
+  //   link.download = "Grades for an assignment";
+  //   link.href = "/file_template/grade_map.xlsx";
+  //   link.click();
+  // };
 
   return (
     <div>
       {loadEffect ? (
         <Grid container direction="column" alignItems="center" justifyContent="space-between">
-          <Button onClick={onDownload} variant="contained" color="primary">
+          {/* <Button onClick={onDownload} variant="contained" color="primary">
             Student list
           </Button>
           <Button onClick={onDownload2} variant="contained" color="primary">
             Grades list
-          </Button>
+          </Button> */}
           <Box
             sx={{
               width: "60%",

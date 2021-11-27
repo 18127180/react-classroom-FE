@@ -8,7 +8,6 @@ import StreamTab from "./StreamTab";
 import ClassProvider from "../../contexts/ClassProvider";
 import { useNavigate, useLocation } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
-import MaintainanceTab from "./MaintainanceTab";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import AssignmentTab from "./AssignmentTab";
@@ -123,7 +122,7 @@ const DetailClassroom = () => {
             }
           />
           <Route path="/member" element={<MemberTab data={detailClassData} />} />
-          <Route path="/grades" element={<GradeTab data={detailClassData}/>} />
+          <Route path="/grades" element={<GradeTab data={detailClassData} />} />
         </Routes>
         <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
           <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>

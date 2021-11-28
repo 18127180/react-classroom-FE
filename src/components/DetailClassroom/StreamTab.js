@@ -9,8 +9,10 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ControlledEditor from "./ControlledEditor";
+import UserProvider from "../../contexts/UserProvider";
+import GradeTab from "./GradeTab";
+import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/theme";
-import { ThemeProvider } from "@mui/material";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -35,101 +37,117 @@ const styles = {
 const StreamTab = ({ data }) => {
   let work = null;
   const [addPost, setAddPost] = React.useState(false);
+  const [user, setUser] = React.useContext(UserProvider.context);
+  const [openGrade, setOpenGrade] = React.useState(false);
+  console.log("user", user);
+  const teacher = data.teacherList?.find((t) => t.id === user.id);
 
   return (
     <div>
-      <Container maxWidth="lg" sx={{ marginTop: 11, maxWidth: "1000px !important" }}>
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Paper xs={{ padding: 0, borderRadius: "10px !important" }}>
-                <Accordion disableGutters xs={{ borderRadius: "10px" }}>
-                  <AccordionSummary
-                    id="panel1a-header"
-                    aria-controls="panel1a-content"
-                    sx={{
-                      height: 250,
-                      width: "100%",
-                      background: `linear-gradient(to bottom, rgba(0,0,0,0) 70%, rgba(0,0,0,1)), url('https://picsum.photos/1000/250?random=${data.id}')`,
-                      alignItems: "end",
-                    }}
-                  >
-                    <Typography
+      <ThemeProvider theme={theme}>
+        <Container maxWidth="lg" sx={{ marginTop: 11, maxWidth: "1000px !important" }}>
+          <Box sx={{ flexGrow: 1 }}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Paper xs={{ padding: 0, borderRadius: "10px !important" }}>
+                  <Accordion disableGutters xs={{ borderRadius: "10px" }}>
+                    <AccordionSummary
+                      id="panel1a-header"
+                      aria-controls="panel1a-content"
                       sx={{
-                        color: "white",
-                        fontSize: 36,
+                        height: 250,
+                        width: "100%",
+                        background: `linear-gradient(to bottom, rgba(0,0,0,0) 70%, rgba(0,0,0,1)), url('https://picsum.photos/1000/250?random=${data.id}')`,
+                        alignItems: "end",
                       }}
                     >
-                      {data.name}
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Typography>
-                      <b style={styles.infoLabel}>Section:</b>
-                      <span style={styles.sizeText}>{data.section}</span>
-                    </Typography>
-                    <Typography>
-                      <b style={styles.infoLabel}>Topic:</b>
-                      <span style={styles.sizeText}>{data.topic || ""}</span>
-                    </Typography>
-                    <Typography>
-                      <b style={styles.infoLabel}>Description:</b>
-                      <span style={styles.sizeText}>{data.description || ""}</span>
-                    </Typography>
-                  </AccordionDetails>
-                </Accordion>
-              </Paper>
-            </Grid>
-            <Grid item xs={3.5}>
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Item>
-                    <Typography>
-                      <span style={styles.infoLabel}>Upcoming</span>
-                    </Typography>
-                    {work ? (
-                      ""
-                    ) : (
-                      <Box sx={{ paddingTop: 2 }}>
-                        <p style={styles.sizeText}>No work due soon</p>
-                      </Box>
-                    )}
-                    <Typography>
-                      <Link
-                        to="#"
+                      <Typography
                         sx={{
-                          textDecoration: "none",
-                          "&:hover": {
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                          },
+                          color: "white",
+                          fontSize: 36,
                         }}
                       >
-                        <p
-                          style={{
-                            textAlign: "end",
-                            marginBottom: "5px",
-                            ...styles.sizeText,
+                        {data.name}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Typography>
+                        <b style={styles.infoLabel}>Section:</b>
+                        <span style={styles.sizeText}>{data.section}</span>
+                      </Typography>
+                      <Typography>
+                        <b style={styles.infoLabel}>Topic:</b>
+                        <span style={styles.sizeText}>{data.topic || ""}</span>
+                      </Typography>
+                      <Typography>
+                        <b style={styles.infoLabel}>Description:</b>
+                        <span style={styles.sizeText}>{data.description || ""}</span>
+                      </Typography>
+                    </AccordionDetails>
+                  </Accordion>
+                </Paper>
+              </Grid>
+              <Grid item xs={3.5}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <Item>
+                      <Typography>
+                        <span style={styles.infoLabel}>Upcoming</span>
+                      </Typography>
+                      {work ? (
+                        ""
+                      ) : (
+                        <Box sx={{ paddingTop: 2 }}>
+                          <p style={styles.sizeText}>No work due soon</p>
+                        </Box>
+                      )}
+                      <Typography>
+                        <Link
+                          to="#"
+                          sx={{
+                            textDecoration: "none",
+                            "&:hover": {
+                              textDecoration: "underline",
+                              cursor: "pointer",
+                            },
                           }}
                         >
-                          View all
-                        </p>
-                      </Link>
-                    </Typography>
-                  </Item>
+                          <p
+                            style={{
+                              textAlign: "end",
+                              marginBottom: "5px",
+                              ...styles.sizeText,
+                            }}
+                          >
+                            View all
+                          </p>
+                        </Link>
+                      </Typography>
+                    </Item>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Item>
+                      <Typography>
+                        <span style={styles.infoLabel}>Grade structure</span>
+                      </Typography>
+                      {work ? (
+                        ""
+                      ) : (
+                        <Box sx={{ paddingTop: 2 }}>
+                          <p style={styles.sizeText}>No grade structure yet</p>
+                        </Box>
+                      )}
+                      {teacher && <GradeTab data={data} openState={[openGrade, setOpenGrade]} />}
+                    </Item>
+                  </Grid>
                 </Grid>
-                {/* <Grid item xs={12}>
-                  <Item>xs=4</Item>
-                </Grid> */}
               </Grid>
-            </Grid>
-            <Grid item xs={8.5}>
-              <Item>
-                {addPost ? (
-                  <Box>
-                    <ControlledEditor />
-                    <Grid container justifyContent="end" sx={{ marginTop: 2 }}>
-                      <ThemeProvider theme={theme}>
+              <Grid item xs={8.5}>
+                <Item>
+                  {addPost ? (
+                    <Box>
+                      <ControlledEditor />
+                      <Grid container justifyContent="end" sx={{ marginTop: 2 }}>
                         <Button
                           sx={{ marginRight: 1 }}
                           color="primary"
@@ -144,37 +162,37 @@ const StreamTab = ({ data }) => {
                         >
                           Post
                         </Button>
-                      </ThemeProvider>
-                    </Grid>
-                  </Box>
-                ) : (
-                  <Box
-                    onClick={() => setAddPost(true)}
-                    sx={{ marginBottom: 1, "&:hover": { cursor: "pointer" } }}
-                  >
-                    <Grid container alignItems="center">
-                      <Avatar height="35" wihth="35"></Avatar>
-                      <Link
-                        sx={{
-                          marginLeft: "10px",
-                          color: "rgba(0,0,0,0.55)",
-                          textDecoration: "none",
-                          "&:hover": {
-                            color: "#000",
-                            cursor: "pointer",
-                          },
-                        }}
-                      >
-                        Annouce something to your class
-                      </Link>
-                    </Grid>
-                  </Box>
-                )}
-              </Item>
+                      </Grid>
+                    </Box>
+                  ) : (
+                    <Box
+                      onClick={() => setAddPost(true)}
+                      sx={{ marginBottom: 1, "&:hover": { cursor: "pointer" } }}
+                    >
+                      <Grid container alignItems="center">
+                        <Avatar height="35" wihth="35"></Avatar>
+                        <Link
+                          sx={{
+                            marginLeft: "10px",
+                            color: "rgba(0,0,0,0.55)",
+                            textDecoration: "none",
+                            "&:hover": {
+                              color: "#000",
+                              cursor: "pointer",
+                            },
+                          }}
+                        >
+                          Annouce something to your class
+                        </Link>
+                      </Grid>
+                    </Box>
+                  )}
+                </Item>
+              </Grid>
             </Grid>
-          </Grid>
-        </Box>
-      </Container>
+          </Box>
+        </Container>
+      </ThemeProvider>
     </div>
   );
 };

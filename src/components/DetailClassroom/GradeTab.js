@@ -22,15 +22,34 @@ import { useNavigate, useLocation } from "react-router-dom";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import { Dialog, Toolbar, AppBar, Slide } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import style from "../../styles/accordion.css";
+import BackdropProvider from "../../contexts/BackdropProvider";
 
-const GradeTab = ({ data }) => {
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+const GradeTab = ({ data, openState }) => {
   const [characters, updateCharacters] = React.useState([]);
   const [topic, setTopic] = React.useState("Grade structure");
   const [description, setDescription] = React.useState("Description");
   const [loadEffect, setEffect] = React.useState(false);
   const [idStructure, setIdStructure] = React.useState(0);
   const [visable, setVisable] = React.useState(false);
+  const [open, setOpen] = openState;
+  const [openBackdrop, setOpenBackdrop] = React.useContext(BackdropProvider.context);
   const navigate = useNavigate();
+
+  //handle the grade dialog
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleChangeTopic = (event) => {
     setTopic(event.target.value);
@@ -80,6 +99,7 @@ const GradeTab = ({ data }) => {
 
   const handleUpdate = () => {
     const access_token = localStorage.getItem("access_token");
+    setOpenBackdrop(true);
     axios
       .put(
         process.env.REACT_APP_API_URL + "/classroom/grade-structure",
@@ -97,14 +117,13 @@ const GradeTab = ({ data }) => {
         }
       )
       .then((res) => {
-        // console.log(res.data);
+        setOpenBackdrop(false);
         if (res.status === 200) {
-          //console.log("ok");
           setVisable(false);
         }
       })
       .catch((err) => {
-        //console.log(err);
+        setOpenBackdrop(false);
       });
   };
 
@@ -117,12 +136,14 @@ const GradeTab = ({ data }) => {
     >
       {(provided) => (
         <Accordion
+          disableGutters={true}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
           sx={{
             mt: 2,
           }}
+          expanded={false}
         >
           <AccordionSummary aria-controls="panel1a-content" id="panel1a-header">
             <FormControl variant="standard" sx={{ flex: 4, mt: 2 }}>
@@ -180,107 +201,115 @@ const GradeTab = ({ data }) => {
       });
   }, []);
 
-  // const onDownload = () => {
-  //   const link = document.createElement("a");
-  //   link.target = "_blank";
-  //   link.download = "Student list";
-  //   link.href = "/file_template/student_map.xlsx";
-  //   link.click();
-  // };
-
-  // const onDownload2 = () => {
-  //   const link = document.createElement("a");
-  //   link.target = "_blank";
-  //   link.download = "Grades for an assignment";
-  //   link.href = "/file_template/grade_map.xlsx";
-  //   link.click();
-  // };
-
   return (
     <div>
       {loadEffect ? (
-        <Grid container direction="column" alignItems="center" justifyContent="space-between">
-          {/* <Button onClick={onDownload} variant="contained" color="primary">
+        <React.Fragment>
+          <Button
+            variant="contained"
+            sx={{
+              mt: 2,
+              width: "100%",
+            }}
+            onClick={handleClickOpen}
+          >
+            Manage
+          </Button>
+          <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+            <AppBar sx={{ position: "relative" }} color="secondary">
+              <Toolbar>
+                <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+                  <CloseIcon />
+                </IconButton>
+                <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                  Grade structure
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <Grid container direction="column" alignItems="center" justifyContent="space-between">
+              {/* <Button onClick={onDownload} variant="contained" color="primary">
             Student list
           </Button>
           <Button onClick={onDownload2} variant="contained" color="primary">
             Grades list
           </Button> */}
-          <Box
-            sx={{
-              width: "60%",
-              mt: 2,
-              display: "flex",
-              flexDirection: "row-reverse",
-            }}
-          >
-            <Button variant="outlined" onClick={handleHide}>
-              Edit
-            </Button>
-          </Box>
-          <Box
-            sx={{
-              width: "60%",
-            }}
-          >
-            <FormControl variant="standard" fullWidth size="medium">
-              <Input
-                id="component-simple"
-                sx={{ fontSize: 40 }}
-                value={topic}
-                onChange={handleChangeTopic}
-                placeholder="Topic"
-              />
-            </FormControl>
-            <FormControl variant="standard" fullWidth>
-              <Input
-                id="component-simple"
-                sx={{ fontSize: 20, mt: 2 }}
-                value={description}
-                onChange={handleChangeDescription}
-                placeholder="Description"
-              />
-            </FormControl>
-          </Box>
-          <Box
-            sx={{
-              width: "60%",
-              justifyContent: "center",
-              mt: 2,
-            }}
-          >
-            <DragDropContext onDragEnd={handleOnDragEnd}>
-              <Droppable droppableId="characters">
-                {(provided) => (
-                  <Box {...provided.droppableProps} ref={provided.innerRef}>
-                    <List dense={true}>{itemList}</List>
-                    {provided.placeholder}
-                  </Box>
+              <Box
+                sx={{
+                  width: "60%",
+                  mt: 2,
+                  display: "flex",
+                  flexDirection: "row-reverse",
+                }}
+              >
+                <Button variant="contained" onClick={handleHide}>
+                  Edit
+                </Button>
+              </Box>
+              <Box
+                sx={{
+                  width: "60%",
+                }}
+              >
+                <FormControl variant="standard" fullWidth size="medium">
+                  <Input
+                    id="component-simple"
+                    sx={{ fontSize: 40 }}
+                    value={topic}
+                    onChange={handleChangeTopic}
+                    placeholder="Topic"
+                  />
+                </FormControl>
+                <FormControl variant="standard" fullWidth>
+                  <Input
+                    id="component-simple"
+                    sx={{ fontSize: 20, mt: 2 }}
+                    value={description}
+                    onChange={handleChangeDescription}
+                    placeholder="Description"
+                  />
+                </FormControl>
+              </Box>
+              <Box
+                sx={{
+                  width: "60%",
+                  justifyContent: "center",
+                  mt: 2,
+                }}
+              >
+                <DragDropContext onDragEnd={handleOnDragEnd}>
+                  <Droppable droppableId="characters">
+                    {(provided) => (
+                      <Box {...provided.droppableProps} ref={provided.innerRef}>
+                        <List dense={true}>{itemList}</List>
+                        {provided.placeholder}
+                      </Box>
+                    )}
+                  </Droppable>
+                </DragDropContext>
+              </Box>
+              <Box
+                sx={{
+                  width: "60%",
+                  justifyContent: "center",
+                  display: "flex",
+                }}
+              >
+                {visable ? (
+                  <div>
+                    <IconButton color="primary" onClick={handleAddItem}>
+                      <AddCircleRoundedIcon />
+                    </IconButton>
+                    <IconButton color="primary" onClick={handleUpdate}>
+                      <CheckCircleOutlineIcon />
+                    </IconButton>
+                  </div>
+                ) : (
+                  <div></div>
                 )}
-              </Droppable>
-            </DragDropContext>
-          </Box>
-          <Box
-            sx={{
-              width: "60%",
-              justifyContent: "center",
-              display: "flex",
-            }}
-          >
-            {visable ? (
-              <div>
-                <IconButton color="primary" onClick={handleAddItem}>
-                  <AddCircleRoundedIcon />
-                </IconButton>
-                <IconButton color="primary" onClick={handleUpdate}>
-                  <CheckCircleOutlineIcon />
-                </IconButton>
-              </div>
-            ) : (
-              <div></div>
-            )}
-          </Box>
-        </Grid>
+              </Box>
+            </Grid>
+          </Dialog>
+        </React.Fragment>
       ) : (
         <div></div>
       )}

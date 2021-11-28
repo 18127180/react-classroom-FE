@@ -15,7 +15,22 @@ const UserBarInClass = ({ list }) => {
         <Avatar src={item.avatar}></Avatar>
       </ListItemAvatar>
       {item.student_id ? (
-        <ListItemText primary={item.first_name + " " + item.last_name + " - " + item.student_id} />
+        <React.Fragment>
+          <ListItemText
+            primary={item.first_name + " " + item.last_name}
+            sx={{
+              width: "100%",
+              maxWidth: "100%",
+              textOverflow: "ellipsis",
+              lineClamp: 1,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              display: "-webkit-box",
+              boxOrient: "vertical",
+            }}
+          />
+          <ListItemText primary={item.student_id} />
+        </React.Fragment>
       ) : (
         <ListItemText primary={item.first_name + " " + item.last_name} />
       )}

@@ -11,7 +11,6 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import AssignmentTab from "./AssignmentTab";
-import GradeTab from "./GradeTab";
 import GradeManage from "./GradeManage";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -55,7 +54,7 @@ const DetailClassroom = () => {
       })
       .then((res) => {
         if (res.status === 200) {
-          console.log("detail-classroom useEffect");
+          //console.log(res.data);
           setDetailClassData(res.data);
           setEffect(true);
           setRouterTab([
@@ -101,37 +100,37 @@ const DetailClassroom = () => {
 
   return (
     <div>
-      <div>
-        <ClassProvider>
-          <UserProvider>
+      <UserProvider>
+        <div>
+          <ClassProvider>
             <MenuAppBar name={detailClassData.name} route_list={routerTab} isHaveHeaderTab={true} />
-          </UserProvider>
-        </ClassProvider>
-        {!loadEffect && <LinearProgress />}
-        <Routes>
-          <Route path="/stream" element={<StreamTab data={detailClassData} />} />
-          <Route
-            path="/exercises"
-            element={
-              <AssignmentTab
-                data={detailClassData}
-                setEffect={setEffect}
-                classId={id}
-                assignmentState={[assignment, setAssignment]}
-                visitedState={[visited, setVisited]}
-              />
-            }
-          />
-          <Route path="/member" element={<MemberTab data={detailClassData} />} />
-          {/* <Route path="/grades" element={<GradeTab data={detailClassData}/>} /> */}
-          <Route path="/grades" element={<GradeManage/>} />
-        </Routes>
-        <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
-          <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
-            You do not have permission to access this class !!
-          </Alert>
-        </Snackbar>
-      </div>
+          </ClassProvider>
+          {!loadEffect && <LinearProgress />}
+          <Routes>
+            <Route path="/stream" element={<StreamTab data={detailClassData} />} />
+            <Route
+              path="/exercises"
+              element={
+                <AssignmentTab
+                  data={detailClassData}
+                  setEffect={setEffect}
+                  classId={id}
+                  assignmentState={[assignment, setAssignment]}
+                  visitedState={[visited, setVisited]}
+                />
+              }
+            />
+            <Route path="/member" element={<MemberTab data={detailClassData} />} />
+            {/* <Route path="/grades" element={<GradeTab data={detailClassData}/>} /> */}
+            <Route path="/grades" element={<GradeManage />} />
+          </Routes>
+          <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+              You do not have permission to access this class !!
+            </Alert>
+          </Snackbar>
+        </div>
+      </UserProvider>
     </div>
   );
 };

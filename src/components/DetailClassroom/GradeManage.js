@@ -4,7 +4,7 @@ import GradeTable from "../utils/GradeTable";
 
 const GradeManage = ({ data }) => {
   return (
-      <GradeTable/>
+      <GradeTable data={data}/>
   );
 };
 

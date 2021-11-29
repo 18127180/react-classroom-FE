@@ -29,6 +29,9 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 import CheckIcon from '@mui/icons-material/Check';
 import FormExportDialog from './FormExportDialog';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -126,24 +129,52 @@ const list_rows = [
     },
 ]
 
-export default function CustomizedTables() {
-    const [listScore, setListScore] = React.useState(list_rows);
+export default function CustomizedTables({ data }) {
+    const [listScore, setListScore] = React.useState([]);
+    const [loadEffect, setEffect] = React.useState(false);
+    const [listHeader, setListHeader] = React.useState([]);
+    const navigate = useNavigate();
+
     const handleChangeInput = (i, event, subIndex, max_score) => {
         const arr = [...listScore];
         const value = event.target.value;
-        if (!isNaN(+value) || value===""){
-            if (value !=="" && value >= max_score){
-                arr[i].score_list[subIndex].score = max_score;
+        if (!isNaN(+value) || value === "") {
+            if (value !== "" && value >= max_score) {
+                arr[i].list_score[subIndex].score = max_score;
                 setListScore(arr);
-            }else{
-                arr[i].score_list[subIndex].score = event.target.value;
+            } else {
+                arr[i].list_score[subIndex].score = event.target.value;
                 setListScore(arr);
             }
-        }else{
-            arr[i].score_list[subIndex].score = 0;
+        } else {
+            arr[i].list_score[subIndex].score = 0;
             setListScore(arr);
         }
     };
+
+    React.useEffect(() => {
+        const access_token = localStorage.getItem("access_token");
+        axios
+            .get(process.env.REACT_APP_API_URL + `/classroom/grade-table?class_id=${data.id}`, {
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+            .then((res) => {
+                if (res.status === 200) {
+                    setListHeader(res.data.list_header);
+                    setListScore(res.data.grade_table_list);
+                    setEffect(true);
+                }
+            })
+            .catch((err) => {
+                if (err.response.status === 401) {
+                    localStorage.removeItem("user");
+                    localStorage.removeItem("access_token");
+                    setEffect(false);
+                    navigate("/login");
+                }
+            });
+    }, []);
+
     return (
         <Grid container>
             <Grid
@@ -160,61 +191,60 @@ export default function CustomizedTables() {
                     </IconButton>
                 </Tooltip>
                 <FormExportDialog />
-                <Tooltip title="Deny">
-                    <IconButton aria-label="deny">
-                        <DoDisturbIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Save">
-                    <IconButton aria-label="save">
-                        <CheckIcon />
-                    </IconButton>
-                </Tooltip>
             </Grid>
             <Grid item xs={12}>
                 <TableContainer sx={{ maxHeight: 500 }}>
                     <Table sx={{ minWidth: 700 }} aria-label="customized table" stickyHeader>
                         <TableHead>
                             <TableRow>
-                                <StyledTableCell sx={{ fontWeight: 'bold', fontSize: 15 }}>Full name of student</StyledTableCell>
-                                {list_header.map((row) => (
-                                    <StyledTableCell key={row.name} align="center">
+                                <StyledTableCell sx={{ fontWeight: 'bold', fontSize: 15 }} align="center">Student</StyledTableCell>
+                                {listHeader.map((row) => (
+                                    <StyledTableCell key={row.subject_name} align="center">
                                         <Box sx={{ fontWeight: 'bold', fontSize: 18 }}>
-                                            {row.name}
+                                            {row.subject_name}
                                         </Box>
                                         <Box>
-                                            <Divider sx={{ backgroundColor: 'white', height: 2 }} />
+                                            <IconButton aria-label="more" sx={{position:'absolute', right:1, top:1}}>
+                                                <MoreVertIcon sx={{ color: 'white' }} />
+                                            </IconButton>
+                                        </Box>
+                                        <Box sx={{display:'flex',justifyContent:'center', width:'100%'}}>
+                                            <Divider sx={{ backgroundColor: 'white', height: 2 , width: 100}} />
                                         </Box>
                                         <Box>
-                                            (total/{row.total_grade})
+                                            (total/{row.grade})
                                         </Box>
                                     </StyledTableCell>
                                 ))}
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {list_rows.map((row, index) => (
-                                <StyledTableRow key={row.name}>
-                                    <StyledTableCell align="center">
+                            {listScore.map((row, index) => (
+                                <StyledTableRow key={row.student_code}>
+                                    <StyledTableCell align="center" sx={{ width: 300 }}>
                                         <List dense={true}>
                                             <ListItem>
                                                 <ListItemAvatar>
                                                     <Avatar src="https://lh3.googleusercontent.com/a/AATXAJz7_SyQiPPSdAYGsJ5O7cuwom9p9TnHXIqxeyb3=s96-c"></Avatar>
                                                 </ListItemAvatar>
-                                                <ListItemText primary={row.name} />
+                                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                                    <ListItemText primary={row.full_name} />
+                                                    <ListItemText primary={row.student_code} />
+                                                </Box>
                                             </ListItem>
                                         </List>
                                     </StyledTableCell>
-                                    {row.score_list.map((subRow, subIndex) => (
+                                    {row.list_score.map((subRow, subIndex) => (
                                         <StyledTableCell align="center">
-                                            <FormControl variant="standard" sx={{ width: '10ch' }}>
+                                            <FormControl variant="standard">
                                                 <Input
+                                                    sx={{ width: '8ch' }}
                                                     id="standard-adornment-weight"
                                                     value={subRow.score}
                                                     // onChange={handleChange('weight')}
-                                                    endAdornment={<InputAdornment position="end">/100</InputAdornment>}
+                                                    endAdornment={<InputAdornment position="end">/{row.max_score[subIndex]}</InputAdornment>}
                                                     aria-describedby="standard-weight-helper-text"
-                                                    onChange={(e) => handleChangeInput(index, e, subIndex, subRow.max_score)}
+                                                    onChange={(e) => handleChangeInput(index, e, subIndex, row.max_score[subIndex])}
                                                 />
                                             </FormControl>
                                         </StyledTableCell>

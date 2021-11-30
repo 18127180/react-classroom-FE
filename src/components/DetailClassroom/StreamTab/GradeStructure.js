@@ -62,4 +62,4 @@ const GradeStructure = ({ class_id, open }) => {
   );
 };
 
-export default GradeStructure;
+export default React.memo(GradeStructure);

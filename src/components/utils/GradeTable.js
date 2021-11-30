@@ -88,8 +88,40 @@ export default function CustomizedTables({ data }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [curMenu, setCurMenu] = React.useState(null);
   const inputRef = React.createRef();
+  const importRef = React.createRef();
   const { setOpenBackdrop } = React.useContext(BackdropProvider.context);
   const navigate = useNavigate();
+
+  //handle import click
+  const onChangeImportHandler = (event) => {
+    const file = event.target.files[0];
+    console.log(file);
+    if (file.name.split(".")[1] !== "xlsx") {
+      alert("Can only import .xlsx file !!!");
+      // setOpen(true);
+      return;
+    }
+    const formdata = new FormData();
+    formdata.append("file", file);
+    formdata.append("id", data.id);
+    axios
+      .post("http://localhost:4000/upload", formdata, {
+        // receive two parameter endpoint url ,form data
+      })
+      .then((res) => {
+        // then print response status
+        if (res.statusText === "OK") {
+          // xu ly
+        }
+      })
+      .catch((err) => {
+        alert("Something's wrong !!!");
+      });
+  };
+
+  const onClickHandler = () => {
+    importRef.current.click();
+  };
 
   //handle the menu item
   const handleClickMenu = (event) => {
@@ -191,9 +223,17 @@ export default function CustomizedTables({ data }) {
           mr: 2,
         }}
       >
-        <Tooltip title="Import">
+        <input
+          type="file"
+          hidden
+          name="file"
+          ref={importRef}
+          onChange={onChangeImportHandler}
+          onClick={(e) => (e.target.value = null)}
+        ></input>
+        <Tooltip title="Import student list">
           <IconButton aria-label="import">
-            <UploadIcon />
+            <UploadIcon onClick={onClickHandler} />
           </IconButton>
         </Tooltip>
         <FormExportDialog class_id={data.id} />
@@ -251,23 +291,27 @@ export default function CustomizedTables({ data }) {
                   </StyledTableCell>
                   {row.list_score.map((subRow, subIndex) => (
                     <StyledTableCell align="center">
-                      {subRow ? (<FormControl variant="standard">
-                        <Input
-                          sx={{ width: "8ch" }}
-                          id="standard-adornment-weight"
-                          value={subRow}
-                          // onChange={handleChange('weight')}
-                          endAdornment={
-                            <InputAdornment position="end">
-                              /{row.max_score[subIndex]}
-                            </InputAdornment>
-                          }
-                          aria-describedby="standard-weight-helper-text"
-                          onChange={(e) =>
-                            handleChangeInput(index, e, subIndex, row.max_score[subIndex])
-                          }
-                        />
-                      </FormControl>) : (<div></div>)}
+                      {subRow ? (
+                        <FormControl variant="standard">
+                          <Input
+                            sx={{ width: "8ch" }}
+                            id="standard-adornment-weight"
+                            value={subRow}
+                            // onChange={handleChange('weight')}
+                            endAdornment={
+                              <InputAdornment position="end">
+                                /{row.max_score[subIndex]}
+                              </InputAdornment>
+                            }
+                            aria-describedby="standard-weight-helper-text"
+                            onChange={(e) =>
+                              handleChangeInput(index, e, subIndex, row.max_score[subIndex])
+                            }
+                          />
+                        </FormControl>
+                      ) : (
+                        <div></div>
+                      )}
                     </StyledTableCell>
                   ))}
                 </StyledTableRow>

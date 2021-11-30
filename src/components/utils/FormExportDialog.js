@@ -22,6 +22,21 @@ export default function FormExportDialog({ class_id }) {
     setOpen(false);
   };
 
+  const exportStudentList = () => {
+    axios({
+      url: process.env.REACT_APP_API_URL + "/upload/download/studentlist", //your url
+      method: "GET",
+      responseType: "blob", // important
+    }).then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "Student List Template.xlsx"); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+    });
+  };
+
   const exportGradeList = () => {
     axios({
       url: process.env.REACT_APP_API_URL + "/upload/download/grade-list?class_id=" + class_id, //your url
@@ -53,7 +68,12 @@ export default function FormExportDialog({ class_id }) {
         <DialogTitle id="alert-dialog-title">{"Choose template for download:"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <Button variant="contained" startIcon={<FileDownloadIcon />} sx={{ width: "100%" }}>
+            <Button
+              variant="contained"
+              startIcon={<FileDownloadIcon />}
+              sx={{ width: "100%" }}
+              onClick={exportStudentList}
+            >
               template for student list
             </Button>
             <Button

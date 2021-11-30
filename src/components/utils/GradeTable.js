@@ -27,6 +27,8 @@ import { Menu, MenuItem } from "@mui/material";
 import axios from "axios";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BackdropProvider from "../../contexts/BackdropProvider";
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   // [`&.${tableCellClasses.head}`]: {
@@ -91,6 +93,20 @@ export default function CustomizedTables({ data }) {
   const importRef = React.createRef();
   const { setOpenBackdrop } = React.useContext(BackdropProvider.context);
   const navigate = useNavigate();
+
+  const handleClickAway = (i, j) => {
+    const arr = [...listScore];
+    console.log("away" + i + j);
+    arr[i].list_score[j].isClickAway = false;
+    setListScore(arr);
+  }
+
+  const handleClickIn = (i, j) => {
+    const arr = [...listScore];
+    console.log("click" + i + j);
+    arr[i].list_score[j].isClickAway = true;
+    setListScore(arr);
+  }
 
   //handle import click
   const onChangeImportHandler = (event) => {
@@ -277,38 +293,77 @@ export default function CustomizedTables({ data }) {
               {listScore.map((row, index) => (
                 <StyledTableRow key={row.student_code}>
                   <StyledTableCell align="center" sx={{ width: 300 }}>
-                    <List dense={true}>
-                      <ListItem>
-                        <ListItemAvatar>
-                          <Avatar src="https://lh3.googleusercontent.com/a/AATXAJz7_SyQiPPSdAYGsJ5O7cuwom9p9TnHXIqxeyb3=s96-c"></Avatar>
-                        </ListItemAvatar>
-                        <Box sx={{ display: "flex", flexDirection: "column" }}>
-                          <ListItemText primary={row.full_name} />
-                          <ListItemText primary={row.student_code} />
-                        </Box>
-                      </ListItem>
-                    </List>
+                    {row.isExist ? (
+                      <List dense={true}>
+                        <ListItem>
+                          <ListItemAvatar>
+                            <Avatar src={row.avatar}></Avatar>
+                          </ListItemAvatar>
+                          <Box sx={{ display: "flex", flexDirection: "column" }}>
+                            <ListItemText primary={row.full_name} />
+                            <ListItemText primary={row.student_code} />
+                          </Box>
+                        </ListItem>
+                      </List>
+                    ) : (
+                      <List dense={true}>
+                        <ListItem>
+                          <ListItemAvatar>
+                            <Avatar sx={{ backGroundColor: 'red' }}>
+                              <AccountCircleIcon />
+                            </Avatar>
+                          </ListItemAvatar>
+                          <Box sx={{ display: "flex", flexDirection: "column" }}>
+                            <ListItemText sx={{ color: '#bdbdbd' }} primary={row.full_name} />
+                            <ListItemText sx={{ color: '#bdbdbd' }} primary={row.student_code} />
+                          </Box>
+                        </ListItem>
+                      </List>
+                    )}
                   </StyledTableCell>
                   {row.list_score.map((subRow, subIndex) => (
                     <StyledTableCell align="center">
-                      {subRow ? (
-                        <FormControl variant="standard">
-                          <Input
-                            sx={{ width: "8ch" }}
-                            id="standard-adornment-weight"
-                            value={subRow}
-                            // onChange={handleChange('weight')}
-                            endAdornment={
-                              <InputAdornment position="end">
-                                /{row.max_score[subIndex]}
-                              </InputAdornment>
-                            }
-                            aria-describedby="standard-weight-helper-text"
-                            onChange={(e) =>
-                              handleChangeInput(index, e, subIndex, row.max_score[subIndex])
-                            }
-                          />
-                        </FormControl>
+                      {subRow.isChange ? (
+                        subRow.isClickAway ? (
+                          <ClickAwayListener onClickAway={(e) => handleClickAway(index, subIndex)}>
+                            < FormControl variant="standard">
+                              <Input
+                                sx={{ width: "8ch" }}
+                                id="standard-adornment-weight"
+                                value={subRow.score}
+                                // onChange={handleChange('weight')}
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                    /{row.max_score[subIndex]}
+                                  </InputAdornment>
+                                }
+                                aria-describedby="standard-weight-helper-text"
+                                onChange={(e) =>
+                                  handleChangeInput(index, e, subIndex, row.max_score[subIndex])
+                                }
+                                autoFocus={true}
+                              />
+                            </FormControl>
+                          </ClickAwayListener>) : (
+                          < FormControl variant="standard">
+                            <Input
+                              sx={{ width: "8ch" }}
+                              id="standard-adornment-weight"
+                              value={subRow.score}
+                              // onChange={handleChange('weight')}
+                              endAdornment={
+                                <InputAdornment position="end">
+                                  /{row.max_score[subIndex]}
+                                </InputAdornment>
+                              }
+                              aria-describedby="standard-weight-helper-text"
+                              onChange={(e) =>
+                                handleChangeInput(index, e, subIndex, row.max_score[subIndex])
+                              }
+                              onClick={(e) => handleClickIn(index, subIndex)}
+                            />
+                          </FormControl>)
+
                       ) : (
                         <div></div>
                       )}
@@ -345,6 +400,6 @@ export default function CustomizedTables({ data }) {
       >
         <MenuItem onClick={handleImport}>Import Grade</MenuItem>
       </Menu>
-    </Grid>
+    </Grid >
   );
 }

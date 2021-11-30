@@ -18,7 +18,7 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { Topic } from "@mui/icons-material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useRef } from "react-router-dom";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -260,13 +260,13 @@ const GradeTab = ({ data, openState }) => {
                   />
                 </FormControl>
                 <FormControl variant="standard" fullWidth>
-                  <Input
-                    id="component-simple"
-                    sx={{ fontSize: 20, mt: 2 }}
-                    value={description}
-                    onChange={handleChangeDescription}
-                    placeholder="Description"
-                  />
+                    <Input
+                      id="component-simple"
+                      sx={{ fontSize: 20, mt: 2 }}
+                      value={description}
+                      onChange={handleChangeDescription}
+                      placeholder="Description"
+                    />
                 </FormControl>
               </Box>
               <Box

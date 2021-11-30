@@ -39,7 +39,7 @@ const GradeTab = ({ data, openState }) => {
   const [idStructure, setIdStructure] = React.useState(0);
   const [visable, setVisable] = React.useState(false);
   const [open, setOpen] = openState;
-  const [openBackdrop, setOpenBackdrop] = React.useContext(BackdropProvider.context);
+  const { setOpenBackdrop } = React.useContext(BackdropProvider.context);
   const navigate = useNavigate();
 
   //handle the grade dialog

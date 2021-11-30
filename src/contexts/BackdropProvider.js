@@ -8,7 +8,7 @@ const BackdropProvider = ({ children }) => {
     setOpenBackdrop(false);
   };
   return (
-    <context.Provider value={[openBackdrop, setOpenBackdrop]}>
+    <context.Provider value={{ setOpenBackdrop }}>
       {children}
       <Backdrop sx={{ color: "#fff", zIndex: 100000 }} open={openBackdrop} onClick={handleClose}>
         <CircularProgress color="inherit" />

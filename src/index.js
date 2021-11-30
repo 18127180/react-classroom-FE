@@ -23,7 +23,7 @@ ReactDOM.render(
         <Route path="classroom" element={<Home />} />
         <Route path="/detail-classroom/:id*" element={<DetailClassroom />} />
         <Route path="error" element={<Error />} />
-        {/* <Route path="/*" element={<Error />} /> */}
+        <Route path="/*" element={<Error />} />
       </Routes>
     </BrowserRouter>
   </BackdropProvider>,

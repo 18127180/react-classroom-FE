@@ -251,11 +251,11 @@ export default function CustomizedTables({ data }) {
                   </StyledTableCell>
                   {row.list_score.map((subRow, subIndex) => (
                     <StyledTableCell align="center">
-                      <FormControl variant="standard">
+                      {subRow ? (<FormControl variant="standard">
                         <Input
                           sx={{ width: "8ch" }}
                           id="standard-adornment-weight"
-                          value={subRow.score}
+                          value={subRow}
                           // onChange={handleChange('weight')}
                           endAdornment={
                             <InputAdornment position="end">
@@ -267,7 +267,7 @@ export default function CustomizedTables({ data }) {
                             handleChangeInput(index, e, subIndex, row.max_score[subIndex])
                           }
                         />
-                      </FormControl>
+                      </FormControl>) : (<div></div>)}
                     </StyledTableCell>
                   ))}
                 </StyledTableRow>

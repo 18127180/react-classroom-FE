@@ -13,6 +13,7 @@ import UserProvider from "../../contexts/UserProvider";
 import GradeTab from "./GradeTab";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/theme";
+import GradeStructure from "./StreamTab/GradeStructure";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -34,7 +35,7 @@ const styles = {
   },
 };
 
-const StreamTab = ({ data }) => {
+const StreamTab = ({ data, classId }) => {
   let work = null;
   const [addPost, setAddPost] = React.useState(false);
   const [user, setUser] = React.useContext(UserProvider.context);
@@ -130,13 +131,7 @@ const StreamTab = ({ data }) => {
                       <Typography>
                         <span style={styles.infoLabel}>Grade structure</span>
                       </Typography>
-                      {work ? (
-                        ""
-                      ) : (
-                        <Box sx={{ paddingTop: 2 }}>
-                          <p style={styles.sizeText}>No grade structure yet</p>
-                        </Box>
-                      )}
+                      <GradeStructure class_id={classId} open={openGrade} />
                       {teacher && <GradeTab data={data} openState={[openGrade, setOpenGrade]} />}
                     </Item>
                   </Grid>

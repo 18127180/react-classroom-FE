@@ -106,8 +106,9 @@ const DetailClassroom = () => {
             <MenuAppBar name={detailClassData.name} route_list={routerTab} isHaveHeaderTab={true} />
           </ClassProvider>
           {!loadEffect && <LinearProgress />}
+          {/* {detailClassData && ( */}
           <Routes>
-            <Route path="/stream" element={<StreamTab data={detailClassData} />} />
+            <Route path="/stream" element={<StreamTab data={detailClassData} classId={id} />} />
             <Route
               path="/exercises"
               element={
@@ -124,6 +125,7 @@ const DetailClassroom = () => {
             {/* <Route path="/grades" element={<GradeTab data={detailClassData}/>} /> */}
             <Route path="/grades" element={<GradeManage data={detailClassData} />} />
           </Routes>
+          {/* )} */}
           <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
               You do not have permission to access this class !!

@@ -55,9 +55,12 @@ const DetailClassroom = () => {
       .then((res) => {
         if (res.status === 200) {
           //console.log(res.data);
-          setDetailClassData(res.data);
+          const data = res.data;
+          data["isTeacher"] = data.teacherList?.find((t) => t.id === user.id);
+          setDetailClassData(data);
           setEffect(true);
-          setRouterTab([
+
+          const router = [
             {
               name_header: "Stream",
               link: `/detail-classroom/${res.data.id}/stream`,
@@ -73,12 +76,14 @@ const DetailClassroom = () => {
               link: `/detail-classroom/${res.data.id}/member`,
               value: 3,
             },
-            {
+          ];
+          if (data.isTeacher)
+            router.push({
               name_header: "Grade",
               link: `/detail-classroom/${res.data.id}/grades`,
               value: 4,
-            },
-          ]);
+            });
+          setRouterTab(router);
         }
       })
       .catch((err) => {

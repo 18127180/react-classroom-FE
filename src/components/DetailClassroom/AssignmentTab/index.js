@@ -127,12 +127,14 @@ const AssignmentTab = ({ data, classId, setEffect, assignmentState, visitedState
     <ThemeProvider theme={theme}>
       <Grid container spacing={0} direction="column" alignItems="center" justifyContent="center">
         <Container sx={{ maxWidth: "850px !important", mt: 2 }}>
-          <CreateAssignment
-            openState={[open, setOpen]}
-            classId={classId}
-            assignmentState={[assignment, setAssignment]}
-            curAssignmentState={[curAssignment, setCurAssignment]}
-          />
+          {data.isTeacher && (
+            <CreateAssignment
+              openState={[open, setOpen]}
+              classId={classId}
+              assignmentState={[assignment, setAssignment]}
+              curAssignmentState={[curAssignment, setCurAssignment]}
+            />
+          )}
           <Grid container direction="column" sx={{ mt: 4 }}>
             <DragDropContext onDragEnd={handleOnDragEnd}>
               <Droppable droppableId="assigns">
@@ -173,14 +175,16 @@ const AssignmentTab = ({ data, classId, setEffect, assignmentState, visitedState
                                   >
                                     {ass.title}
                                   </Typography>
-                                  <IconButton
-                                    sx={{ ml: "auto", height: 40, width: 40 }}
-                                    className="menu-button"
-                                    data-id={ass.id}
-                                    onClick={handleClickMenu}
-                                  >
-                                    <MoreVertOutlinedIcon />
-                                  </IconButton>
+                                  {data.isTeacher && (
+                                    <IconButton
+                                      sx={{ ml: "auto", height: 40, width: 40 }}
+                                      className="menu-button"
+                                      data-id={ass.id}
+                                      onClick={handleClickMenu}
+                                    >
+                                      <MoreVertOutlinedIcon />
+                                    </IconButton>
+                                  )}
                                 </Grid>
                               </AccordionSummary>
                               <AccordionDetails sx={{ borderTop: "1px solid #ccc", padding: 0 }}>

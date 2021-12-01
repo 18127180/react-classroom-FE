@@ -40,7 +40,6 @@ const StreamTab = ({ data, classId }) => {
   const [addPost, setAddPost] = React.useState(false);
   const [user, setUser] = React.useContext(UserProvider.context);
   const [openGrade, setOpenGrade] = React.useState(false);
-  console.log("user", user);
   const teacher = data.teacherList?.find((t) => t.id === user.id);
 
   return (

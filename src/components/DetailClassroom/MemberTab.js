@@ -26,6 +26,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const MemberTab = ({ data }) => {
+  console.log("data", data);
   const inputRef = React.createRef();
   const [open, setOpen] = React.useState(false);
   const [warningMessage, setWarningMessage] = React.useState("");
@@ -118,25 +119,27 @@ const MemberTab = ({ data }) => {
                     Download template
                   </Button>
                 </Grid>
-                <Grid item sx={{ width: "100%" }}>
-                  <input
-                    type="file"
-                    hidden
-                    name="file"
-                    ref={inputRef}
-                    onChange={onChangeHandler}
-                    onClick={(e) => (e.target.value = null)}
-                  ></input>
-                  <Button
-                    variant="contained"
-                    onClick={onClickHandler}
-                    color="primary"
-                    startIcon={<DocumentScannerIcon />}
-                    sx={{ width: "100%" }}
-                  >
-                    Upload student list
-                  </Button>
-                </Grid>
+                {data.isTeacher && (
+                  <Grid item sx={{ width: "100%" }}>
+                    <input
+                      type="file"
+                      hidden
+                      name="file"
+                      ref={inputRef}
+                      onChange={onChangeHandler}
+                      onClick={(e) => (e.target.value = null)}
+                    ></input>
+                    <Button
+                      variant="contained"
+                      onClick={onClickHandler}
+                      color="primary"
+                      startIcon={<DocumentScannerIcon />}
+                      sx={{ width: "100%" }}
+                    >
+                      Upload student list
+                    </Button>
+                  </Grid>
+                )}
               </Grid>
             </ThemeProvider>
           </Item>

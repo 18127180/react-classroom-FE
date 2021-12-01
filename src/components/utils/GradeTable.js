@@ -98,7 +98,29 @@ export default function CustomizedTables({ data }) {
     const arr = [...listScore];
     console.log("away" + i + j);
     arr[i].list_score[j].isClickAway = false;
-    setListScore(arr);
+    const access_token = localStorage.getItem("access_token");
+    axios
+      .put(
+        process.env.REACT_APP_API_URL + "/classroom/grade-table",
+        {
+          id: data.id,
+          student_data: arr[i],
+          list_header: listHeader
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + access_token,
+          },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+
+        }
+      })
+      .catch((err) => {
+
+      });
   }
 
   const handleClickIn = (i, j) => {

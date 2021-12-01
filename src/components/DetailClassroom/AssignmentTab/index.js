@@ -86,6 +86,7 @@ const AssignmentTab = ({ data, classId, setEffect, assignmentState, visitedState
           console.log(err);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleOnDragEnd(result) {

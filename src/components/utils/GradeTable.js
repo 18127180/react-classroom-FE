@@ -125,7 +125,6 @@ export default function CustomizedTables({ data }) {
 
   const handleClickIn = (i, j) => {
     const arr = [...listScore];
-    console.log("click" + i + j);
     arr[i].list_score[j].isClickAway = true;
     setListScore(arr);
   }
@@ -208,16 +207,32 @@ export default function CustomizedTables({ data }) {
   const handleChangeInput = (i, event, subIndex, max_score) => {
     const arr = [...listScore];
     const value = event.target.value;
+    console.log("i "+i+" j"+subIndex);
     if (!isNaN(+value) || value === "") {
       if (value !== "" && value >= max_score) {
         arr[i].list_score[subIndex].score = max_score;
+        let total_score = 0;
+        for (let j=0;j<arr[i].list_score.length-1;j++){
+          total_score = total_score + Number(arr[i].list_score[j]?.score);
+        }
+        arr[i].list_score[arr[i].list_score.length-1].score = total_score;
         setListScore(arr);
       } else {
-        arr[i].list_score[subIndex].score = event.target.value;
+        arr[i].list_score[subIndex].score = Number(event.target.value);
+        let total_score = 0;
+        for (let j=0;j<arr[i].list_score.length-1;j++){
+          total_score = total_score + Number(arr[i].list_score[j]?.score);
+        }
+        arr[i].list_score[arr[i].list_score.length-1].score = total_score;
         setListScore(arr);
       }
     } else {
       arr[i].list_score[subIndex].score = 0;
+      let total_score = 0;
+      for (let j=0;j<arr[i].list_score.length-1;j++){
+        total_score = total_score + Number(arr[i].list_score[j]?.score);
+      }
+      arr[i].list_score[arr[i].list_score.length-1].score = total_score;
       setListScore(arr);
     }
   };

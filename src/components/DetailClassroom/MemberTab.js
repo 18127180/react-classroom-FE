@@ -51,7 +51,7 @@ const MemberTab = ({ data }) => {
     formdata.append("file", file);
     formdata.append("id", data.id);
     axios
-      .post("http://localhost:4000/upload", formdata, {
+      .post(process.env.REACT_APP_API_URL + "/upload", formdata, {
         // receive two parameter endpoint url ,form data
       })
       .then((res) => {

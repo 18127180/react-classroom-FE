@@ -27,8 +27,8 @@ import { Menu, MenuItem } from "@mui/material";
 import axios from "axios";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BackdropProvider from "../../contexts/BackdropProvider";
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   // [`&.${tableCellClasses.head}`]: {
@@ -105,7 +105,7 @@ export default function CustomizedTables({ data }) {
         {
           id: data.id,
           student_data: arr[i],
-          list_header: listHeader
+          list_header: listHeader,
         },
         {
           headers: {
@@ -115,19 +115,16 @@ export default function CustomizedTables({ data }) {
       )
       .then((res) => {
         if (res.status === 200) {
-
         }
       })
-      .catch((err) => {
-
-      });
-  }
+      .catch((err) => {});
+  };
 
   const handleClickIn = (i, j) => {
     const arr = [...listScore];
     arr[i].list_score[j].isClickAway = true;
     setListScore(arr);
-  }
+  };
 
   //handle import click
   const onChangeImportHandler = (event) => {
@@ -142,7 +139,7 @@ export default function CustomizedTables({ data }) {
     formdata.append("file", file);
     formdata.append("id", data.id);
     axios
-      .post("http://localhost:4000/upload", formdata, {
+      .post(process.env.REACT_APP_API_URL + "/upload", formdata, {
         // receive two parameter endpoint url ,form data
       })
       .then((res) => {
@@ -187,7 +184,7 @@ export default function CustomizedTables({ data }) {
     formdata.append("syllabus_id", curMenu);
     formdata.append("syllabus_maxGrade", listHeader.find((row) => row.id === curMenu).grade);
     axios
-      .post("http://localhost:4000/upload/grade-list", formdata)
+      .post(process.env.REACT_APP_API_URL + "/upload/grade-list", formdata)
       .then((res) => {
         // then print response status
         if (res.status === 200) {
@@ -207,32 +204,32 @@ export default function CustomizedTables({ data }) {
   const handleChangeInput = (i, event, subIndex, max_score) => {
     const arr = [...listScore];
     const value = event.target.value;
-    console.log("i "+i+" j"+subIndex);
+    console.log("i " + i + " j" + subIndex);
     if (!isNaN(+value) || value === "") {
       if (value !== "" && value >= max_score) {
         arr[i].list_score[subIndex].score = max_score;
         let total_score = 0;
-        for (let j=0;j<arr[i].list_score.length-1;j++){
+        for (let j = 0; j < arr[i].list_score.length - 1; j++) {
           total_score = total_score + Number(arr[i].list_score[j]?.score);
         }
-        arr[i].list_score[arr[i].list_score.length-1].score = total_score;
+        arr[i].list_score[arr[i].list_score.length - 1].score = total_score;
         setListScore(arr);
       } else {
         arr[i].list_score[subIndex].score = Number(event.target.value);
         let total_score = 0;
-        for (let j=0;j<arr[i].list_score.length-1;j++){
+        for (let j = 0; j < arr[i].list_score.length - 1; j++) {
           total_score = total_score + Number(arr[i].list_score[j]?.score);
         }
-        arr[i].list_score[arr[i].list_score.length-1].score = total_score;
+        arr[i].list_score[arr[i].list_score.length - 1].score = total_score;
         setListScore(arr);
       }
     } else {
       arr[i].list_score[subIndex].score = 0;
       let total_score = 0;
-      for (let j=0;j<arr[i].list_score.length-1;j++){
+      for (let j = 0; j < arr[i].list_score.length - 1; j++) {
         total_score = total_score + Number(arr[i].list_score[j]?.score);
       }
-      arr[i].list_score[arr[i].list_score.length-1].score = total_score;
+      arr[i].list_score[arr[i].list_score.length - 1].score = total_score;
       setListScore(arr);
     }
   };
@@ -346,13 +343,13 @@ export default function CustomizedTables({ data }) {
                       <List dense={true}>
                         <ListItem>
                           <ListItemAvatar>
-                            <Avatar sx={{ backGroundColor: 'red' }}>
+                            <Avatar sx={{ backGroundColor: "red" }}>
                               <AccountCircleIcon />
                             </Avatar>
                           </ListItemAvatar>
                           <Box sx={{ display: "flex", flexDirection: "column" }}>
-                            <ListItemText sx={{ color: '#bdbdbd' }} primary={row.full_name} />
-                            <ListItemText sx={{ color: '#bdbdbd' }} primary={row.student_code} />
+                            <ListItemText sx={{ color: "#bdbdbd" }} primary={row.full_name} />
+                            <ListItemText sx={{ color: "#bdbdbd" }} primary={row.student_code} />
                           </Box>
                         </ListItem>
                       </List>
@@ -363,7 +360,7 @@ export default function CustomizedTables({ data }) {
                       {subRow.isChange ? (
                         subRow.isClickAway ? (
                           <ClickAwayListener onClickAway={(e) => handleClickAway(index, subIndex)}>
-                            < FormControl variant="standard">
+                            <FormControl variant="standard">
                               <Input
                                 sx={{ width: "8ch" }}
                                 id="standard-adornment-weight"
@@ -381,8 +378,9 @@ export default function CustomizedTables({ data }) {
                                 autoFocus={true}
                               />
                             </FormControl>
-                          </ClickAwayListener>) : (
-                          < FormControl variant="standard">
+                          </ClickAwayListener>
+                        ) : (
+                          <FormControl variant="standard">
                             <Input
                               sx={{ width: "8ch" }}
                               id="standard-adornment-weight"
@@ -399,8 +397,8 @@ export default function CustomizedTables({ data }) {
                               }
                               onClick={(e) => handleClickIn(index, subIndex)}
                             />
-                          </FormControl>)
-
+                          </FormControl>
+                        )
                       ) : (
                         <div></div>
                       )}
@@ -437,6 +435,6 @@ export default function CustomizedTables({ data }) {
       >
         <MenuItem onClick={handleImport}>Import Grade</MenuItem>
       </Menu>
-    </Grid >
+    </Grid>
   );
 }

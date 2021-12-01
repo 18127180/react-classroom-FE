@@ -75,6 +75,7 @@ const GradeTab = ({ data, openState }) => {
       id: "" + (characters.length + 1),
       subject_name: "",
       grade: 0,
+      new: true
     });
     updateCharacters(items);
     console.log(items);
@@ -119,6 +120,10 @@ const GradeTab = ({ data, openState }) => {
       .then((res) => {
         setOpenBackdrop(false);
         if (res.status === 200) {
+          updateCharacters(res.data?.list_syllabus);
+          setTopic(res.data?.topic);
+          setDescription(res.data?.description);
+          setIdStructure(res.data?.id);
           setVisable(false);
         }
       })

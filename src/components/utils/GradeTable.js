@@ -96,8 +96,8 @@ export default function CustomizedTables({ data }) {
 
   const handleClickAway = (i, j) => {
     const arr = [...listScore];
-    console.log("away" + i + j);
     arr[i].list_score[j].isClickAway = false;
+    setListScore(arr);
     const access_token = localStorage.getItem("access_token");
     axios
       .put(

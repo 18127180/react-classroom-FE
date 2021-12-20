@@ -170,6 +170,38 @@ export default function CustomizedTables({ data }) {
     inputRef.current.click();
     setAnchorEl(null);
   };
+  const handleFinalize = () => {
+    setAnchorEl(null);
+    const access_token = localStorage.getItem("access_token");
+    const header = listHeader.find((h) => h.id === curMenu);
+    axios
+      .put(
+        process.env.REACT_APP_API_URL + "/syllabus/" + curMenu,
+        {
+          finalize: !header.finalize,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + access_token,
+          },
+        }
+      )
+      .then((res) => {
+        // then print response status
+        if (res.statusText === "OK") {
+          const tempList = listHeader.map((h) => {
+            if (h.id === curMenu) {
+              return res.data;
+            }
+            return h;
+          });
+          setListHeader(tempList);
+        }
+      })
+      .catch((err) => {
+        alert("Something's wrong !!!");
+      });
+  };
 
   //upload
   const onChangeHandler = (event) => {
@@ -434,6 +466,7 @@ export default function CustomizedTables({ data }) {
         }}
       >
         <MenuItem onClick={handleImport}>Import Grade</MenuItem>
+        <MenuItem onClick={handleFinalize}>Finalize Score</MenuItem>
       </Menu>
     </Grid>
   );

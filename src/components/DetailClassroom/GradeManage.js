@@ -1,10 +1,12 @@
 import React from "react";
-import Grid from "@mui/material/Grid";
 import GradeTable from "../utils/GradeTable";
+import StudentGrade from "./StudentGrade";
 
-const GradeManage = ({ data }) => {
-  return (
-      <GradeTable data={data}/>
+const GradeManage = ({ data, visitedState, setEffect }) => {
+  return data.isTeacher ? (
+    <GradeTable data={data} />
+  ) : (
+    <StudentGrade data={data} visitedState={visitedState} setEffect={setEffect} />
   );
 };
 

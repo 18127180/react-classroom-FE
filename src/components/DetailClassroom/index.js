@@ -76,13 +76,12 @@ const DetailClassroom = () => {
               link: `/detail-classroom/${res.data.id}/member`,
               value: 3,
             },
-          ];
-          if (data.isTeacher)
-            router.push({
+            {
               name_header: "Grade",
               link: `/detail-classroom/${res.data.id}/grades`,
               value: 4,
-            });
+            },
+          ];
           setRouterTab(router);
         }
       })
@@ -128,7 +127,16 @@ const DetailClassroom = () => {
             />
             <Route path="/member" element={<MemberTab data={detailClassData} />} />
             {/* <Route path="/grades" element={<GradeTab data={detailClassData}/>} /> */}
-            <Route path="/grades" element={<GradeManage data={detailClassData} />} />
+            <Route
+              path="/grades"
+              element={
+                <GradeManage
+                  data={detailClassData}
+                  visitedState={[visited, setVisited]}
+                  setEffect={setEffect}
+                />
+              }
+            />
           </Routes>
           {/* )} */}
           <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>

@@ -24,6 +24,7 @@ const DetailClassroom = () => {
   const [routerTab, setRouterTab] = useState([]);
   const [visited, setVisited] = useState([true, false, false, false]);
   const [assignment, setAssignment] = useState([]);
+  const [syllabus, setSyllabus] = useState([]);
   const [loadEffect, setEffect] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -133,6 +134,7 @@ const DetailClassroom = () => {
                 <GradeManage
                   data={detailClassData}
                   visitedState={[visited, setVisited]}
+                  syllabusState={[syllabus, setSyllabus]}
                   setEffect={setEffect}
                 />
               }

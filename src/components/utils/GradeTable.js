@@ -84,6 +84,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function CustomizedTables({ data }) {
   const [listScore, setListScore] = React.useState([]);
+  const [listMaxScore, setListMaxScore] = React.useState([]);
   const [reload, setReload] = React.useState(0);
   const [loadEffect, setEffect] = React.useState(false);
   const [listHeader, setListHeader] = React.useState([]);
@@ -92,38 +93,60 @@ export default function CustomizedTables({ data }) {
   const inputRef = React.createRef();
   const importRef = React.createRef();
   const { setOpenBackdrop } = React.useContext(BackdropProvider.context);
+  const [clickAway, setClickAway] = React.useState(false);
+  const [studentDataUpdate, setStudentDataUpdate] = React.useState(null);
   const navigate = useNavigate();
 
   const handleClickAway = (i, j) => {
-    const arr = [...listScore];
-    arr[i].list_score[j].isClickAway = false;
-    setListScore(arr);
-    const access_token = localStorage.getItem("access_token");
-    axios
-      .put(
-        process.env.REACT_APP_API_URL + "/classroom/grade-table",
-        {
-          id: data.id,
-          student_data: arr[i],
-          list_header: listHeader,
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + access_token,
-          },
-        }
-      )
-      .then((res) => {
-        if (res.status === 200) {
-        }
-      })
-      .catch((err) => {});
-  };
-
-  const handleClickIn = (i, j) => {
-    const arr = [...listScore];
-    arr[i].list_score[j].isClickAway = true;
-    setListScore(arr);
+    if (clickAway === false) {
+      console.log("ClickAway: ", i + " " + j);
+      console.log(studentDataUpdate);
+      setClickAway(true);
+      if (studentDataUpdate) {
+        const access_token = localStorage.getItem("access_token");
+        axios
+          .put(
+            process.env.REACT_APP_API_URL + "/classroom/grade-table",
+            {
+              student_data: studentDataUpdate,
+              list_header: listHeader,
+            },
+            {
+              headers: {
+                Authorization: "Bearer " + access_token,
+              },
+            }
+          )
+          .then((res) => {
+            if (res.status === 200) {
+            }
+          })
+          .catch((err) => { });
+      }
+    }
+    // const arr = [...listScore];
+    // arr[i].list_score[j].isClickAway = false;
+    // setListScore(arr);
+    // const access_token = localStorage.getItem("access_token");
+    // axios
+    //   .put(
+    //     process.env.REACT_APP_API_URL + "/classroom/grade-table",
+    //     {
+    //       id: data.id,
+    //       student_data: arr[i],
+    //       list_header: listHeader,
+    //     },
+    //     {
+    //       headers: {
+    //         Authorization: "Bearer " + access_token,
+    //       },
+    //     }
+    //   )
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //     }
+    //   })
+    //   .catch((err) => { });
   };
 
   //handle import click
@@ -234,34 +257,37 @@ export default function CustomizedTables({ data }) {
   };
 
   const handleChangeInput = (i, event, subIndex, max_score) => {
+    // console.log('ok');
+    setClickAway(false);
     const arr = [...listScore];
+    setStudentDataUpdate(arr[i]);
     const value = event.target.value;
-    console.log("i " + i + " j" + subIndex);
+    // console.log("i " + i + " j" + subIndex);
     if (!isNaN(+value) || value === "") {
       if (value !== "" && value >= max_score) {
-        arr[i].list_score[subIndex].score = max_score;
+        arr[i].list_score[subIndex] = max_score;
         let total_score = 0;
         for (let j = 0; j < arr[i].list_score.length - 1; j++) {
-          total_score = total_score + Number(arr[i].list_score[j]?.score);
+          total_score = total_score + Number(arr[i].list_score[j]);
         }
-        arr[i].list_score[arr[i].list_score.length - 1].score = total_score;
+        arr[i].list_score[arr[i].list_score.length - 1] = total_score;
         setListScore(arr);
       } else {
-        arr[i].list_score[subIndex].score = Number(event.target.value);
+        arr[i].list_score[subIndex] = Number(event.target.value);
         let total_score = 0;
         for (let j = 0; j < arr[i].list_score.length - 1; j++) {
-          total_score = total_score + Number(arr[i].list_score[j]?.score);
+          total_score = total_score + Number(arr[i].list_score[j]);
         }
-        arr[i].list_score[arr[i].list_score.length - 1].score = total_score;
+        arr[i].list_score[arr[i].list_score.length - 1] = total_score;
         setListScore(arr);
       }
     } else {
-      arr[i].list_score[subIndex].score = 0;
+      arr[i].list_score[subIndex] = 0;
       let total_score = 0;
       for (let j = 0; j < arr[i].list_score.length - 1; j++) {
-        total_score = total_score + Number(arr[i].list_score[j]?.score);
+        total_score = total_score + Number(arr[i].list_score[j]);
       }
-      arr[i].list_score[arr[i].list_score.length - 1].score = total_score;
+      arr[i].list_score[arr[i].list_score.length - 1] = total_score;
       setListScore(arr);
     }
   };
@@ -274,7 +300,15 @@ export default function CustomizedTables({ data }) {
       })
       .then((res) => {
         if (res.status === 200) {
-          setListHeader(res.data.list_header);
+          let list_header = res.data.list_header;
+          setListHeader(list_header);
+
+          let max_score_list = [];
+          for (let item of list_header) {
+            max_score_list.push(item.grade);
+          }
+          setListMaxScore(max_score_list);
+
           setListScore(res.data.grade_table_list);
           setEffect(true);
           if (reload > 0) {
@@ -330,7 +364,7 @@ export default function CustomizedTables({ data }) {
                   Student
                 </StyledTableCell>
                 {listHeader.map((row) => (
-                  <StyledTableCell key={row.subject_name} align="center" sx={{ maxWidth: "200px" }}>
+                  <StyledTableCell key={row.id} align="center" sx={{ maxWidth: "200px" }}>
                     <Box sx={{ fontWeight: "bold", fontSize: 18 }}>{row.subject_name}</Box>
                     <Box>
                       <IconButton
@@ -353,13 +387,20 @@ export default function CustomizedTables({ data }) {
                     <Box>(total/{row.grade})</Box>
                   </StyledTableCell>
                 ))}
+                <StyledTableCell key="totalFinal" align="center" sx={{ maxWidth: "200px" }}>
+                  <Box sx={{ fontWeight: "bold", fontSize: 18 }}>Total</Box>
+                  <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+                    <Divider sx={{ backgroundColor: "white", height: 2, width: 100 }} />
+                  </Box>
+                  <Box>(total/{listMaxScore.reduce(function (acc, val) { return acc + val; }, 0)})</Box>
+                </StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {listScore.map((row, index) => (
                 <StyledTableRow key={row.student_code}>
                   <StyledTableCell align="center" sx={{ width: 300 }}>
-                    {row.isExist ? (
+                    {row.isexist ? (
                       <List dense={true}>
                         <ListItem>
                           <ListItemAvatar>
@@ -387,10 +428,73 @@ export default function CustomizedTables({ data }) {
                       </List>
                     )}
                   </StyledTableCell>
-                  {row.list_score.map((subRow, subIndex) => (
-                    <StyledTableCell align="center">
-                      {subRow.isChange ? (
-                        subRow.isClickAway ? (
+                  {row.list_score.map((subRow, subIndex) => {
+                    if (listMaxScore.length - subIndex === 0) {
+                      return (
+                        <StyledTableCell align="center">
+                          <FormControl variant="standard">
+                            <Input
+                              sx={{ width: "8ch" }}
+                              id="standard-adornment-weight"
+                              value={subRow}
+                              endAdornment={
+                                <InputAdornment position="end">
+                                  /{listMaxScore.reduce(function (acc, val) { return acc + val; }, 0)}
+                                </InputAdornment>
+                              }
+                              aria-describedby="standard-weight-helper-text"
+                            />
+                          </FormControl>
+                        </StyledTableCell>
+                      )
+                    } else {
+                      if (subRow != null) {
+                        return (
+                          <ClickAwayListener onClickAway={(e) => handleClickAway(index, subIndex)}>
+                            <StyledTableCell align="center">
+                              <FormControl variant="standard">
+                                <Input
+                                  sx={{ width: "8ch" }}
+                                  id="standard-adornment-weight"
+                                  value={subRow}
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                      /{listMaxScore[subIndex]}
+                                    </InputAdornment>
+                                  }
+                                  onChange={(e) =>
+                                    handleChangeInput(index, e, subIndex, listMaxScore[subIndex])
+                                  }
+                                  aria-describedby="standard-weight-helper-text"
+                                />
+                              </FormControl>
+                            </StyledTableCell>
+                          </ClickAwayListener>
+                        )
+                      } else {
+                        return (
+                          <StyledTableCell align="center">
+                          </StyledTableCell>
+                        )
+                      }
+                    }
+                    // <StyledTableCell align="center">
+                    //   <FormControl variant="standard">
+                    //     <Input
+                    //       sx={{ width: "8ch" }}
+                    //       id="standard-adornment-weight"
+                    //       value={subRow}
+                    //       // onChange={handleChange('weight')}
+                    //       endAdornment={
+                    //         <InputAdornment position="end">
+                    //           /{listMaxScore[subIndex]}
+                    //         </InputAdornment>
+                    //       }
+                    //       aria-describedby="standard-weight-helper-text"
+                    //     />
+                    //   </FormControl>
+
+                    {/* {subRow.isClickAway ? (
                           <ClickAwayListener onClickAway={(e) => handleClickAway(index, subIndex)}>
                             <FormControl variant="standard">
                               <Input
@@ -430,12 +534,9 @@ export default function CustomizedTables({ data }) {
                               onClick={(e) => handleClickIn(index, subIndex)}
                             />
                           </FormControl>
-                        )
-                      ) : (
-                        <div></div>
-                      )}
-                    </StyledTableCell>
-                  ))}
+                        )} */}
+                    // </StyledTableCell>
+                  })}
                 </StyledTableRow>
               ))}
             </TableBody>

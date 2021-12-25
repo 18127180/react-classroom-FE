@@ -133,6 +133,7 @@ const DetailClassroom = () => {
               element={
                 <GradeManage
                   data={detailClassData}
+                  classId={id}
                   visitedState={[visited, setVisited]}
                   syllabusState={[syllabus, setSyllabus]}
                   setEffect={setEffect}

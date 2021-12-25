@@ -17,19 +17,20 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import theme from "../../../theme/theme";
-import AddCommentOutlinedIcon from "@mui/icons-material/AddCommentOutlined";
 import { Formik, Form } from "formik";
 import * as yup from "yup";
 import "../../../styles/assignment.css";
+import ReviewComment from "./ReviewComment";
 
-const StudentGrade = ({ data, visitedState, syllabusState, setEffect }) => {
+const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect }) => {
   const [syllabus, setSyllabus] = syllabusState;
   const [visited, setVisited] = visitedState;
   const [expanded, setExpanded] = React.useState(false);
   const access_token = localStorage.getItem("access_token");
   const user = JSON.parse(localStorage.getItem("user"));
+  const [commenting, setCommenting] = useState(false);
 
   //handle the current accordion
   const handleChange = (panel) => (event, isExpanded) => {
@@ -43,7 +44,7 @@ const StudentGrade = ({ data, visitedState, syllabusState, setEffect }) => {
       axios
         .get(
           process.env.REACT_APP_API_URL +
-            `/classroom/grade-personal?class_id=${data.id}&user_id=${user.id}`,
+            `/classroom/grade-personal?class_id=${classId}&user_id=${user.id}`,
           {
             headers: { Authorization: `Bearer ${access_token}` },
           }
@@ -67,8 +68,21 @@ const StudentGrade = ({ data, visitedState, syllabusState, setEffect }) => {
   return (
     <ThemeProvider theme={theme}>
       <Grid container spacing={0} direction="column" alignItems="center" justifyContent="center">
-        <Container sx={{ maxWidth: "650px !important", mt: 2 }}>
-          <Grid container direction="column" sx={{ mt: 4 }}>
+        <Container
+          sx={{
+            maxWidth: "650px !important",
+            mt: 2,
+            ml: commenting ? "50px" : "auto",
+            transition: commenting ? "margin-left 1000ms linear" : "",
+          }}
+        >
+          <Grid
+            container
+            direction="column"
+            sx={{
+              mt: 4,
+            }}
+          >
             {syllabus &&
               syllabus.map((syl, index) => (
                 <Accordion
@@ -229,15 +243,7 @@ const StudentGrade = ({ data, visitedState, syllabusState, setEffect }) => {
                                 letterSpacing: "normal",
                               }}
                             >
-                              <IconButton
-                                variant="contained"
-                                color="default"
-                                sx={{ float: "left" }}
-                              >
-                                <Badge badgeContent={4} color="info">
-                                  <AddCommentOutlinedIcon />
-                                </Badge>
-                              </IconButton>
+                              <ReviewComment setCommenting={setCommenting} syllabus={syl} />
                               <Button type="submit" variant="contained" sx={{ float: "right" }}>
                                 Submit review
                               </Button>

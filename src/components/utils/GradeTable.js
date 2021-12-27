@@ -29,6 +29,16 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BackdropProvider from "../../contexts/BackdropProvider";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Button from "@mui/material/Button";
+import { Dialog, Toolbar, AppBar, Slide } from "@mui/material";
+import { Typography } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import style from "../../styles/accordion.css";
+import TeacherReviewComment from "../DetailClassroom/TeacherReviewGrade";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   // [`&.${tableCellClasses.head}`]: {
@@ -95,7 +105,16 @@ export default function CustomizedTables({ data }) {
   const { setOpenBackdrop } = React.useContext(BackdropProvider.context);
   const [clickAway, setClickAway] = React.useState(false);
   const [studentDataUpdate, setStudentDataUpdate] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleClickAway = (i, j) => {
     if (clickAway === false) {
@@ -353,6 +372,40 @@ export default function CustomizedTables({ data }) {
           </IconButton>
         </Tooltip>
         <FormExportDialog class_id={data.id} />
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          maxHeight: 40,
+          display: "flex",
+          justifyContent: "flex-end",
+          mr: 2,
+        }}
+      >
+        <Button
+          variant="contained"
+          onClick={handleClickOpen}
+        >
+          Manage Review
+        </Button>
+        <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+          <AppBar sx={{ position: "relative" }} color="secondary">
+            <Toolbar>
+              <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+                <CloseIcon />
+              </IconButton>
+              <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                Grade review
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <Grid container direction="column" alignItems="center" justifyContent="space-between">
+            <TeacherReviewComment
+              data={data}
+            />
+          </Grid>
+        </Dialog>
       </Grid>
       <Grid item xs={12}>
         <TableContainer sx={{ maxHeight: 500 }}>

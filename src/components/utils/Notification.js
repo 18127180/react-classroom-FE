@@ -2,13 +2,10 @@ import { useState, Fragment } from "react";
 import * as React from "react";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import Divider from "@mui/material/Divider";
-import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import { Avatar, Badge, Box, Container, Grid, ListItemIcon, ListItemText } from "@mui/material";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import LogoutIcon from "@mui/icons-material/Logout";
+import { Avatar, Badge, Container, Grid } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ITEM_HEIGHT = 64;
@@ -16,6 +13,8 @@ const ITEM_HEIGHT = 64;
 const Notification = () => {
   const [newNotification, setNewNotification] = useState(0);
   const [anchorNotification, setanchorNotification] = useState(null);
+  const [index, setIndex] = useState(null);
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([
     {
       id: 1,
@@ -24,6 +23,7 @@ const Notification = () => {
         "https://lh3.googleusercontent.com/ogw/ADea4I46BRajOkt5wQOxWnzcV3aYpK6JzLRYTWQkh94=s64-c-mo",
       message: "Nhan Rui has posted something in class",
       hasRead: true,
+      link: "https://www.facebook.com/lehoang.phuc.52",
       time: Date.now(),
     },
   ]);
@@ -33,6 +33,15 @@ const Notification = () => {
   };
   const handleCloseNotificationMenu = () => {
     setanchorNotification(null);
+  };
+  const handleClickNotification = (id) => {
+    setIndex(id);
+    setNotifications(
+      notifications.map((el) => (el.id === id ? Object.assign({}, el, { hasRead: true }) : el))
+    );
+    //thao mock thay window = navigate
+    // navigate(`${link}`)
+    window.location.redirect = "facebook.com/lehoang.phuc.52";
   };
 
   React.useEffect(() => {
@@ -45,6 +54,7 @@ const Notification = () => {
           "https://lh3.googleusercontent.com/ogw/ADea4I46BRajOkt5wQOxWnzcV3aYpK6JzLRYTWQkh94=s64-c-mo",
         message: "Phuc Map has modified your grade.",
         hasRead: false,
+        link: "https://www.facebook.com/lehoang.phuc.52",
         time: Date.now(),
       },
     ];
@@ -98,8 +108,11 @@ const Notification = () => {
                   padding: 1,
                   "&:hover": {
                     background: "#d7d7d7",
+                    cursor: "pointer",
                   },
                 }}
+                id={`notification-${noti.id}`}
+                onClick={() => handleClickNotification(noti.id)}
               >
                 <Grid container direction="row">
                   <Grid item xs={1.5} alignSelf="center">

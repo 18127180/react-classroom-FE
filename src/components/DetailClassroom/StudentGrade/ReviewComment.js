@@ -11,6 +11,7 @@ import { ChatController, MuiChat } from "chat-ui-react";
 import "./ReviewComment.css";
 
 const drawerWidth = 520;
+const cssName = { position: "absolute", top: "-24px", fontSize: "12px", color: "rgba(0,0,0,0.87)" };
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -25,6 +26,7 @@ export default function ReviewComment({ setCommenting, syllabus }) {
   const theme = useTheme();
   const [state, setState] = useState(false);
   const { syllabus_name, syllabus_id } = syllabus;
+  const [numberOfComment, setNumberOfComment] = useState(0);
   const [chatCtl] = React.useState(
     new ChatController({
       showDateTime: true,
@@ -36,28 +38,49 @@ export default function ReviewComment({ setCommenting, syllabus }) {
     {
       id: 1,
       syllabus_id: 4,
+      username: "Narui",
       content: "Mong thay xem xet",
       isStudent: true,
       avatar:
         "https://scontent.fsgn5-9.fna.fbcdn.net/v/t1.18169-1/cp0/p86x86/15542053_340996142952805_2049033225934452726_n.jpg?_nc_cat=105&ccb=1-5&_nc_sid=dbb9e7&_nc_ohc=En4rN_34GnkAX-jGALs&_nc_ht=scontent.fsgn5-9.fna&oh=00_AT8kCLkgpwGvyvrxXRLdmHrvjF6KZX1MRcRn68I11c-kYA&oe=61F480E5",
       isSeen: false,
-      createAt: new Date(),
+      createdAt: new Date(),
     },
     {
       id: 2,
       syllabus_id: 4,
       content: "Toi ko thich day",
+      username: "Phuc Le",
       isStudent: false,
       avatar:
         "https://scontent.fsgn5-9.fna.fbcdn.net/v/t1.18169-1/cp0/p86x86/15542053_340996142952805_2049033225934452726_n.jpg?_nc_cat=105&ccb=1-5&_nc_sid=dbb9e7&_nc_ohc=En4rN_34GnkAX-jGALs&_nc_ht=scontent.fsgn5-9.fna&oh=00_AT8kCLkgpwGvyvrxXRLdmHrvjF6KZX1MRcRn68I11c-kYA&oe=61F480E5",
       isSeen: false,
-      createAt: new Date(),
+      createdAt: new Date(),
     },
   ];
 
-  chatCtl.setActionRequest({ type: "text", always: true }, (response) => {
-    console.log(response.value);
-  });
+  chatCtl.setActionRequest(
+    {
+      type: "text",
+      always: true,
+    },
+    (response) => {
+      setNumberOfComment(numberOfComment + 1);
+      chatCtl.updateMessage(numberOfComment, {
+        type: "text",
+        content: (
+          <div style={{ position: "relative" }}>
+            <p style={{ ...cssName, right: 0 }}>{"narui"}</p>
+            <span>{response.value}</span>
+          </div>
+        ),
+        self: true,
+        avatar:
+          "https://scontent.fsgn5-9.fna.fbcdn.net/v/t1.18169-1/cp0/p86x86/15542053_340996142952805_2049033225934452726_n.jpg?_nc_cat=105&ccb=1-5&_nc_sid=dbb9e7&_nc_ohc=En4rN_34GnkAX-jGALs&_nc_ht=scontent.fsgn5-9.fna&oh=00_AT8kCLkgpwGvyvrxXRLdmHrvjF6KZX1MRcRn68I11c-kYA&oe=61F480E5",
+        createdAt: new Date(),
+      });
+    }
+  );
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
@@ -75,12 +98,20 @@ export default function ReviewComment({ setCommenting, syllabus }) {
         for (const message of mock) {
           await chatCtl.addMessage({
             type: "text",
-            content: message.content,
+            content: (
+              <div style={{ position: "relative" }}>
+                <p style={{ ...cssName, right: message.isStudent ? "0" : "none" }}>
+                  {message.username}
+                </p>
+                <span>{message.content}</span>
+              </div>
+            ),
             self: message.isStudent,
             avatar: message.avatar,
-            createdAt: message.createAt,
+            createdAt: message.createdAt,
           });
         }
+        setNumberOfComment(mock.length);
       } catch (err) {
         console.log(err);
       }

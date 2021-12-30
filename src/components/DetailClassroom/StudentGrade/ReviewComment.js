@@ -25,7 +25,11 @@ export default function ReviewComment({ setCommenting, syllabus }) {
   const theme = useTheme();
   const [state, setState] = useState(false);
   const { syllabus_name, syllabus_id } = syllabus;
-  const [chatCtl] = React.useState(new ChatController());
+  const [chatCtl] = React.useState(
+    new ChatController({
+      showDateTime: true,
+    })
+  );
 
   //mock
   const mock = [
@@ -37,6 +41,7 @@ export default function ReviewComment({ setCommenting, syllabus }) {
       avatar:
         "https://scontent.fsgn5-9.fna.fbcdn.net/v/t1.18169-1/cp0/p86x86/15542053_340996142952805_2049033225934452726_n.jpg?_nc_cat=105&ccb=1-5&_nc_sid=dbb9e7&_nc_ohc=En4rN_34GnkAX-jGALs&_nc_ht=scontent.fsgn5-9.fna&oh=00_AT8kCLkgpwGvyvrxXRLdmHrvjF6KZX1MRcRn68I11c-kYA&oe=61F480E5",
       isSeen: false,
+      createAt: new Date(),
     },
     {
       id: 2,
@@ -46,6 +51,7 @@ export default function ReviewComment({ setCommenting, syllabus }) {
       avatar:
         "https://scontent.fsgn5-9.fna.fbcdn.net/v/t1.18169-1/cp0/p86x86/15542053_340996142952805_2049033225934452726_n.jpg?_nc_cat=105&ccb=1-5&_nc_sid=dbb9e7&_nc_ohc=En4rN_34GnkAX-jGALs&_nc_ht=scontent.fsgn5-9.fna&oh=00_AT8kCLkgpwGvyvrxXRLdmHrvjF6KZX1MRcRn68I11c-kYA&oe=61F480E5",
       isSeen: false,
+      createAt: new Date(),
     },
   ];
 
@@ -72,6 +78,7 @@ export default function ReviewComment({ setCommenting, syllabus }) {
             content: message.content,
             self: message.isStudent,
             avatar: message.avatar,
+            createdAt: message.createAt,
           });
         }
       } catch (err) {

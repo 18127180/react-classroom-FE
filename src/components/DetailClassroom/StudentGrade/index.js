@@ -89,9 +89,15 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
                   // disableGutters={true}
                   sx={{
                     mb: 0.5,
-                    boxShadow: "0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%)",
                     borderRadius: "0.5rem",
-                    "&:not(:hover)": { boxShadow: "none" },
+                    boxShadow:
+                      expanded === "panel" + index
+                        ? "0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%)"
+                        : "none",
+                    "&:hover": {
+                      boxShadow:
+                        "0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%)",
+                    },
                   }}
                   className="assignment"
                   expanded={expanded === "panel" + index}

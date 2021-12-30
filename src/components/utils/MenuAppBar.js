@@ -7,7 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import { Avatar, Container, ListItemIcon, ListItemText } from "@mui/material";
+import { Avatar, Badge, Container, ListItemIcon, ListItemText } from "@mui/material";
 import UserProvider from "../../contexts/UserProvider";
 import SideBar from "./SideBar";
 import TabHeader from "./TabHeader";
@@ -20,6 +20,8 @@ import AddIcon from "@mui/icons-material/Add";
 import CreateClassDialog from "../classroom/CreateClassDialog";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import CssBaseline from "@mui/material/CssBaseline";
+import axios from "axios";
+import Notification from "./Notification";
 
 function stringToColor(string) {
   let hash = 0;
@@ -71,6 +73,7 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorEl2, setAnchorEl2] = React.useState(null);
+
   const [open, setOpen] = React.useState(false);
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = React.useContext(UserProvider.context);
@@ -82,6 +85,7 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
   const handleMenu2 = (event) => {
     setAnchorEl2(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -156,6 +160,10 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
                         <AddIcon />
                       </IconButton>
                     )}
+
+                    {/* Notification */}
+                    <Notification />
+
                     <IconButton
                       size="medium"
                       aria-label="account of current user"

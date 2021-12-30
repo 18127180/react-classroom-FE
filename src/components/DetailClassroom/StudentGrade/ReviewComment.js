@@ -89,6 +89,7 @@ export default function ReviewComment({ setCommenting, syllabus }) {
               width: drawerWidth,
             },
             height: "100%",
+            mt: 0,
           }}
           variant="persistent"
           anchor="right"

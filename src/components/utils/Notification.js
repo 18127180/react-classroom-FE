@@ -39,6 +39,7 @@ const Notification = () => {
     setNotifications(
       notifications.map((el) => (el.id === id ? Object.assign({}, el, { hasRead: true }) : el))
     );
+    setNewNotification(newNotification - 1);
     //thao mock thay window = navigate
     // navigate(`${link}`)
     window.location.redirect = "facebook.com/lehoang.phuc.52";

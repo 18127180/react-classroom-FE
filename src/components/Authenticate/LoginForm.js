@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -23,6 +23,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import BackdropProvider from "../../contexts/BackdropProvider";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -55,6 +56,7 @@ const validationSchema = yup.object({
 });
 
 const LoginForm = ({ section, topic, room, name }) => {
+  const { setOpenSnack } = useContext(BackdropProvider.context);
   const [state, setState] = useState({
     isLoggedIn: false,
     userInfo: {
@@ -192,6 +194,24 @@ const LoginForm = ({ section, topic, room, name }) => {
     setState({ userInfo, isLoggedIn: false });
   };
 
+  const handleForgetPassword = () => {
+    const email = formik.values.email;
+    if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.exec(email)) {
+      setOpenSnack("error", "Please provide a valid email", 4000);
+    }
+
+    axios
+      .post(process.env.REACT_APP_API_URL + "/auth/forgot-password", {
+        email,
+      })
+      .then((res) => {
+        setOpenSnack("info", "Password has been sent to email " + email, 6000);
+      })
+      .catch((err) => {
+        setOpenSnack("error", "Can't connect to mail service", 5000);
+      });
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
@@ -263,7 +283,7 @@ const LoginForm = ({ section, topic, room, name }) => {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link href="#" onClick={handleForgetPassword} variant="body2">
                     Forgot password?
                   </Link>
                 </Grid>

@@ -11,7 +11,13 @@ import { ChatController, MuiChat } from "chat-ui-react";
 import "./ReviewComment.css";
 
 const drawerWidth = 520;
-const cssName = { position: "absolute", top: "-24px", fontSize: "12px", color: "rgba(0,0,0,0.87)" };
+const cssName = {
+  position: "absolute",
+  top: "-24px",
+  fontSize: "12px",
+  color: "rgba(0,0,0,0.87)",
+  whiteSpace: "nowrap",
+};
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",

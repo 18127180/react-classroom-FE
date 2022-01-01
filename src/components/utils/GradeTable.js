@@ -191,6 +191,8 @@ export default function CustomizedTables({ data }) {
       .then((res) => {
         // then print response status
         if (res.statusText === "OK") {
+          console.log(res.data);
+          setListScore([...listScore, ...res.data]);
           // xu ly
         }
       })
@@ -272,7 +274,6 @@ export default function CustomizedTables({ data }) {
         if (res.status === 200) {
           // xu ly
           setReload(reload + 1);
-          // setOpenBackdrop(false);
         }
       })
       .catch((err) => {
@@ -335,7 +336,7 @@ export default function CustomizedTables({ data }) {
             max_score_list.push(item.grade);
           }
           setListMaxScore(max_score_list);
-
+          console.log(res.data.grade_table_list);
           setListScore(res.data.grade_table_list);
           setEffect(true);
           if (reload > 0) {

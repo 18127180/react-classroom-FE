@@ -6,9 +6,10 @@ import AddCommentOutlined from "@mui/icons-material/AddCommentOutlined";
 import { Badge, Typography } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ChatController, MuiChat } from "chat-ui-react";
 import "./ReviewComment.css";
+import axios from "axios";
 
 const drawerWidth = 520;
 const cssName = {
@@ -28,11 +29,13 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-start",
 }));
 
-export default function ReviewComment({ setCommenting, syllabus }) {
+export default function ReviewComment({ setCommenting, syllabus, review_id, socket }) {
   const theme = useTheme();
   const [state, setState] = useState(false);
   const { syllabus_name, syllabus_id } = syllabus;
-  const [numberOfComment, setNumberOfComment] = useState(0);
+  let numberOfComment = useRef(0);
+  const [commentList, setCommentList] = useState([]);
+  const user = JSON.parse(localStorage.getItem("user"));
   const [chatCtl] = React.useState(
     new ChatController({
       showDateTime: true,
@@ -65,26 +68,60 @@ export default function ReviewComment({ setCommenting, syllabus }) {
     },
   ];
 
+  async function fetchData(data) {
+    try {
+      // await chatCtl.addMessage({
+      //   type: "text",
+      //   content: data.comment,
+      //   self: data.is_student,
+      // });
+      await chatCtl.addMessage({
+        type: "text",
+        content: (
+          <div style={{ position: "relative" }}>
+            <p style={{ ...cssName, right: data.user_id === user.id ? "0" : "none" }}>
+              {data.name_user}
+            </p>
+            <span>{data.comment}</span>
+          </div>
+        ),
+        self: data.user_id === user.id,
+        avatar: data.avatar,
+        createdAt: new Date(data.created_at),
+      });
+      numberOfComment.current++;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   chatCtl.setActionRequest(
     {
       type: "text",
       always: true,
     },
     (response) => {
-      setNumberOfComment(numberOfComment + 1);
-      chatCtl.updateMessage(numberOfComment, {
+      chatCtl.updateMessage(numberOfComment.current, {
         type: "text",
         content: (
           <div style={{ position: "relative" }}>
-            <p style={{ ...cssName, right: 0 }}>{"narui"}</p>
+            <p style={{ ...cssName, right: 0 }}>{user.last_name + " " + user.first_name}</p>
             <span>{response.value}</span>
           </div>
         ),
         self: true,
-        avatar:
-          "https://scontent.fsgn5-9.fna.fbcdn.net/v/t1.18169-1/cp0/p86x86/15542053_340996142952805_2049033225934452726_n.jpg?_nc_cat=105&ccb=1-5&_nc_sid=dbb9e7&_nc_ohc=En4rN_34GnkAX-jGALs&_nc_ht=scontent.fsgn5-9.fna&oh=00_AT8kCLkgpwGvyvrxXRLdmHrvjF6KZX1MRcRn68I11c-kYA&oe=61F480E5",
+        avatar: user.avatar,
         createdAt: new Date(),
       });
+      const messageData = {
+        review_id: review_id,
+        comment: response.value,
+        user_id: user.id,
+        name_user: user.last_name + " " + user.first_name,
+        avatar: user.avatar
+      }
+      numberOfComment.current++;
+      socket.emit("send_comment", messageData);
     }
   );
 
@@ -93,37 +130,82 @@ export default function ReviewComment({ setCommenting, syllabus }) {
       return;
     }
 
+    if (open === true) {
+      const access_token = localStorage.getItem("access_token");
+      axios
+        .put(
+          process.env.REACT_APP_API_URL +
+          `/classroom/update-comment-status`,
+          {
+            review_id: review_id
+          },
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            let newCommentList = [...commentList];
+            for (let item of newCommentList){
+              item.status = false
+            }
+            setCommentList(newCommentList);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
     setCommenting(open);
     setState(open);
   };
 
   React.useEffect(() => {
     //generate messages
-    async function fetchData() {
-      try {
-        for (const message of mock) {
-          await chatCtl.addMessage({
-            type: "text",
-            content: (
-              <div style={{ position: "relative" }}>
-                <p style={{ ...cssName, right: message.isStudent ? "0" : "none" }}>
-                  {message.username}
-                </p>
-                <span>{message.content}</span>
-              </div>
-            ),
-            self: message.isStudent,
-            avatar: message.avatar,
-            createdAt: message.createdAt,
-          });
-        }
-        setNumberOfComment(mock.length);
-      } catch (err) {
-        console.log(err);
-      }
-    }
-    fetchData();
+    socket.on("receive_comment_" + review_id, (data) => {
+      fetchData(data);
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
+  React.useEffect(() => {
+    //generate messages
+    socket.emit("join_room", review_id);
+    const access_token = localStorage.getItem("access_token");
+    axios
+      .get(
+        process.env.REACT_APP_API_URL +
+        `/classroom/all-comment?review_id=${review_id}`,
+        {
+          headers: { Authorization: `Bearer ${access_token}` },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setCommentList(res.data);
+          numberOfComment.current = res.data.length;
+          for (const message of res.data){
+            chatCtl.addMessage({
+              type: "text",
+              content: (
+                <div style={{ position: "relative" }}>
+                  <p style={{ ...cssName, right: message.user_id ? "0" : "none" }}>
+                    {message.name_user}
+                  </p>
+                  <span>{message.comment}</span>
+                </div>
+              ),
+              self: message.user_id == user.id,
+              avatar: message.avatar,
+              createdAt: new Date(message.created_at),
+            });
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   return (

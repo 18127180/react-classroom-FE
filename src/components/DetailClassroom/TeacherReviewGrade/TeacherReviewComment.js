@@ -6,9 +6,12 @@ import AddCommentOutlined from "@mui/icons-material/AddCommentOutlined";
 import { Badge, Box, Typography } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { ChatController, MuiChat } from "chat-ui-react";
 import "./TeacherReviewComment.css";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 
 const drawerWidth = 520;
 
@@ -21,37 +24,129 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-start",
 }));
 
-export default function ReviewComment({ setCommenting, syllabus }) {
+const cssName = { position: "absolute", top: "-24px", fontSize: "12px", color: "rgba(0,0,0,0.87)", whiteSpace: "nowrap" };
+
+
+const mock = [
+  {
+    id: 1,
+    syllabus_id: 4,
+    content: "Mong thay xem xet",
+    is_student: false
+  },
+  {
+    id: 2,
+    syllabus_id: 4,
+    comment: "Toi ko thich day",
+    is_student: false
+  },
+];
+
+export default function TeacherReviewComment({ setCommenting, syllabus, review_id, socket }) {
   const theme = useTheme();
   const [state, setState] = useState(false);
   const { syllabus_name, syllabus_id } = syllabus;
-  const [chatCtl] = React.useState(new ChatController());
+  const [chatCtl] = React.useState(
+    new ChatController({
+      showDateTime: true,
+    })
+  );
+  const navigate = useNavigate();
+  const [commentList, setCommentList] = useState([]);
+  let numberOfComment = useRef(0);
+  const user = JSON.parse(localStorage.getItem("user"));
+  // const [socket, setSocket] = React.useState(null);
 
   //mock
-  const mock = [
-    {
-      id: 1,
-      syllabus_id: 4,
-      content: "Mong thay xem xet",
-      isStudent: true,
-      isSeen: false,
-    },
-    {
-      id: 2,
-      syllabus_id: 4,
-      content: "Toi ko thich day",
-      isStudent: false,
-      isSeen: false,
-    },
-  ];
 
-  chatCtl.setActionRequest({ type: "text", always: true }, (response) => {
-    console.log(response.value);
-  });
+  async function fetchData(data) {
+    try {
+      // await chatCtl.addMessage({
+      //   type: "text",
+      //   content: data.comment,
+      //   self: data.is_student,
+      // });
+      await chatCtl.addMessage({
+        type: "text",
+        content: (
+          <div style={{ position: "relative" }}>
+            <p style={{ ...cssName, right: data.user_id === user.id ? "0" : "none" }}>
+              {data.name_user}
+            </p>
+            <span>{data.comment}</span>
+          </div>
+        ),
+        self: data.user_id === user.id,
+        avatar: data.avatar,
+        createdAt: new Date(data.created_at),
+      });
+      numberOfComment.current++;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  chatCtl.setActionRequest(
+    {
+      type: "text",
+      always: true
+    }, (response) => {
+      chatCtl.updateMessage(numberOfComment.current, {
+        type: "text",
+        content: (
+          <div style={{ position: "relative" }}>
+            <p style={{ ...cssName, right: 0 }}>{user.last_name + " " + user.first_name}</p>
+            <span>{response.value}</span>
+          </div>
+        ),
+        self: true,
+        avatar: user.avatar,
+        createdAt: new Date()
+      });
+      numberOfComment.current++;
+      const messageData = {
+        review_id: review_id,
+        comment: response.value,
+        user_id: user.id,
+        name_user: user.last_name + " " + user.first_name,
+        avatar: user.avatar
+      }
+      socket.emit("send_comment", messageData);
+      // fetchData(messageData);
+      // const user = JSON.parse(localStorage.getItem("user"));
+      // console.log(user);
+    });
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
       return;
+    }
+
+    if (open === true) {
+      const access_token = localStorage.getItem("access_token");
+      axios
+        .put(
+          process.env.REACT_APP_API_URL +
+          `/classroom/update-comment-status`,
+          {
+            review_id: review_id
+          },
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            let newCommentList = [...commentList];
+            for (let item of newCommentList) {
+              item.status = false
+            }
+            setCommentList(newCommentList);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
 
     setCommenting(open);
@@ -60,21 +155,49 @@ export default function ReviewComment({ setCommenting, syllabus }) {
 
   React.useEffect(() => {
     //generate messages
-    async function fetchData() {
-      try {
-        for (const message of mock) {
-          await chatCtl.addMessage({
-            type: "text",
-            content: message.content,
-            self: message.isStudent,
-          });
+    socket.on("receive_comment_" + review_id, (data) => {
+      console.log(data);
+      fetchData(data);
+    })
+  }, [socket]);
+
+  React.useEffect(() => {
+    //generate messages
+    socket.emit("join_room", review_id);
+    const access_token = localStorage.getItem("access_token");
+    axios
+      .get(
+        process.env.REACT_APP_API_URL +
+        `/classroom/all-comment?review_id=${review_id}`,
+        {
+          headers: { Authorization: `Bearer ${access_token}` },
         }
-      } catch (err) {
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setCommentList(res.data);
+          numberOfComment.current = res.data.length;
+          for (const message of res.data) {
+            chatCtl.addMessage({
+              type: "text",
+              content: (
+                <div style={{ position: "relative" }}>
+                  <p style={{ ...cssName, right: message.user_id ? "0" : "none" }}>
+                    {message.name_user}
+                  </p>
+                  <span>{message.comment}</span>
+                </div>
+              ),
+              self: message.user_id == user.id,
+              avatar: message.avatar,
+              createdAt: new Date(message.created_at),
+            });
+          }
+        }
+      })
+      .catch((err) => {
         console.log(err);
-      }
-    }
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      });
   }, []);
 
   return (
@@ -89,6 +212,7 @@ export default function ReviewComment({ setCommenting, syllabus }) {
               width: drawerWidth,
             },
             height: "100%",
+            mt: 0
           }}
           variant="persistent"
           anchor="right"
@@ -114,7 +238,7 @@ export default function ReviewComment({ setCommenting, syllabus }) {
           onClick={toggleDrawer(true)}
         >
           <Badge
-            badgeContent={mock.filter((message) => !message.isStudent && !message.isSeen).length}
+            badgeContent={commentList.filter((message) => message.status && message.user_id !== user.id).length}
             color="info"
           >
             <AddCommentOutlined />

@@ -15,7 +15,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Grid from "@mui/material/Grid";
-import { ThemeProvider } from "@mui/material/styles";
+import { createMuiTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import React, { useState } from "react";
 import theme from "../../../theme/theme";
@@ -23,8 +23,10 @@ import { Formik, Form } from "formik";
 import * as yup from "yup";
 import "../../../styles/assignment.css";
 import TeacherReviewComment from "./TeacherReviewComment";
+import io from "socket.io-client";
+const socket = io.connect("http://localhost:3001");
 
-const StudentGrade = ({ data }) => {
+const TeacherReviewGrade = ({ data }) => {
   const [syllabus, setSyllabus] = React.useState([]);
   const [expanded, setExpanded] = React.useState(false);
   const [commenting, setCommenting] = useState(false);
@@ -34,129 +36,48 @@ const StudentGrade = ({ data }) => {
     setExpanded(isExpanded ? panel : false);
   };
 
+  const theme = createMuiTheme({
+    palette: {
+      text: {
+        disabled: 'black'
+      }
+    },
+  });
+
   React.useEffect(() => {
-    setSyllabus([
+    // setSyllabus([
+    //     {
+    //       syllabus_id: 123,
+    //       syllabus_name: "Mid term",
+    //       order: 0,
+    //       maxGrade: 100,
+    //       grade: 13,
+    //     },
+    //     {
+    //       syllabus_id: 456,
+    //       syllabus_name: "Seminar",
+    //       order: 1,
+    //       maxGrade: 120,
+    //       grade: 75,
+    //     }
+    //   ]);
+    const access_token = localStorage.getItem("access_token");
+    axios
+      .get(
+        process.env.REACT_APP_API_URL +
+        `/classroom/all-review?class_id=${data.id}`,
         {
-          syllabus_id: 123,
-          syllabus_name: "Mid term",
-          order: 0,
-          maxGrade: 100,
-          grade: 13,
-        },
-        {
-          syllabus_id: 456,
-          syllabus_name: "Seminar",
-          order: 1,
-          maxGrade: 120,
-          grade: 75,
-        },
-        {
-          syllabus_id: 789,
-          syllabus_name: "Final term",
-          order: 2,
-          maxGrade: 100,
-          grade: 99,
-        },
-        {
-            syllabus_id: 789,
-            syllabus_name: "Final term",
-            order: 2,
-            maxGrade: 100,
-            grade: 99,
-          },
-          {
-            syllabus_id: 789,
-            syllabus_name: "Final term",
-            order: 2,
-            maxGrade: 100,
-            grade: 99,
-          },
-          {
-            syllabus_id: 789,
-            syllabus_name: "Final term",
-            order: 2,
-            maxGrade: 100,
-            grade: 99,
-          },
-          {
-            syllabus_id: 789,
-            syllabus_name: "Final term",
-            order: 2,
-            maxGrade: 100,
-            grade: 99,
-          },
-          {
-            syllabus_id: 789,
-            syllabus_name: "Final term",
-            order: 2,
-            maxGrade: 100,
-            grade: 99,
-          },
-          {
-            syllabus_id: 789,
-            syllabus_name: "Final term",
-            order: 2,
-            maxGrade: 100,
-            grade: 99,
-          },
-          {
-            syllabus_id: 789,
-            syllabus_name: "Final term",
-            order: 2,
-            maxGrade: 100,
-            grade: 99,
-          },
-          {
-            syllabus_id: 789,
-            syllabus_name: "Final term",
-            order: 2,
-            maxGrade: 100,
-            grade: 99,
-          },
-          {
-            syllabus_id: 789,
-            syllabus_name: "Final term",
-            order: 2,
-            maxGrade: 100,
-            grade: 99,
-          },
-          {
-            syllabus_id: 789,
-            syllabus_name: "Final term",
-            order: 2,
-            maxGrade: 100,
-            grade: 99,
-          },
-          {
-            syllabus_id: 789,
-            syllabus_name: "Final term",
-            order: 2,
-            maxGrade: 100,
-            grade: 99,
-          },
-          {
-            syllabus_id: 789,
-            syllabus_name: "Final term",
-            order: 2,
-            maxGrade: 100,
-            grade: 99,
-          },
-          {
-            syllabus_id: 789,
-            syllabus_name: "Final term",
-            order: 2,
-            maxGrade: 100,
-            grade: 99,
-          },
-      ]);
-    // if (visited[3] === false) {
-    //   setEffect(false);
-    //   const tempVisited = visited;
-    //   tempVisited[3] = true;
-    //   setVisited(tempVisited);
-    //   setEffect(true);
-    // }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+          headers: { Authorization: `Bearer ${access_token}` },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setSyllabus(res.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   return (
@@ -204,7 +125,7 @@ const StudentGrade = ({ data }) => {
                           letterSpacing: ".01785714em",
                         }}
                       >
-                        {syl.syllabus_name}
+                        {syl.syllabus_name} - {syl.student_code}
                       </Typography>
                       <Box sx={{ ml: "auto" }}>
                         <Typography
@@ -225,7 +146,7 @@ const StudentGrade = ({ data }) => {
                     <Formik
                       initialValues={{
                         [`expected-${syl.syllabus_id}`]: `${syl.maxgrade}`,
-                        [`reason-${syl.syllabus_id}`]: "",
+                        [`reason-${syl.syllabus_id}`]: `${syl.reason}`,
                       }}
                       onSubmit={(values) => {
                         const form = {
@@ -293,6 +214,7 @@ const StudentGrade = ({ data }) => {
                                   props.errors[`expected-${syl.syllabus_id}`]
                                 }
                                 defaultValue={syl.grade}
+                                disabled={true}
                               ></TextField>
                             </Grid>
                             <Grid
@@ -305,25 +227,28 @@ const StudentGrade = ({ data }) => {
                                 letterSpacing: "normal",
                               }}
                             >
-                              <TextField
-                                id={`reason-${syl.syllabus_id}`}
-                                onChange={props.handleChange}
-                                onBlur={props.handleBlur}
-                                value={props.values[`reason-${syl.syllabus_id}`]}
-                                name={`reason-${syl.syllabus_id}`}
-                                label={`Reason for grade composition`}
-                                error={
-                                  props.touched[`reason-${syl.syllabus_id}`] &&
-                                  Boolean(props.errors[`reason-${syl.syllabus_id}`])
-                                }
-                                helperText={
-                                  props.touched[`reason-${syl.syllabus_id}`] &&
-                                  props.errors[`reason-${syl.syllabus_id}`]
-                                }
-                                multiline
-                                rows={3}
-                                fullWidth
-                              ></TextField>
+                              <ThemeProvider theme={theme}>
+                                <TextField
+                                  id={`reason-${syl.syllabus_id}`}
+                                  onChange={props.handleChange}
+                                  onBlur={props.handleBlur}
+                                  value={props.values[`reason-${syl.syllabus_id}`]}
+                                  name={`reason-${syl.syllabus_id}`}
+                                  label={`Reason for grade composition`}
+                                  error={
+                                    props.touched[`reason-${syl.syllabus_id}`] &&
+                                    Boolean(props.errors[`reason-${syl.syllabus_id}`])
+                                  }
+                                  helperText={
+                                    props.touched[`reason-${syl.syllabus_id}`] &&
+                                    props.errors[`reason-${syl.syllabus_id}`]
+                                  }
+                                  multiline
+                                  rows={3}
+                                  disabled={true}
+                                  fullWidth
+                                ></TextField>
+                              </ThemeProvider>
                             </Grid>
                             <Grid
                               item
@@ -337,7 +262,7 @@ const StudentGrade = ({ data }) => {
                                 letterSpacing: "normal",
                               }}
                             >
-                              <TeacherReviewComment setCommenting={setCommenting} syllabus={syl} />
+                              <TeacherReviewComment setCommenting={setCommenting} syllabus={syl} socket={socket} review_id={syl.id} />
                               <Button type="submit" variant="contained" sx={{ float: "right" }}>
                                 Submit review
                               </Button>
@@ -356,4 +281,4 @@ const StudentGrade = ({ data }) => {
   );
 };
 
-export default StudentGrade;
+export default TeacherReviewGrade;

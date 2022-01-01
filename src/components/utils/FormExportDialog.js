@@ -13,7 +13,7 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
 export default function FormExportDialog({ class_id }) {
   const [open, setOpen] = React.useState(false);
-
+  const access_token = localStorage.getItem("access_token");
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -27,6 +27,9 @@ export default function FormExportDialog({ class_id }) {
       url: process.env.REACT_APP_API_URL + "/upload/download/studentlist", //your url
       method: "GET",
       responseType: "blob", // important
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
     }).then((response) => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
@@ -42,6 +45,9 @@ export default function FormExportDialog({ class_id }) {
       url: process.env.REACT_APP_API_URL + "/upload/download/grade-list?class_id=" + class_id, //your url
       method: "GET",
       responseType: "blob", // important
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
     }).then((response) => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");

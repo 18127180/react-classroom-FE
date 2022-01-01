@@ -30,6 +30,7 @@ const MemberTab = ({ data }) => {
   const inputRef = React.createRef();
   const [open, setOpen] = React.useState(false);
   const [warningMessage, setWarningMessage] = React.useState("");
+  const access_token = localStorage.getItem("access_token");
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -53,6 +54,9 @@ const MemberTab = ({ data }) => {
     axios
       .post(process.env.REACT_APP_API_URL + "/upload", formdata, {
         // receive two parameter endpoint url ,form data
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
       })
       .then((res) => {
         // then print response status
@@ -106,6 +110,9 @@ const MemberTab = ({ data }) => {
                         url: process.env.REACT_APP_API_URL + "/upload/download/studentlist", //your url
                         method: "GET",
                         responseType: "blob", // important
+                        headers: {
+                          Authorization: `Bearer ${access_token}`,
+                        },
                       }).then((response) => {
                         const url = window.URL.createObjectURL(new Blob([response.data]));
                         const link = document.createElement("a");

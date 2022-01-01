@@ -20,7 +20,6 @@ import AddIcon from "@mui/icons-material/Add";
 import CreateClassDialog from "../classroom/CreateClassDialog";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import CssBaseline from "@mui/material/CssBaseline";
-import axios from "axios";
 import Notification from "./Notification";
 
 function stringToColor(string) {

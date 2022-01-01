@@ -106,6 +106,7 @@ export default function CustomizedTables({ data }) {
   const [clickAway, setClickAway] = React.useState(false);
   const [studentDataUpdate, setStudentDataUpdate] = React.useState(null);
   const [open, setOpen] = React.useState(false);
+  const access_token = localStorage.getItem("access_token");
   const navigate = useNavigate();
 
   const handleClickOpen = () => {
@@ -140,7 +141,7 @@ export default function CustomizedTables({ data }) {
             if (res.status === 200) {
             }
           })
-          .catch((err) => { });
+          .catch((err) => {});
       }
     }
     // const arr = [...listScore];
@@ -183,6 +184,9 @@ export default function CustomizedTables({ data }) {
     axios
       .post(process.env.REACT_APP_API_URL + "/upload", formdata, {
         // receive two parameter endpoint url ,form data
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
       })
       .then((res) => {
         // then print response status
@@ -258,7 +262,11 @@ export default function CustomizedTables({ data }) {
     formdata.append("syllabus_id", curMenu);
     formdata.append("syllabus_maxGrade", listHeader.find((row) => row.id === curMenu).grade);
     axios
-      .post(process.env.REACT_APP_API_URL + "/upload/grade-list", formdata)
+      .post(process.env.REACT_APP_API_URL + "/upload/grade-list", formdata, {
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      })
       .then((res) => {
         // then print response status
         if (res.status === 200) {
@@ -383,10 +391,7 @@ export default function CustomizedTables({ data }) {
           mr: 2,
         }}
       >
-        <Button
-          variant="contained"
-          onClick={handleClickOpen}
-        >
+        <Button variant="contained" onClick={handleClickOpen}>
           Manage Review
         </Button>
         <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
@@ -401,9 +406,7 @@ export default function CustomizedTables({ data }) {
             </Toolbar>
           </AppBar>
           <Grid container direction="column" alignItems="center" justifyContent="space-between">
-            <TeacherReviewComment
-              data={data}
-            />
+            <TeacherReviewComment data={data} />
           </Grid>
         </Dialog>
       </Grid>
@@ -445,7 +448,13 @@ export default function CustomizedTables({ data }) {
                   <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
                     <Divider sx={{ backgroundColor: "white", height: 2, width: 100 }} />
                   </Box>
-                  <Box>(total/{listMaxScore.reduce(function (acc, val) { return acc + val; }, 0)})</Box>
+                  <Box>
+                    (total/
+                    {listMaxScore.reduce(function (acc, val) {
+                      return acc + val;
+                    }, 0)}
+                    )
+                  </Box>
                 </StyledTableCell>
               </TableRow>
             </TableHead>
@@ -492,14 +501,17 @@ export default function CustomizedTables({ data }) {
                               value={subRow}
                               endAdornment={
                                 <InputAdornment position="end">
-                                  /{listMaxScore.reduce(function (acc, val) { return acc + val; }, 0)}
+                                  /
+                                  {listMaxScore.reduce(function (acc, val) {
+                                    return acc + val;
+                                  }, 0)}
                                 </InputAdornment>
                               }
                               aria-describedby="standard-weight-helper-text"
                             />
                           </FormControl>
                         </StyledTableCell>
-                      )
+                      );
                     } else {
                       if (subRow != null) {
                         return (
@@ -523,12 +535,9 @@ export default function CustomizedTables({ data }) {
                               </FormControl>
                             </StyledTableCell>
                           </ClickAwayListener>
-                        )
+                        );
                       } else {
-                        return (
-                          <StyledTableCell align="center">
-                          </StyledTableCell>
-                        )
+                        return <StyledTableCell align="center"></StyledTableCell>;
                       }
                     }
                     // <StyledTableCell align="center">
@@ -547,7 +556,8 @@ export default function CustomizedTables({ data }) {
                     //     />
                     //   </FormControl>
 
-                    {/* {subRow.isClickAway ? (
+                    {
+                      /* {subRow.isClickAway ? (
                           <ClickAwayListener onClickAway={(e) => handleClickAway(index, subIndex)}>
                             <FormControl variant="standard">
                               <Input
@@ -587,7 +597,8 @@ export default function CustomizedTables({ data }) {
                               onClick={(e) => handleClickIn(index, subIndex)}
                             />
                           </FormControl>
-                        )} */}
+                        )} */
+                    }
                     // </StyledTableCell>
                   })}
                 </StyledTableRow>

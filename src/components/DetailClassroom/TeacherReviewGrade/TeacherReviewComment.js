@@ -77,7 +77,7 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
           </div>
         ),
         self: data.user_id === user.id,
-        avatar: data.avatar,
+        avatar: data.avatar ?  data.avatar : (data.is_student ? "https://cdn-icons-png.flaticon.com/512/194/194931.png" : "https://cdn-icons-png.flaticon.com/512/194/194935.png"),
         createdAt: new Date(data.created_at),
       });
       numberOfComment.current++;
@@ -100,7 +100,7 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
           </div>
         ),
         self: true,
-        avatar: user.avatar,
+        avatar: user.avatar ?  user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
         createdAt: new Date()
       });
       numberOfComment.current++;
@@ -109,7 +109,8 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
         comment: response.value,
         user_id: user.id,
         name_user: user.last_name + " " + user.first_name,
-        avatar: user.avatar
+        avatar: user.avatar ?  user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
+        is_student: false
       }
       socket.emit("send_comment", messageData);
       // fetchData(messageData);
@@ -182,14 +183,14 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
               type: "text",
               content: (
                 <div style={{ position: "relative" }}>
-                  <p style={{ ...cssName, right: message.user_id ? "0" : "none" }}>
+                  <p style={{ ...cssName, right: message.user_id === user.id ? "0" : "none" }}>
                     {message.name_user}
                   </p>
                   <span>{message.comment}</span>
                 </div>
               ),
               self: message.user_id == user.id,
-              avatar: message.avatar,
+              avatar: message.avatar ?  message.avatar : (message.is_student ? "https://cdn-icons-png.flaticon.com/512/194/194931.png" : "https://cdn-icons-png.flaticon.com/512/194/194935.png"),
               createdAt: new Date(message.created_at),
             });
           }

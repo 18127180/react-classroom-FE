@@ -24,6 +24,8 @@ import * as yup from "yup";
 import "../../../styles/assignment.css";
 import TeacherReviewComment from "./TeacherReviewComment";
 import io from "socket.io-client";
+import { width } from "@mui/system";
+import moment from "moment-timezone";
 const socket = io.connect("http://localhost:3001");
 
 const TeacherReviewGrade = ({ data }) => {
@@ -31,6 +33,8 @@ const TeacherReviewGrade = ({ data }) => {
   const [expanded, setExpanded] = React.useState(false);
   const [commenting, setCommenting] = useState(false);
 
+
+  // console.log(moment.tz.names());
   //handle the current accordion
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -113,33 +117,50 @@ const TeacherReviewGrade = ({ data }) => {
                   onChange={handleChange("panel" + index)}
                 >
                   <AccordionSummary>
-                    <Grid container alignItems="center">
-                      <Avatar sx={{ backgroundColor: "#ff2c03" }}>
-                        <AssignmentOutlinedIcon />
-                      </Avatar>
-                      <Typography
-                        sx={{
-                          ml: 2,
-                          color: "#3c404a",
-                          fontSize: "0.875rem",
-                          letterSpacing: ".01785714em",
-                        }}
-                      >
-                        {syl.syllabus_name} - {syl.student_code}
-                      </Typography>
-                      <Box sx={{ ml: "auto" }}>
+                    <Grid container>
+                      <Grid container sx={{ justifyContent: 'flex-end', display: 'flex' }}>
+                        <Box>
+                          <Typography
+                            sx={{
+                              ml: 2,
+                              fontWeight:'bold',
+                              fontSize: "1.0rem",
+                              letterSpacing: ".01785714em",
+                            }}
+                          >
+                            {moment.tz(syl.created_at, "Asia/Saigon").format("HH:mm:ss DD/MM/YYYY ")}
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid container alignItems="center">
+                        <Avatar sx={{ backgroundColor: "#ff2c03" }}>
+                          <AssignmentOutlinedIcon />
+                        </Avatar>
                         <Typography
                           sx={{
                             ml: 2,
-                            color: "#ec1212",
-
-                            fontSize: "1.6rem",
+                            color: "#3c404a",
+                            fontSize: "0.875rem",
+                            fontWeight:'bold',
                             letterSpacing: ".01785714em",
                           }}
                         >
-                          {syl.grade} / {syl.maxgrade}
+                          {syl.syllabus_name} - {syl.student_code}
                         </Typography>
-                      </Box>
+                        <Box sx={{ ml: "auto" }}>
+                          <Typography
+                            sx={{
+                              ml: 2,
+                              color: "#ec1212",
+
+                              fontSize: "1.6rem",
+                              letterSpacing: ".01785714em",
+                            }}
+                          >
+                            {syl.grade} / {syl.maxgrade}
+                          </Typography>
+                        </Box>
+                      </Grid>
                     </Grid>
                   </AccordionSummary>
                   <AccordionDetails sx={{ borderTop: "1px solid #ccc", padding: 0 }}>

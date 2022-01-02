@@ -54,6 +54,9 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
         .then((res) => {
           if (res.status === 200) {
             setSyllabus(res.data);
+            for (let item of res.data){
+              console.log(item.review_id);
+            }
             const tempVisited = visited;
             tempVisited[3] = true;
             setVisited(tempVisited);
@@ -136,7 +139,7 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
                     </Grid>
                   </AccordionSummary>
                   <AccordionDetails sx={{ borderTop: "1px solid #ccc", padding: 0 }}>
-                    {syllabus.review_id !== null ? (
+                    {syl.review_id ? (
                       <Formik
                         initialValues={{
                           [`expected-${syl.syllabus_id}`]: `${syl.expect_score}`,

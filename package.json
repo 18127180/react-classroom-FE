@@ -17,6 +17,7 @@
     "formik": "^2.2.9",
     "history": "^5.1.0",
     "material-table": "^1.69.3",
+    "moment-timezone": "^0.5.34",
     "query-string": "^4.3.4",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.0",

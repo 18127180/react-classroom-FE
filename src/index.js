@@ -7,6 +7,7 @@ import Home from "./components/classroom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DetailClassroom from "./components/DetailClassroom/";
 import Profile from "./components/Profile";
+import Admin from "./components/Admin";
 import Error from "./components/error/Error";
 import InviteTab from "./components/DetailClassroom/InviteTab";
 import BackdropProvider from "./contexts/BackdropProvider";
@@ -21,6 +22,7 @@ ReactDOM.render(
         <Route path="register" element={<RegisterForm />} />
         <Route path="profile" element={<Profile />} />
         <Route path="classroom" element={<Home />} />
+        <Route path="/admin/*" element={<Admin />} />
         <Route path="/detail-classroom/:id*" element={<DetailClassroom />} />
         <Route path="error" element={<Error />} />
         <Route path="/*" element={<Error />} />

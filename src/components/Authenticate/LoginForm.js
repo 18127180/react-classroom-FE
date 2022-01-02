@@ -138,12 +138,18 @@ const LoginForm = ({ section, topic, room, name }) => {
               localStorage.removeItem("current_link");
               navigate(current_link);
             } else {
-              navigate("/classroom");
+              console.log(res.data.user);
+
+              if (res.data.user.role === "Admin") {
+                navigate("/admin");
+              } else {
+                navigate("/classroom");
+              }
             }
           }
         })
         .catch((err) => {
-          if (err.response.status === 401) {
+          if (err.response?.status === 401) {
             setOpenBackdrop(false);
             setOpen(true);
           }

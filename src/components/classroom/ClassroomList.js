@@ -86,43 +86,33 @@ export default function ClassroomList() {
                 <Typography gutterBottom variant="h5" component="div" noWrap>
                   {c.name}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  className={styles.description}
-                >
+                <Typography variant="body2" color="text.secondary" className={styles.description}>
                   {c.description}
                 </Typography>
               </CardContent>
               <CardActions className={styles.actions}>
                 <ThemeProvider theme={theme}>
                   {c.student ? (
-                    <Tooltip
-                      title={`Open your work for ${c.name}`}
-                      disableInteractive
-                    >
+                    <Tooltip title={`Open your work for ${c.name}`} disableInteractive>
                       <IconButton
                         size="small"
                         variant="contained"
                         color="primary"
                         onClick={() => {
-                          navigate(`/detail-classroom/${c.id}`);
+                          navigate(`/detail-classroom/${c.id}/grades`);
                         }}
                       >
                         <WorkOutlineIcon />
                       </IconButton>
                     </Tooltip>
                   ) : (
-                    <Tooltip
-                      title={`Open gradebook for ${c.name}`}
-                      disableInteractive
-                    >
+                    <Tooltip title={`Open gradebook for ${c.name}`} disableInteractive>
                       <IconButton
                         size="small"
                         variant="contained"
                         color="primary"
                         onClick={() => {
-                          navigate(`/detail-classroom/${c.id}`);
+                          navigate(`/detail-classroom/${c.id}/grades`);
                         }}
                       >
                         <TrendingUpIcon />

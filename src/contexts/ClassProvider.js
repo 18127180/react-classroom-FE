@@ -21,7 +21,7 @@ const ClassProvider = ({ children }) => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.response.status === 401) {
+        if (err.response?.status === 401) {
           //token expired or not login yet
           //so do basic log out process
           localStorage.removeItem("user");

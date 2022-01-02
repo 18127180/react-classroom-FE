@@ -7,7 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import { Avatar, Badge, Container, ListItemIcon, ListItemText } from "@mui/material";
+import { Avatar, Container, ListItemIcon, ListItemText } from "@mui/material";
 import UserProvider from "../../contexts/UserProvider";
 import SideBar from "./SideBar";
 import TabHeader from "./TabHeader";
@@ -67,7 +67,7 @@ function ElevationScroll(props) {
   });
 }
 
-const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
+const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass, isHaveSidebar }) => {
   // eslint-disable-next-line no-unused-vars
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -130,7 +130,7 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass }) => {
               sx={{ borderBottom: "0.1px solid rgba(0,0,0,0.2)" }}
             >
               <Toolbar>
-                <SideBar name={name} />
+                {isHaveSidebar && <SideBar name={name} />}
                 <Typography
                   variant="h6"
                   component="div"

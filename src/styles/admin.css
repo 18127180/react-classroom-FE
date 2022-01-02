@@ -1,0 +1,10 @@
+li[role="menuitem"] {
+  width: 100%;
+  padding: 8px;
+}
+
+.side-list-item {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  padding-left: 8px !important;
+}

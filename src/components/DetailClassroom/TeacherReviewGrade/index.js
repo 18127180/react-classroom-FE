@@ -32,6 +32,7 @@ const TeacherReviewGrade = ({ data }) => {
   const [syllabus, setSyllabus] = React.useState([]);
   const [expanded, setExpanded] = React.useState(false);
   const [commenting, setCommenting] = useState(false);
+  const access_token = localStorage.getItem("access_token");
 
 
   // console.log(moment.tz.names());
@@ -40,10 +41,16 @@ const TeacherReviewGrade = ({ data }) => {
     setExpanded(isExpanded ? panel : false);
   };
 
+  const handleSubmitButton = (index) => {
+    let arr = [...syllabus];
+    arr[index].final_mark = !syllabus[index].final_mark
+    setSyllabus(arr);
+  }
+
   const theme = createMuiTheme({
     palette: {
       text: {
-        disabled: 'black'
+        disabled: '#757575'
       }
     },
   });
@@ -123,7 +130,7 @@ const TeacherReviewGrade = ({ data }) => {
                           <Typography
                             sx={{
                               ml: 2,
-                              fontWeight:'bold',
+                              fontWeight: 'bold',
                               fontSize: "1.0rem",
                               letterSpacing: ".01785714em",
                             }}
@@ -141,7 +148,7 @@ const TeacherReviewGrade = ({ data }) => {
                             ml: 2,
                             color: "#3c404a",
                             fontSize: "0.875rem",
-                            fontWeight:'bold',
+                            fontWeight: 'bold',
                             letterSpacing: ".01785714em",
                           }}
                         >
@@ -166,77 +173,114 @@ const TeacherReviewGrade = ({ data }) => {
                   <AccordionDetails sx={{ borderTop: "1px solid #ccc", padding: 0 }}>
                     <Formik
                       initialValues={{
-                        [`expected-${syl.syllabus_id}`]: `${syl.maxgrade}`,
+                        [`expected-${syl.syllabus_id}`]: `${syl.grade}`,
                         [`reason-${syl.syllabus_id}`]: `${syl.reason}`,
+                        [`final-${syl.syllabus_id}`]: `${syl.final_mark ? syl.final_score : syl.maxgrade}`,
                       }}
                       onSubmit={(values) => {
                         const form = {
                           expect_score: parseInt(values[`expected-${syl.syllabus_id}`], 10),
                           reason: values[`reason-${syl.syllabus_id}`],
+                          final_score: parseInt(values[`final-${syl.syllabus_id}`], 10)
                         };
-                        // axios
-                        //   .post(
-                        //     process.env.REACT_APP_API_URL + `/classroom/add-review`,
-                        //     {
-                        //       syllabus_id: syl.syllabus_id,
-                        //       student_code: syl.student_code,
-                        //       ...form,
-                        //     },
-                        //     {
-                        //       headers: { Authorization: `Bearer ${access_token}` },
-                        //     }
-                        //   )
-                        //   .then((res) => {
-                        //     if (res.status === 200 || res.status === 201) {
-                        //       console.log(res.data);
-                        //     }
-                        //   })
-                        //   .catch((err) => {
-                        //     console.log(err);
-                        //   });
+                        axios
+                          .put(
+                            process.env.REACT_APP_API_URL + `/classroom/update-review`,
+                            {
+                              syllabus_id: syl.syllabus_id,
+                              student_id: syl.student_id,
+                              ...form,
+                            },
+                            {
+                              headers: { Authorization: `Bearer ${access_token}` },
+                            }
+                          )
+                          .then((res) => {
+                            if (res.status === 200 || res.status === 201) {
+                              console.log(res.data);
+                            }
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                          });
                       }}
                       validationSchema={yup.object({
                         [`expected-${syl.syllabus_id}`]: yup
                           .number("Enter expected grade")
-                          .max(syl.maxgrade)
+                          .max(syl.grade)
                           .min(0)
-                          .required("Expected grade is required"),
+                          .required("Final grade is required"),
                         [`reason-${syl.syllabus_id}`]: yup
                           .string("Enter reason")
                           .max(255)
                           .required("Reason is required"),
+                        [`final-${syl.syllabus_id}`]: yup
+                          .number("Enter final grade")
+                          .max(syl.maxgrade)
+                          .min(0)
+                          .required("Final grade is required"),
                       })}
                     >
                       {(props) => (
                         <Form onSubmit={props.handleSubmit}>
                           <Grid container direction="column">
-                            <Grid
-                              item
-                              xs={12}
-                              sx={{
-                                p: 2,
-                                pl: 4,
-                                letterSpacing: "normal",
-                              }}
-                            >
-                              <TextField
-                                id={`expected-${syl.syllabus_id}`}
-                                onChange={props.handleChange}
-                                onBlur={props.handleBlur}
-                                value={props.values[`expected-${syl.syllabus_id}`]}
-                                name={`expected-${syl.syllabus_id}`}
-                                label={`Expected grade for ${syl.syllabus_name}`}
-                                error={
-                                  props.touched[`expected-${syl.syllabus_id}`] &&
-                                  Boolean(props.errors[`expected-${syl.syllabus_id}`])
-                                }
-                                helperText={
-                                  props.touched[`expected-${syl.syllabus_id}`] &&
-                                  props.errors[`expected-${syl.syllabus_id}`]
-                                }
-                                defaultValue={syl.grade}
-                                disabled={true}
-                              ></TextField>
+                            <Grid container style={{ display: 'flex', justifyContent: 'space-between' }}>
+                              <Box
+                                item
+                                xs={12}
+                                sx={{
+                                  p: 2,
+                                  pl: 4,
+                                  letterSpacing: "normal",
+                                }}
+                              >
+                                <TextField
+                                  id={`expected-${syl.syllabus_id}`}
+                                  onBlur={props.handleBlur}
+                                  value={props.values[`expected-${syl.syllabus_id}`]}
+                                  name={`expected-${syl.syllabus_id}`}
+                                  label={`Số điểm phúc khảo cho ${syl.syllabus_name}`}
+                                  error={
+                                    props.touched[`expected-${syl.syllabus_id}`] &&
+                                    Boolean(props.errors[`expected-${syl.syllabus_id}`])
+                                  }
+                                  helperText={
+                                    props.touched[`expected-${syl.syllabus_id}`] &&
+                                    props.errors[`expected-${syl.syllabus_id}`]
+                                  }
+                                  defaultValue={syl.grade}
+                                  disabled={true}
+                                ></TextField>
+                              </Box>
+
+                              <Box
+                                item
+                                xs={12}
+                                sx={{
+                                  p: 2,
+                                  pl: 4,
+                                  letterSpacing: "normal"
+                                }}
+                              >
+                                <TextField
+                                  id={`final-${syl.syllabus_id}`}
+                                  onChange={props.handleChange}
+                                  onBlur={props.handleBlur}
+                                  value={props.values[`final-${syl.syllabus_id}`]}
+                                  name={`final-${syl.syllabus_id}`}
+                                  label={`Số điêm cuối cùng cho ${syl.syllabus_name}`}
+                                  error={
+                                    props.touched[`final-${syl.syllabus_id}`] &&
+                                    Boolean(props.errors[`final-${syl.syllabus_id}`])
+                                  }
+                                  helperText={
+                                    props.touched[`final-${syl.syllabus_id}`] &&
+                                    props.errors[`final-${syl.syllabus_id}`]
+                                  }
+                                  defaultValue={syl.grade}
+                                  disabled={syl.final_mark ? true : false}
+                                ></TextField>
+                              </Box>
                             </Grid>
                             <Grid
                               item
@@ -284,9 +328,15 @@ const TeacherReviewGrade = ({ data }) => {
                               }}
                             >
                               <TeacherReviewComment setCommenting={setCommenting} syllabus={syl} socket={socket} review_id={syl.id} />
-                              <Button type="submit" variant="contained" sx={{ float: "right" }}>
-                                Submit review
-                              </Button>
+                              {!syl.final_mark ? (
+                                <Button onClick={(e) => handleSubmitButton(index)} variant="contained" sx={{ float: "right" }}>
+                                  Xác nhận
+                                </Button>
+                              ) : (
+                                <Button type="submit" onClick={(e) => handleSubmitButton(index)} variant="contained" sx={{ float: "right" }}>
+                                  Hủy bỏ
+                                </Button>
+                              )}
                             </Grid>
                           </Grid>
                         </Form>

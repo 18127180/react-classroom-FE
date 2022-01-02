@@ -15,7 +15,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Grid from "@mui/material/Grid";
-import { ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider, createMuiTheme } from "@mui/material/styles";
 import axios from "axios";
 import React, { useState } from "react";
 import theme from "../../../theme/theme";
@@ -25,6 +25,14 @@ import "../../../styles/assignment.css";
 import ReviewComment from "./ReviewComment";
 import io from "socket.io-client";
 const socket = io.connect("http://localhost:3001");
+
+const theme1 = createMuiTheme({
+  palette: {
+    text: {
+      disabled: '#757575'
+    }
+  },
+});
 
 const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect }) => {
   const [syllabus, setSyllabus] = syllabusState;
@@ -54,7 +62,7 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
         .then((res) => {
           if (res.status === 200) {
             setSyllabus(res.data);
-            for (let item of res.data){
+            for (let item of res.data) {
               console.log(item.review_id);
             }
             const tempVisited = visited;
@@ -169,24 +177,26 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
                                   letterSpacing: "normal",
                                 }}
                               >
-                                <TextField
-                                  id={`expected-${syl.syllabus_id}`}
-                                  onChange={props.handleChange}
-                                  onBlur={props.handleBlur}
-                                  value={props.values[`expected-${syl.syllabus_id}`]}
-                                  name={`expected-${syl.syllabus_id}`}
-                                  label={`Expected grade for ${syl.syllabus_name}`}
-                                  error={
-                                    props.touched[`expected-${syl.syllabus_id}`] &&
-                                    Boolean(props.errors[`expected-${syl.syllabus_id}`])
-                                  }
-                                  helperText={
-                                    props.touched[`expected-${syl.syllabus_id}`] &&
-                                    props.errors[`expected-${syl.syllabus_id}`]
-                                  }
-                                  defaultValue={syl.grade}
-                                  disabled={true}
-                                ></TextField>
+                                <ThemeProvider theme={theme1}>
+                                  <TextField
+                                    id={`expected-${syl.syllabus_id}`}
+                                    onChange={props.handleChange}
+                                    onBlur={props.handleBlur}
+                                    value={props.values[`expected-${syl.syllabus_id}`]}
+                                    name={`expected-${syl.syllabus_id}`}
+                                    label={`Expected grade for ${syl.syllabus_name}`}
+                                    error={
+                                      props.touched[`expected-${syl.syllabus_id}`] &&
+                                      Boolean(props.errors[`expected-${syl.syllabus_id}`])
+                                    }
+                                    helperText={
+                                      props.touched[`expected-${syl.syllabus_id}`] &&
+                                      props.errors[`expected-${syl.syllabus_id}`]
+                                    }
+                                    defaultValue={syl.grade}
+                                    disabled={true}
+                                  ></TextField>
+                                </ThemeProvider>
                               </Grid>
                               <Grid
                                 item
@@ -198,26 +208,28 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
                                   letterSpacing: "normal",
                                 }}
                               >
-                                <TextField
-                                  id={`reason-${syl.syllabus_id}`}
-                                  onChange={props.handleChange}
-                                  onBlur={props.handleBlur}
-                                  value={props.values[`reason-${syl.syllabus_id}`]}
-                                  name={`reason-${syl.syllabus_id}`}
-                                  label={`Reason for grade composition`}
-                                  error={
-                                    props.touched[`reason-${syl.syllabus_id}`] &&
-                                    Boolean(props.errors[`reason-${syl.syllabus_id}`])
-                                  }
-                                  helperText={
-                                    props.touched[`reason-${syl.syllabus_id}`] &&
-                                    props.errors[`reason-${syl.syllabus_id}`]
-                                  }
-                                  multiline
-                                  rows={3}
-                                  fullWidth
-                                  disabled={true}
-                                ></TextField>
+                                <ThemeProvider theme={theme1}>
+                                  <TextField
+                                    id={`reason-${syl.syllabus_id}`}
+                                    onChange={props.handleChange}
+                                    onBlur={props.handleBlur}
+                                    value={props.values[`reason-${syl.syllabus_id}`]}
+                                    name={`reason-${syl.syllabus_id}`}
+                                    label={`Reason for grade composition`}
+                                    error={
+                                      props.touched[`reason-${syl.syllabus_id}`] &&
+                                      Boolean(props.errors[`reason-${syl.syllabus_id}`])
+                                    }
+                                    helperText={
+                                      props.touched[`reason-${syl.syllabus_id}`] &&
+                                      props.errors[`reason-${syl.syllabus_id}`]
+                                    }
+                                    multiline
+                                    rows={3}
+                                    fullWidth
+                                    disabled={true}
+                                  ></TextField>
+                                </ThemeProvider>
                               </Grid>
                               <Grid
                                 item
@@ -293,23 +305,25 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
                                   letterSpacing: "normal",
                                 }}
                               >
-                                <TextField
-                                  id={`expected-${syl.syllabus_id}`}
-                                  onChange={props.handleChange}
-                                  onBlur={props.handleBlur}
-                                  value={props.values[`expected-${syl.syllabus_id}`]}
-                                  name={`expected-${syl.syllabus_id}`}
-                                  label={`Expected grade for ${syl.syllabus_name}`}
-                                  error={
-                                    props.touched[`expected-${syl.syllabus_id}`] &&
-                                    Boolean(props.errors[`expected-${syl.syllabus_id}`])
-                                  }
-                                  helperText={
-                                    props.touched[`expected-${syl.syllabus_id}`] &&
-                                    props.errors[`expected-${syl.syllabus_id}`]
-                                  }
-                                  defaultValue={syl.grade}
-                                ></TextField>
+                                <ThemeProvider theme={theme1}>
+                                  <TextField
+                                    id={`expected-${syl.syllabus_id}`}
+                                    onChange={props.handleChange}
+                                    onBlur={props.handleBlur}
+                                    value={props.values[`expected-${syl.syllabus_id}`]}
+                                    name={`expected-${syl.syllabus_id}`}
+                                    label={`Expected grade for ${syl.syllabus_name}`}
+                                    error={
+                                      props.touched[`expected-${syl.syllabus_id}`] &&
+                                      Boolean(props.errors[`expected-${syl.syllabus_id}`])
+                                    }
+                                    helperText={
+                                      props.touched[`expected-${syl.syllabus_id}`] &&
+                                      props.errors[`expected-${syl.syllabus_id}`]
+                                    }
+                                    defaultValue={syl.grade}
+                                  ></TextField>
+                                </ThemeProvider>
                               </Grid>
                               <Grid
                                 item
@@ -321,25 +335,27 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
                                   letterSpacing: "normal",
                                 }}
                               >
-                                <TextField
-                                  id={`reason-${syl.syllabus_id}`}
-                                  onChange={props.handleChange}
-                                  onBlur={props.handleBlur}
-                                  value={props.values[`reason-${syl.syllabus_id}`]}
-                                  name={`reason-${syl.syllabus_id}`}
-                                  label={`Reason for grade composition`}
-                                  error={
-                                    props.touched[`reason-${syl.syllabus_id}`] &&
-                                    Boolean(props.errors[`reason-${syl.syllabus_id}`])
-                                  }
-                                  helperText={
-                                    props.touched[`reason-${syl.syllabus_id}`] &&
-                                    props.errors[`reason-${syl.syllabus_id}`]
-                                  }
-                                  multiline
-                                  rows={3}
-                                  fullWidth
-                                ></TextField>
+                                <ThemeProvider theme={theme1}>
+                                  <TextField
+                                    id={`reason-${syl.syllabus_id}`}
+                                    onChange={props.handleChange}
+                                    onBlur={props.handleBlur}
+                                    value={props.values[`reason-${syl.syllabus_id}`]}
+                                    name={`reason-${syl.syllabus_id}`}
+                                    label={`Reason for grade composition`}
+                                    error={
+                                      props.touched[`reason-${syl.syllabus_id}`] &&
+                                      Boolean(props.errors[`reason-${syl.syllabus_id}`])
+                                    }
+                                    helperText={
+                                      props.touched[`reason-${syl.syllabus_id}`] &&
+                                      props.errors[`reason-${syl.syllabus_id}`]
+                                    }
+                                    multiline
+                                    rows={3}
+                                    fullWidth
+                                  ></TextField>
+                                </ThemeProvider>
                               </Grid>
                               <Grid
                                 item

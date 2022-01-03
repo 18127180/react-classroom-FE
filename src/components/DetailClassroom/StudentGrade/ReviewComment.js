@@ -10,6 +10,7 @@ import { useState, useRef } from "react";
 import { ChatController, MuiChat } from "chat-ui-react";
 import "./ReviewComment.css";
 import axios from "axios";
+import uuid from 'react-native-uuid';
 
 const drawerWidth = 520;
 const cssName = {
@@ -29,7 +30,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-start",
 }));
 
-export default function ReviewComment({ setCommenting, syllabus, review_id, socket }) {
+export default function ReviewComment({ setCommenting, syllabus, review_id, socket, data }) {
   const theme = useTheme();
   const [state, setState] = useState(false);
   const { syllabus_name, syllabus_id } = syllabus;
@@ -123,6 +124,18 @@ export default function ReviewComment({ setCommenting, syllabus, review_id, sock
       }
       numberOfComment.current++;
       socket.emit("send_comment", messageData);
+      const notification = {
+        uuid: uuid.v1(),
+        sender_name: "Student " + user.last_name + " " + user.first_name,
+        sender_avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194931.png",
+        message: "Student " + user.last_name + " " + user.first_name + ` has replied your ${syllabus_name} grade`,
+        has_read: false,
+        link_navigate: `/detail-classroom/${data.id}/grades`,
+        time: Date.now(),
+        class_id: data.id,
+        to_role_name: 'teacher'
+      }
+      socket.emit("send_notification", notification);
     }
   );
 

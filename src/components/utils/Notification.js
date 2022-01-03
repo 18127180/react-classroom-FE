@@ -19,7 +19,7 @@ const Notification = ({ data }) => {
   const [notifications, setNotifications] = useState();
   const access_token = localStorage.getItem("access_token");
   const user = JSON.parse(localStorage.getItem("user"));
-  let tempListNotfication = useRef();
+  let tempListNotfication = useRef([]);
 
   const handleNotificationMenu = (event) => {
     setanchorNotification(event.currentTarget);
@@ -27,14 +27,34 @@ const Notification = ({ data }) => {
   const handleCloseNotificationMenu = () => {
     setanchorNotification(null);
   };
-  const handleClickNotification = (id, link) => {
-    setIndex(id);
-    setNotifications(
-      notifications.map((el) => (el.id === id ? Object.assign({}, el, { has_read: true }) : el))
-    );
-    setNewNotification(newNotification - 1);
-    //thao mock thay window = navigate
-    navigate(`${link}`)
+  const handleClickNotification = (uuid, link) => {
+    axios
+    .put(
+      process.env.REACT_APP_API_URL +
+      `/classroom/update-status-notifications`
+      ,
+      {
+        uuid: uuid,
+        has_read: true
+      }
+      ,
+      {
+        headers: { Authorization: `Bearer ${access_token}` },
+      }
+    )
+    .then((res) => {
+      if (res.status === 200) {
+        setIndex(uuid);
+        setNotifications(
+          notifications.map((el) => (el.uuid === uuid ? Object.assign({}, el, { has_read: true }) : el))
+        );
+        setNewNotification(newNotification - 1);
+        navigate(`${link}`)
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
     // window.location.redirect = "facebook.com/lehoang.phuc.52";
   };
 
@@ -81,11 +101,6 @@ const Notification = ({ data }) => {
     .catch((err) => {
       console.log(err);
     });
-    socket.on("receive_notification_private_" + user.id, (data) => {
-      tempListNotfication.current.unshift(data);
-      setNotifications(tempListNotfication.current);
-      setNewNotification(tempListNotfication.current.filter((noti) => noti.has_read === false).length);
-    })
 
     axios
       .get(
@@ -98,7 +113,7 @@ const Notification = ({ data }) => {
       .then((res) => {
         if (res.status === 200) {
           for (let item of res.data) {
-            socket.on("receive_notification_" + item.class_id +"_"+item.role_name, (data) => {
+            socket.on("receive_notification_" + item.class_id + "_" + item.role_name, (data) => {
               tempListNotfication.current.unshift(data);
               setNotifications(tempListNotfication.current);
               setNewNotification(tempListNotfication.current.filter((noti) => noti.has_read === false).length);
@@ -109,11 +124,12 @@ const Notification = ({ data }) => {
       .catch((err) => {
         console.log(err);
       });
-      socket.on("receive_notification_private_" + user.id, (data) => {
-        tempListNotfication.current.unshift(data);
-        setNotifications(tempListNotfication.current);
-        setNewNotification(tempListNotfication.current.filter((noti) => noti.has_read === false).length);
-      })
+    socket.on("receive_notification_private_" + user.id, (data) => {
+      tempListNotfication.current.unshift(data);
+      console.log(tempListNotfication.current);
+      setNotifications(tempListNotfication.current);
+      setNewNotification(tempListNotfication.current.filter((noti) => noti.has_read === false).length);
+    })
   }, []);
   return (
     <Fragment>
@@ -163,8 +179,8 @@ const Notification = ({ data }) => {
                     cursor: "pointer",
                   },
                 }}
-                id={`notification-${noti.id}`}
-                onClick={() => handleClickNotification(noti.id, noti.link_navigate)}
+                id={`notification-${noti.uuid}`}
+                onClick={() => handleClickNotification(noti.uuid, noti.link_navigate)}
               >
                 <Grid container direction="row">
                   <Grid item xs={1.5} alignSelf="center">

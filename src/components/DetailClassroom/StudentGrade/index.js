@@ -24,6 +24,7 @@ import * as yup from "yup";
 import "../../../styles/assignment.css";
 import ReviewComment from "./ReviewComment";
 import socket from "../../utils/Socket";
+import uuid from 'react-native-uuid';
 // const socket = io.connect("http://localhost:3001");
 
 const theme1 = createMuiTheme({
@@ -243,7 +244,7 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
                                   letterSpacing: "normal",
                                 }}
                               >
-                                <ReviewComment setCommenting={setCommenting} syllabus={syl} review_id={syl.review_id} socket={socket} />
+                                <ReviewComment setCommenting={setCommenting} syllabus={syl} review_id={syl.review_id} socket={socket} data={data} />
                               </Grid>
                             </Grid>
                           </Form>
@@ -273,8 +274,26 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
                               }
                             )
                             .then((res) => {
+                              console.log(res);
+                              let arr = [...syllabus];
                               if (res.status === 200 || res.status === 201) {
-                                console.log(res.data);
+                                const notification = {
+                                  uuid: uuid.v1(),
+                                  sender_name: "Student " + user.last_name + " " + user.first_name,
+                                  sender_avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194931.png",
+                                  message: "Student " + user.last_name + " " + user.first_name + ` requests a grade review for ${arr[index].syllabus_name} grade`,
+                                  has_read: false,
+                                  link_navigate: `/detail-classroom/${data.id}/grades`,
+                                  time: Date.now(),
+                                  class_id: data.id,
+                                  to_role_name: 'teacher'
+                                }
+                                socket.emit("send_notification", notification);
+                                arr[index].review_id = res.data.id;
+                                arr[index].expect_score = res.data.expect_score;
+                                arr[index].reason = res.data.reason;
+                                console.log(arr[index]);
+                                setSyllabus(arr);
                               }
                             })
                             .catch((err) => {

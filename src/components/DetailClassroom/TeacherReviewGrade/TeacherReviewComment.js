@@ -115,12 +115,12 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
       }
       socket.emit("send_comment", messageData);
       const notification = {
-        id: uuid.v1(),
-        senderName: "Teacher " + user.last_name + " " + user.first_name,
-        senderAvatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
+        uuid: uuid.v1(),
+        sender_name: "Teacher " + user.last_name + " " + user.first_name,
+        sender_avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
         message: "Teacher " + user.last_name + " " + user.first_name + ` has replied your ${syllabus_name} grade`,
-        hasRead: false,
-        link: `/detail-classroom/${class_id}/grades`,
+        has_read: false,
+        link_navigate: `/detail-classroom/${class_id}/grades`,
         time: Date.now(),
         class_id: class_id,
         to_user: student_id

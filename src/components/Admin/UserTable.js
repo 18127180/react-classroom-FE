@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import MaterialTable from "material-table";
 import { forwardRef } from "react";
 
@@ -20,14 +20,15 @@ import ViewColumn from "@mui/icons-material/ViewColumn";
 import SaveIcon from "@mui/icons-material/Save";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
+import EmailIcon from "@mui/icons-material/Email";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-  Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
+  Check: forwardRef((props, ref) => <Check {...props} ref={ref} sx={{ color: "#0c9723 " }} />),
   Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
   Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
   DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-  Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+  Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} sx={{ color: "#f2af4a" }} />),
   Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
   Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
   FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
@@ -41,33 +42,47 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const data = [
+const tempdata = [
   {
     id: "1",
+    first_name: "Thien Nhan",
+    last_name: "Luu",
     email: "nhanluu838@gmail.com",
     student_code: "18127165",
     status: "Locked",
+    createdAt: "2022-01-03",
   },
   {
     id: "2",
+    first_name: "Quang Minh",
+    last_name: "Nguyen",
     email: "nminh7953@gmail.com",
     student_code: "18127180",
     status: "Active",
+    createdAt: "2022-01-03",
   },
 ];
 
 const UserTable = () => {
+  const [userData, setUserData] = useState(tempdata);
   return (
     <div style={{ maxWidth: "100%" }}>
       <MaterialTable
         icons={tableIcons}
         columns={[
-          { title: "ID", field: "id" },
-          { title: "Email", field: "email" },
-          { title: "Student code", field: "student_code" },
-          { title: "Status", field: "status" },
+          { title: "ID", field: "id", searchable: false, sorting: false, editable: "never" },
+          { title: "Email", field: "email", sorting: false, editable: "never" },
+          { title: "Student code", field: "student_code", searchable: false, sorting: false },
+          { title: "Status", field: "status", searchable: false, editable: "never" },
+          {
+            title: "Created at",
+            field: "createdAt",
+            type: "date",
+            searchable: false,
+            editable: "never",
+          },
         ]}
-        data={data}
+        data={userData}
         title="Users"
         actions={[
           {
@@ -80,19 +95,77 @@ const UserTable = () => {
               return {
                 icon: () => <LockOpenIcon sx={{ color: "#0c9723" }} />,
                 tooltip: "Unlock User",
-                onClick: (event, rowData) => alert("You unlocked user " + rowData.id),
+                onClick: (event, rowData) => {
+                  setUserData(
+                    userData.map((dat) =>
+                      dat.id === rowData.id ? { ...dat, status: "Active" } : dat
+                    )
+                  );
+                },
               };
             else {
               return {
                 icon: () => <LockIcon sx={{ color: "red" }} />,
                 tooltip: "Lock User",
-                onClick: (event, rowData) => alert("You locked user " + rowData.id),
+                onClick: (event, rowData) => {
+                  setUserData(
+                    userData.map((dat) =>
+                      dat.id === rowData.id ? { ...dat, status: "Locked" } : dat
+                    )
+                  );
+                },
               };
             }
           },
         ]}
         options={{
           actionsColumnIndex: -1,
+        }}
+        editable={{
+          onRowUpdate: (newData, oldData) =>
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                const dataUpdate = [...userData];
+                console.log(oldData);
+                const index = oldData.tableData.id;
+                dataUpdate[index] = newData;
+                setUserData([...dataUpdate]);
+
+                resolve();
+              }, 1000);
+            }),
+        }}
+        onRowClick={(event, rowData, togglePanel) => togglePanel()}
+        detailPanel={(rowData) => {
+          const user = userData[rowData.tableData.id];
+          return (
+            <section class="user-detail">
+              <div class="profile-info">
+                <img
+                  src="https://source.unsplash.com/100x100/?face"
+                  alt={user.first_name + " " + user.last_name}
+                />
+                <div class="desc">
+                  <h3 class="name">{user.first_name + " " + user.last_name}</h3>
+                  <h5>{user.role}</h5>
+                  <h5>
+                    {" "}
+                    Date joined: <strong>{user.createdAt}</strong>{" "}
+                  </h5>
+                </div>
+              </div>
+              <div class="basic-details profile-item">
+                <h4> Basic Details </h4>
+                <ul class="info">
+                  <li>
+                    {" "}
+                    <EmailIcon />
+                    <span class="email-text"> {user.email} </span>{" "}
+                  </li>
+                </ul>
+              </div>
+            </section>
+          );
         }}
       />
     </div>

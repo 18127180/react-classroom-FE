@@ -8,3 +8,205 @@ li[role="menuitem"] {
   padding-bottom: 8px !important;
   padding-left: 8px !important;
 }
+
+.user-detail {
+  padding: 30px;
+  box-sizing: border-box;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.user-detail .profile-item {
+  display: flex;
+  flex-direction: column;
+  margin: 30px 0;
+  position: relative;
+}
+.user-detail .profile-item:last-child {
+  margin-bottom: 0;
+}
+.user-detail .profile-item a.more {
+  position: absolute;
+  text-decoration: none;
+  color: red;
+  top: 0;
+  right: 0;
+  font-size: 0.625em;
+  color: #8e9094;
+}
+.user-detail .profile-item > h4 {
+  color: #74777b;
+  text-transform: uppercase;
+  font-size: 0.75em;
+  margin-bottom: 15px;
+}
+.user-detail .profile-info {
+  display: flex;
+  align-items: center;
+}
+.user-detail .profile-info > img {
+  border-radius: 50%;
+}
+.user-detail .profile-info .desc {
+  margin-left: 15px;
+}
+.user-detail .profile-info .desc h5 {
+  color: #74777b;
+  font-size: 0.8em;
+  margin-top: 10px;
+}
+.user-detail .profile-info .desc .reviews {
+  margin-top: 30px;
+  font-size: 0.75em;
+  color: #74777b;
+}
+.user-detail .profile-info .desc .reviews .count {
+  padding: 7.5px 10px;
+  color: #fff;
+  border-radius: 2.5px;
+  background: #f6ab2e;
+  margin-right: 7.5px;
+}
+.user-detail .basic-details ul.info {
+  display: flex;
+  list-style: none;
+}
+.user-detail .basic-details ul.info .email-text {
+  font-size: 15px;
+  margin-left: 8px;
+}
+.user-detail .basic-details ul.info li {
+  color: #424447;
+  font-size: 0.75em;
+  display: flex;
+  margin-right: 30px;
+}
+.user-detail .basic-details ul.info li i {
+  color: #74777b;
+  margin-right: 10px;
+}
+.user-detail .bio-details .desc {
+  color: #5b5d61;
+  font-size: 0.75em;
+  line-height: 1.8em;
+}
+.user-detail .tags-details .info {
+  font-size: 0.75em;
+  list-style: none;
+}
+.user-detail .tags-details .info li {
+  display: inline-block;
+  background: #252529;
+  padding: 7.5px 10px;
+  border-radius: 1.6666666667px;
+  color: #fff;
+  margin-right: 7.5px;
+}
+.user-detail .tags-details .info li.high {
+  background: #34ab45;
+}
+.user-detail .tags-details .info li.medium {
+  background: #f6ab2e;
+}
+.user-detail .tags-details .info li.low {
+  background: #1765d8;
+}
+.user-detail .divider {
+  border-bottom: 0.5px solid #ddddde;
+  height: 1px;
+}
+
+.user-detail .associated .buildings {
+  list-style: none;
+  margin-top: 15px;
+  display: flex;
+}
+.user-detail .associated .buildings li {
+  display: inline-block;
+  font-size: 0.75em;
+  max-width: 65px;
+  margin: 0 15px;
+  margin-bottom: auto;
+}
+.user-detail .associated .buildings li:first-child {
+  margin-left: 0;
+}
+.user-detail .associated .buildings li img {
+  border-radius: 5px;
+}
+.user-detail .associated .buildings li h3 {
+  margin-top: 10px;
+  line-height: 1.4em;
+}
+.user-detail .associated .buildings li h4 {
+  margin-top: 10px;
+  color: #8e9094;
+  line-height: 1.4em;
+}
+.user-detail .associated .buildings li:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+.user-detail .members .owners {
+  list-style: none;
+  display: flex;
+  margin-top: 15px;
+}
+.user-detail .members .owners li {
+  color: #fff;
+  margin: 0 30px;
+  position: relative;
+  width: 165px;
+  height: 165px;
+}
+.user-detail .members .owners li:first-child {
+  margin-left: 0;
+}
+.user-detail .members .owners li > img {
+  border-radius: 5px;
+  position: absolute;
+  z-index: 0;
+}
+.user-detail .members .owners li .desc {
+  position: absolute;
+  bottom: 0;
+  transition: bottom 0.5s;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+.user-detail .members .owners li .desc h3 {
+  font-size: 1em;
+  margin-bottom: 10px;
+}
+.user-detail .members .owners li .desc h4 {
+  font-size: 0.625em;
+  color: #c2c4c6;
+}
+.user-detail .members .owners li:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+.user-detail .members .owners li:hover .desc {
+  bottom: 30px;
+}
+
+.user-detail .reviews ul.list {
+  list-style: none;
+  margin-top: 10px;
+}
+.user-detail .reviews ul.list li {
+  display: flex;
+  align-items: flex-start;
+}
+.user-detail .reviews ul.list li > img {
+  border-radius: 50%;
+  margin-right: 15px;
+}
+.user-detail .reviews ul.list li .text-content h4 {
+  font-weight: 600;
+}
+.user-detail .reviews ul.list li .text-content .text {
+  margin-top: 10px;
+  font-size: 0.75em;
+  color: #8e9094;
+  line-height: 1.35em;
+}

@@ -1,6 +1,17 @@
-import React from "react";
+import { useState, forwardRef } from "react";
 import MaterialTable from "material-table";
-import { forwardRef } from "react";
+// import Button from "@mui/material/Button";
+import Button from "@material-ui/core/Button";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import { useFormik } from "formik";
+import axios from "axios";
+import * as yup from "yup";
 
 import AddBox from "@mui/icons-material/AddBox";
 import ArrowDownward from "@mui/icons-material/ArrowDownward";
@@ -17,7 +28,8 @@ import Remove from "@mui/icons-material/Remove";
 import SaveAlt from "@mui/icons-material/SaveAlt";
 import Search from "@mui/icons-material/Search";
 import ViewColumn from "@mui/icons-material/ViewColumn";
-import SaveIcon from "@mui/icons-material/Save";
+import EmailIcon from "@mui/icons-material/Email";
+import AddIcon from "@mui/icons-material/Add";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -39,45 +51,238 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const data = [
-  {
-    id: "1",
-    email: "admin123@gmail.com",
-    role: "Admin",
-    status: "Active",
-  },
-  {
-    id: "2",
-    email: "nminh7953@gmail.com",
-    role: "Supervisor",
-    status: "Active",
-  },
-];
+const validationSchema = yup.object({
+  first_name: yup.string("Enter user's first name").max(255).required("First name is required"),
+  last_name: yup.string("Enter user's last name").max(255).required("Last name is required"),
+  email: yup
+    .string("Enter user's email")
+    .max(255)
+    .email("Email is invalid")
+    .required("Email is required"),
+  password: yup
+    .string("Enter user password")
+    .min(6, "Password must have at least 6 characters")
+    .max(255)
+    .required("Password is required"),
+});
 
 const AdminTable = () => {
+  const access_token = localStorage.getItem("access_token");
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      first_name: "",
+      last_name: "",
+      email: " ",
+      password: " ",
+      role: "Admin",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      console.log(values);
+      axios
+        .post(
+          `${process.env.REACT_APP_API_URL}/user/admins`,
+          {
+            first_name: values.first_name,
+            last_name: values.last_name,
+            email: values.email,
+            password: values.password,
+            role: values.role,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        )
+        .then((res) => {})
+        .catch((err) => {
+          console.log(err);
+        });
+      formik.resetForm();
+      setOpen(false);
+    },
+  });
+
   return (
     <div style={{ maxWidth: "100%" }}>
       <MaterialTable
         icons={tableIcons}
         columns={[
-          { title: "ID", field: "id" },
-          { title: "Email", field: "email" },
-          { title: "Role", field: "role" },
-          { title: "Status", field: "status" },
+          { title: "ID", field: "id", sorting: false, searchable: false },
+          { title: "First name", field: "first_name", sorting: false },
+          { title: "Last name", field: "last_name", sorting: false },
+          { title: "Email", field: "email", sorting: false },
+          { title: "Created at", field: "createdAt", type: "date", searchable: false },
         ]}
-        data={data}
+        // data={data}
+        data={(query) =>
+          new Promise((resolve, reject) => {
+            console.log(query);
+            let url = process.env.REACT_APP_API_URL + "/user/admins?";
+            url += "per_page=" + query.pageSize;
+            url += "&page=" + (query.page + 1);
+            url += "&createdAt=" + (query.orderDirection || "desc");
+            url += "&search=" + query.search || "";
+            fetch(url, {
+              headers: {
+                Authorization: `Bearer ${access_token}`,
+              },
+            })
+              .then((response) => response.json())
+              .then((result) => {
+                resolve({
+                  data: result.data,
+                  page: result.page - 1,
+                  totalCount: result.total,
+                });
+              });
+          })
+        }
         title="Administrators"
-        actions={[
-          {
-            icon: () => <SaveIcon color="primary" />,
-            tooltip: "Save User",
-            onClick: (_event, rowData) => alert("You saved user " + rowData.id),
-          },
-        ]}
         options={{
           actionsColumnIndex: -1,
         }}
+        actions={[
+          {
+            icon: () => <AddIcon />,
+            tooltip: "Add User",
+            isFreeAction: true,
+            onClick: (event) => handleClickOpen(),
+          },
+        ]}
+        onRowClick={(event, rowData, togglePanel) => togglePanel()}
+        detailPanel={(rowData) => {
+          return (
+            <section class="user-detail">
+              <div class="profile-info">
+                <img
+                  src="https://source.unsplash.com/100x100/?face"
+                  alt={rowData.first_name + " " + rowData.last_name}
+                />
+                <div class="desc">
+                  <h3 class="name">{rowData.first_name + " " + rowData.last_name}</h3>
+                  <h5>{rowData.role}</h5>
+                  <h5>
+                    {" "}
+                    Date joined:{" "}
+                    <strong>
+                      {new Date(rowData.createdAt).toLocaleString().split(" ")[1]}
+                    </strong>{" "}
+                  </h5>
+                </div>
+              </div>
+              <div class="basic-details profile-item">
+                <h4> Basic Details </h4>
+                <ul class="info">
+                  <li>
+                    {" "}
+                    <EmailIcon />
+                    <span class="email-text"> meangelino@toyota.con </span>{" "}
+                  </li>
+                </ul>
+              </div>
+            </section>
+          );
+        }}
       />
+      <Dialog open={open} onClose={handleClose}>
+        <form onSubmit={formik.handleSubmit}>
+          <DialogTitle>Create admin account</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              A new admin account require new email, a password and its specific role
+            </DialogContentText>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  // autoComplete="given-name"
+                  name="first_name"
+                  fullWidth
+                  id="first_name"
+                  label="First Name"
+                  margin="dense"
+                  variant="standard"
+                  value={formik.values.first_name}
+                  onChange={formik.handleChange}
+                  error={formik.touched.first_name && Boolean(formik.errors.first_name)}
+                  helperText={formik.touched.first_name && formik.errors.first_name}
+                  autoFocus
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  id="last_name"
+                  label="Last Name"
+                  name="last_name"
+                  margin="dense"
+                  variant="standard"
+                  value={formik.values.last_name}
+                  onChange={formik.handleChange}
+                  error={formik.touched.last_name && Boolean(formik.errors.last_name)}
+                  helperText={formik.touched.last_name && formik.errors.last_name}
+                />
+              </Grid>
+            </Grid>
+            <TextField
+              margin="dense"
+              id="email"
+              name="email"
+              label="Email Address"
+              fullWidth
+              variant="standard"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
+            />
+            <TextField
+              margin="dense"
+              id="password"
+              name="password"
+              label="Password"
+              type="password"
+              fullWidth
+              variant="standard"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
+            />
+            <TextField
+              autoComplete="false"
+              margin="dense"
+              id="role"
+              name="role"
+              label="Role"
+              type="text"
+              fullWidth
+              variant="standard"
+              value={formik.values.role}
+              onChange={formik.handleChange}
+              error={formik.touched.role && Boolean(formik.errors.role)}
+              helperText={formik.touched.role && formik.errors.role}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button type="submit" variant="contained" color="primary">
+              Create
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
     </div>
   );
 };

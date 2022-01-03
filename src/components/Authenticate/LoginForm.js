@@ -140,8 +140,8 @@ const LoginForm = ({ section, topic, room, name }) => {
             } else {
               console.log(res.data.user);
 
-              if (res.data.user.role === "Admin") {
-                navigate("/admin");
+              if (res.data.user.role) {
+                navigate("/admin/admins");
               } else {
                 navigate("/classroom");
               }

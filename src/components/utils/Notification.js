@@ -1,4 +1,4 @@
-import { useState, Fragment } from "react";
+import { useState, Fragment, useRef } from "react";
 import * as React from "react";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
@@ -7,26 +7,19 @@ import { Avatar, Badge, Container, Grid } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import socket from "./Socket";
 
 const ITEM_HEIGHT = 64;
 
-const Notification = () => {
+const Notification = ({ data }) => {
   const [newNotification, setNewNotification] = useState(0);
   const [anchorNotification, setanchorNotification] = useState(null);
   const [index, setIndex] = useState(null);
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      senderName: "Nhan Rui",
-      senderAvatar:
-        "https://lh3.googleusercontent.com/ogw/ADea4I46BRajOkt5wQOxWnzcV3aYpK6JzLRYTWQkh94=s64-c-mo",
-      message: "Nhan Rui has posted something in class",
-      hasRead: true,
-      link: "https://www.facebook.com/lehoang.phuc.52",
-      time: Date.now(),
-    },
-  ]);
+  const [notifications, setNotifications] = useState();
+  const access_token = localStorage.getItem("access_token");
+  const user = JSON.parse(localStorage.getItem("user"));
+  let tempListNotfication = useRef();
 
   const handleNotificationMenu = (event) => {
     setanchorNotification(event.currentTarget);
@@ -34,35 +27,93 @@ const Notification = () => {
   const handleCloseNotificationMenu = () => {
     setanchorNotification(null);
   };
-  const handleClickNotification = (id) => {
+  const handleClickNotification = (id, link) => {
     setIndex(id);
     setNotifications(
-      notifications.map((el) => (el.id === id ? Object.assign({}, el, { hasRead: true }) : el))
+      notifications.map((el) => (el.id === id ? Object.assign({}, el, { has_read: true }) : el))
     );
     setNewNotification(newNotification - 1);
     //thao mock thay window = navigate
-    // navigate(`${link}`)
-    window.location.redirect = "facebook.com/lehoang.phuc.52";
+    navigate(`${link}`)
+    // window.location.redirect = "facebook.com/lehoang.phuc.52";
   };
+
+  // React.useEffect(() => {
+  //   //generate messages
+  //   socket.on("receive_comment_" + review_id, (data) => {
+  //     console.log(data);
+  //     fetchData(data);
+  //   })
+  // }, [socket]);
 
   React.useEffect(() => {
     //sort theo thoi gian nha
-    const mocks = [
+    // const mocks = [
+    //   {
+    //     id: 2,
+    //     senderName: "Phuc Map",
+    //     senderAvatar:
+    //       "https://lh3.googleusercontent.com/ogw/ADea4I46BRajOkt5wQOxWnzcV3aYpK6JzLRYTWQkh94=s64-c-mo",
+    //     message: "Phuc Map has modified your grade.",
+    //     hasRead: false,
+    //     link: "https://www.facebook.com/lehoang.phuc.52",
+    //     time: Date.now(),
+    //   },
+    // ];
+    // const tempNotifications = [...mocks, ...notifications];
+    // setNotifications(tempNotifications);
+    // setNewNotification(tempNotifications.filter((noti) => noti.hasRead === false).length);
+    axios
+    .get(
+      process.env.REACT_APP_API_URL +
+      `/classroom/all-notifications`,
       {
-        id: 2,
-        senderName: "Phuc Map",
-        senderAvatar:
-          "https://lh3.googleusercontent.com/ogw/ADea4I46BRajOkt5wQOxWnzcV3aYpK6JzLRYTWQkh94=s64-c-mo",
-        message: "Phuc Map has modified your grade.",
-        hasRead: false,
-        link: "https://www.facebook.com/lehoang.phuc.52",
-        time: Date.now(),
-      },
-    ];
-    const tempNotifications = [...mocks, ...notifications];
-    console.log(tempNotifications);
-    setNotifications(tempNotifications);
-    setNewNotification(tempNotifications.filter((noti) => noti.hasRead === false).length);
+        headers: { Authorization: `Bearer ${access_token}` },
+      }
+    )
+    .then((res) => {
+      if (res.status === 200) {
+        tempListNotfication.current = res.data;
+        setNotifications(tempListNotfication.current);
+        setNewNotification(tempListNotfication.current.filter((noti) => noti.has_read === false).length);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+    socket.on("receive_notification_private_" + user.id, (data) => {
+      tempListNotfication.current.unshift(data);
+      setNotifications(tempListNotfication.current);
+      setNewNotification(tempListNotfication.current.filter((noti) => noti.has_read === false).length);
+    })
+
+    axios
+      .get(
+        process.env.REACT_APP_API_URL +
+        `/classroom/all-channel`,
+        {
+          headers: { Authorization: `Bearer ${access_token}` },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          for (let item of res.data) {
+            socket.on("receive_notification_" + item.class_id +"_"+item.role_name, (data) => {
+              tempListNotfication.current.unshift(data);
+              setNotifications(tempListNotfication.current);
+              setNewNotification(tempListNotfication.current.filter((noti) => noti.has_read === false).length);
+            })
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      socket.on("receive_notification_private_" + user.id, (data) => {
+        tempListNotfication.current.unshift(data);
+        setNotifications(tempListNotfication.current);
+        setNewNotification(tempListNotfication.current.filter((noti) => noti.has_read === false).length);
+      })
   }, []);
   return (
     <Fragment>
@@ -101,7 +152,7 @@ const Notification = () => {
       >
         <Container sx={{ textAlign: "left", padding: "0 !important" }}>
           <Grid container direction="column">
-            {notifications.map((noti, index) => (
+            {notifications && notifications.map((noti, index) => (
               <Grid
                 item
                 sx={{
@@ -113,13 +164,13 @@ const Notification = () => {
                   },
                 }}
                 id={`notification-${noti.id}`}
-                onClick={() => handleClickNotification(noti.id)}
+                onClick={() => handleClickNotification(noti.id, noti.link_navigate)}
               >
                 <Grid container direction="row">
                   <Grid item xs={1.5} alignSelf="center">
                     <Avatar
-                      alt={noti.senderName}
-                      src={noti.senderAvatar}
+                      alt={noti.sender_name}
+                      src={noti.sender_avatar}
                       sx={{ width: 40, height: 40, mr: "auto" }}
                     ></Avatar>
                   </Grid>
@@ -129,8 +180,8 @@ const Notification = () => {
                         <Typography
                           sx={{
                             lineHeight: 1.2,
-                            fontSize: noti.hasRead ? "14.25px" : "14px",
-                            fontWeight: noti.hasRead ? "none" : "bold",
+                            fontSize: noti.has_read ? "14.25px" : "14px",
+                            fontWeight: noti.has_read ? "none" : "bold",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             display: "-webkit-box",
@@ -150,7 +201,7 @@ const Notification = () => {
                     </Grid>
                   </Grid>
                   <Grid item xs={0.5} alignSelf="center">
-                    {!noti.hasRead && (
+                    {!noti.has_read && (
                       <div
                         style={{
                           width: "12px",

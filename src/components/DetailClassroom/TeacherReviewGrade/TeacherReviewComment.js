@@ -11,6 +11,7 @@ import { ChatController, MuiChat } from "chat-ui-react";
 import "./TeacherReviewComment.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import uuid from 'react-native-uuid';
 
 
 const drawerWidth = 520;
@@ -42,10 +43,10 @@ const mock = [
   },
 ];
 
-export default function TeacherReviewComment({ setCommenting, syllabus, review_id, socket }) {
+export default function TeacherReviewComment({ setCommenting, syllabus, review_id, socket, class_id }) {
   const theme = useTheme();
   const [state, setState] = useState(false);
-  const { syllabus_name, syllabus_id } = syllabus;
+  const { syllabus_name, syllabus_id, student_id } = syllabus;
   const [chatCtl] = React.useState(
     new ChatController({
       showDateTime: true,
@@ -77,7 +78,7 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
           </div>
         ),
         self: data.user_id === user.id,
-        avatar: data.avatar ?  data.avatar : (data.is_student ? "https://cdn-icons-png.flaticon.com/512/194/194931.png" : "https://cdn-icons-png.flaticon.com/512/194/194935.png"),
+        avatar: data.avatar ? data.avatar : (data.is_student ? "https://cdn-icons-png.flaticon.com/512/194/194931.png" : "https://cdn-icons-png.flaticon.com/512/194/194935.png"),
         createdAt: new Date(data.created_at),
       });
       numberOfComment.current++;
@@ -100,7 +101,7 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
           </div>
         ),
         self: true,
-        avatar: user.avatar ?  user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
+        avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
         createdAt: new Date()
       });
       numberOfComment.current++;
@@ -109,10 +110,22 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
         comment: response.value,
         user_id: user.id,
         name_user: user.last_name + " " + user.first_name,
-        avatar: user.avatar ?  user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
+        avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
         is_student: false
       }
       socket.emit("send_comment", messageData);
+      const notification = {
+        id: uuid.v1(),
+        senderName: "Teacher " + user.last_name + " " + user.first_name,
+        senderAvatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
+        message: "Teacher " + user.last_name + " " + user.first_name + ` has replied your ${syllabus_name} grade`,
+        hasRead: false,
+        link: `/detail-classroom/${class_id}/grades`,
+        time: Date.now(),
+        class_id: class_id,
+        to_user: student_id
+      }
+      socket.emit("send_notification_private", notification);
       // fetchData(messageData);
       // const user = JSON.parse(localStorage.getItem("user"));
       // console.log(user);
@@ -165,6 +178,7 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
   React.useEffect(() => {
     //generate messages
     socket.emit("join_room", review_id);
+    socket.emit("join_room", "class_private_" +  student_id);
     const access_token = localStorage.getItem("access_token");
     axios
       .get(
@@ -190,7 +204,7 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
                 </div>
               ),
               self: message.user_id == user.id,
-              avatar: message.avatar ?  message.avatar : (message.is_student ? "https://cdn-icons-png.flaticon.com/512/194/194931.png" : "https://cdn-icons-png.flaticon.com/512/194/194935.png"),
+              avatar: message.avatar ? message.avatar : (message.is_student ? "https://cdn-icons-png.flaticon.com/512/194/194931.png" : "https://cdn-icons-png.flaticon.com/512/194/194935.png"),
               createdAt: new Date(message.created_at),
             });
           }

@@ -23,16 +23,18 @@ import { Formik, Form } from "formik";
 import * as yup from "yup";
 import "../../../styles/assignment.css";
 import TeacherReviewComment from "./TeacherReviewComment";
-import io from "socket.io-client";
+import socket from "../../utils/Socket";
 import { width } from "@mui/system";
 import moment from "moment-timezone";
-const socket = io.connect("http://localhost:3001");
+import uuid from 'react-native-uuid';
+// const socket = io.connect("http://localhost:3001");
 
 const TeacherReviewGrade = ({ data }) => {
   const [syllabus, setSyllabus] = React.useState([]);
   const [expanded, setExpanded] = React.useState(false);
   const [commenting, setCommenting] = useState(false);
   const access_token = localStorage.getItem("access_token");
+  const user = JSON.parse(localStorage.getItem("user"));
 
 
   // console.log(moment.tz.names());
@@ -43,6 +45,20 @@ const TeacherReviewGrade = ({ data }) => {
 
   const handleSubmitButton = (index) => {
     let arr = [...syllabus];
+    if (!arr[index].final_mark){
+      const notification = {
+        id: uuid.v1(),
+        senderName: "Teacher " + user.last_name + " " + user.first_name,
+        senderAvatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
+        message: "Teacher " + user.last_name + " " + user.first_name + ` has marked final score in your review for ${arr[index].syllabus_name} grade`,
+        hasRead: false,
+        link: `/detail-classroom/${data.id}/grades`,
+        time: Date.now(),
+        class_id: data.id,
+        to_user: arr[index].student_id
+      }
+      socket.emit("send_notification_private", notification);
+    }
     arr[index].final_mark = !syllabus[index].final_mark
     setSyllabus(arr);
   }
@@ -72,7 +88,6 @@ const TeacherReviewGrade = ({ data }) => {
     //       grade: 75,
     //     }
     //   ]);
-    const access_token = localStorage.getItem("access_token");
     axios
       .get(
         process.env.REACT_APP_API_URL +
@@ -327,7 +342,7 @@ const TeacherReviewGrade = ({ data }) => {
                                 letterSpacing: "normal",
                               }}
                             >
-                              <TeacherReviewComment setCommenting={setCommenting} syllabus={syl} socket={socket} review_id={syl.id} />
+                              <TeacherReviewComment setCommenting={setCommenting} syllabus={syl} socket={socket} review_id={syl.id} class_id = {data.id}/>
                               {!syl.final_mark ? (
                                 <Button onClick={(e) => handleSubmitButton(index)} variant="contained" sx={{ float: "right" }}>
                                   Xác nhận

@@ -23,8 +23,8 @@ import { Formik, Form } from "formik";
 import * as yup from "yup";
 import "../../../styles/assignment.css";
 import ReviewComment from "./ReviewComment";
-import io from "socket.io-client";
-const socket = io.connect("http://localhost:3001");
+import socket from "../../utils/Socket";
+// const socket = io.connect("http://localhost:3001");
 
 const theme1 = createMuiTheme({
   palette: {

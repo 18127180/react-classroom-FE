@@ -35,6 +35,8 @@ import { Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import style from "../../styles/accordion.css";
 import TeacherReviewComment from "../DetailClassroom/TeacherReviewGrade";
+import uuid from 'react-native-uuid'
+import socket from './Socket'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -222,6 +224,7 @@ export default function CustomizedTables({ data }) {
     setAnchorEl(null);
     const access_token = localStorage.getItem("access_token");
     const header = listHeader.find((h) => h.id === curMenu);
+    console.log(header);
     axios
       .put(
         process.env.REACT_APP_API_URL + "/syllabus/" + curMenu,
@@ -237,6 +240,20 @@ export default function CustomizedTables({ data }) {
       .then((res) => {
         // then print response status
         if (res.statusText === "OK") {
+          const user = JSON.parse(localStorage.getItem("user"));
+          const notification = {
+            id: uuid.v1(),
+            senderName: "Teacher " + user.last_name + " " + user.first_name,
+            senderAvatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
+            message: "Teacher " + user.last_name + " " + user.first_name + ` has finalized ${header.subject_name} grade`,
+            hasRead: false,
+            link: `/detail-classroom/${data.id}/grades`,
+            time: Date.now(),
+            class_id: data.id,
+            to_role_name: 'student'
+          }
+          socket.emit("send_notification", notification);
+
           const tempList = listHeader.map((h) => {
             if (h.id === curMenu) {
               return res.data;

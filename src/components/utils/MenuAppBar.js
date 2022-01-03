@@ -67,7 +67,7 @@ function ElevationScroll(props) {
   });
 }
 
-const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass, isHaveSidebar }) => {
+const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass, isHaveSidebar = true }) => {
   // eslint-disable-next-line no-unused-vars
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);

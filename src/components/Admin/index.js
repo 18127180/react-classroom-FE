@@ -19,6 +19,12 @@ const drawerWidth = 200;
 
 const Admin = () => {
   const navigate = useNavigate();
+  React.useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user.role) {
+      navigate("/classroom");
+    }
+  });
   return (
     <UserProvider>
       <MenuAppBar name="Admin" isHaveSidebar={false} />

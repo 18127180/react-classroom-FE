@@ -526,6 +526,7 @@ export default function CustomizedTables({ data }) {
                                 </InputAdornment>
                               }
                               aria-describedby="standard-weight-helper-text"
+                              disabled={true}
                             />
                           </FormControl>
                         </StyledTableCell>

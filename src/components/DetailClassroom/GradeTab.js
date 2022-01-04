@@ -75,7 +75,8 @@ const GradeTab = ({ data, openState }) => {
       id: "" + (characters.length + 1),
       subject_name: "",
       grade: 0,
-      new: true
+      new: true,
+      finalize: false
     });
     updateCharacters(items);
     console.log(items);

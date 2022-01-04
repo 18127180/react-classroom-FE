@@ -267,6 +267,7 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
                               {
                                 syllabus_id: syl.syllabus_id,
                                 student_id: user.id,
+                                real_score: syl.grade,
                                 ...form,
                               },
                               {

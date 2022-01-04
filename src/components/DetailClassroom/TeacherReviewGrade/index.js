@@ -45,7 +45,7 @@ const TeacherReviewGrade = ({ data }) => {
 
   const handleSubmitButton = (index) => {
     let arr = [...syllabus];
-    if (!arr[index].final_mark){
+    if (!arr[index].final_mark) {
       const notification = {
         uuid: uuid.v1(),
         sender_name: "Teacher " + user.last_name + " " + user.first_name,
@@ -140,7 +140,12 @@ const TeacherReviewGrade = ({ data }) => {
                 >
                   <AccordionSummary>
                     <Grid container>
-                      <Grid container sx={{ justifyContent: 'flex-end', display: 'flex' }}>
+                      <Grid container sx={{ justifyContent: 'space-between', display: 'flex' }}>
+                        {syl.final_mark ? (
+                          <Box style={{ fontSize: 14 }}>
+                            Has marked
+                          </Box>
+                        ) : (<Box></Box>)}
                         <Box>
                           <Typography
                             sx={{
@@ -179,7 +184,7 @@ const TeacherReviewGrade = ({ data }) => {
                               letterSpacing: ".01785714em",
                             }}
                           >
-                            {syl.grade} / {syl.maxgrade}
+                            {syl.real_score} / {syl.maxgrade}
                           </Typography>
                         </Box>
                       </Grid>
@@ -342,7 +347,7 @@ const TeacherReviewGrade = ({ data }) => {
                                 letterSpacing: "normal",
                               }}
                             >
-                              <TeacherReviewComment setCommenting={setCommenting} syllabus={syl} socket={socket} review_id={syl.id} class_id = {data.id}/>
+                              <TeacherReviewComment setCommenting={setCommenting} syllabus={syl} socket={socket} review_id={syl.id} class_id={data.id} />
                               {!syl.final_mark ? (
                                 <Button onClick={(e) => handleSubmitButton(index)} variant="contained" sx={{ float: "right" }}>
                                   Xác nhận

@@ -8,6 +8,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import socket from "./Socket";
+import moment from "moment-timezone";
 
 const ITEM_HEIGHT = 64;
 
@@ -211,7 +212,7 @@ const Notification = ({ data }) => {
                       </Grid>
                       <Grid item sx={{ ml: "auto", mr: 1.5, color: "#7e7777" }}>
                         <Typography sx={{ fontSize: "12px" }}>
-                          {new Date(noti.time).toUTCString()}
+                          {moment.tz(noti.time, "Asia/Saigon").format("dddd, MMMM Do YYYY, h:mm:ss a")}
                         </Typography>
                       </Grid>
                     </Grid>

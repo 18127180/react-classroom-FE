@@ -210,3 +210,15 @@ li[role="menuitem"] {
   color: #8e9094;
   line-height: 1.35em;
 }
+
+table.grade-structure {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+table.grade-structure td,
+table.grade-structure th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}

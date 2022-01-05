@@ -37,6 +37,7 @@ import style from "../../styles/accordion.css";
 import TeacherReviewComment from "../DetailClassroom/TeacherReviewGrade";
 import uuid from 'react-native-uuid'
 import socket from './Socket'
+import PublicIcon from '@mui/icons-material/Public';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -161,7 +162,7 @@ export default function CustomizedTables({ data }) {
             if (res.status === 200) {
             }
           })
-          .catch((err) => {});
+          .catch((err) => { });
       }
     }
     // const arr = [...listScore];
@@ -430,7 +431,7 @@ export default function CustomizedTables({ data }) {
         <Button variant="contained" onClick={handleClickOpen}>
           Manage Review
         </Button>
-        <Button variant="contained" onClick={exportGradeTable} sx={{mr:1, ml: 1}}>
+        <Button variant="contained" onClick={exportGradeTable} sx={{ mr: 1, ml: 1 }}>
           Export Grade
         </Button>
         <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
@@ -476,6 +477,16 @@ export default function CustomizedTables({ data }) {
                         />
                       </IconButton>
                     </Box>
+                    {
+                      row.finalize ? (
+                        <Box sx={{ position: "absolute", left: 1, top: 1, mt: 1, ml: 1 }}>
+                          <PublicIcon
+                            sx={{
+                              color: "black",
+                            }}
+                          />
+                        </Box>) : (<Box></Box>)
+                    }
                     <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
                       <Divider sx={{ backgroundColor: "white", height: 2, width: 100 }} />
                     </Box>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MaterialTable from "material-table";
 import { forwardRef } from "react";
 
@@ -21,6 +21,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import EmailIcon from "@mui/icons-material/Email";
+import axios from "axios";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -42,29 +43,50 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const tempdata = [
-  {
-    id: "1",
-    first_name: "Thien Nhan",
-    last_name: "Luu",
-    email: "nhanluu838@gmail.com",
-    student_code: "18127165",
-    status: "Locked",
-    createdAt: "2022-01-03",
-  },
-  {
-    id: "2",
-    first_name: "Quang Minh",
-    last_name: "Nguyen",
-    email: "nminh7953@gmail.com",
-    student_code: "18127180",
-    status: "Active",
-    createdAt: "2022-01-03",
-  },
-];
+// const tempdata = [
+//   {
+//     id: "1",
+//     first_name: "Thien Nhan",
+//     last_name: "Luu",
+//     email: "nhanluu838@gmail.com",
+//     student_code: "18127165",
+//     status: "Locked",
+//     createdAt: "2022-01-03",
+//   },
+//   {
+//     id: "2",
+//     first_name: "Quang Minh",
+//     last_name: "Nguyen",
+//     email: "nminh7953@gmail.com",
+//     student_code: "18127180",
+//     status: "Active",
+//     createdAt: "2022-01-03",
+//   },
+// ];
 
 const UserTable = () => {
-  const [userData, setUserData] = useState(tempdata);
+  const [userData, setUserData] = useState([]);
+  const access_token = localStorage.getItem("access_token");
+
+  // useEffect(() => {
+  //   axios
+  //     .get(
+  //       process.env.REACT_APP_API_URL +
+  //       `/user/all-users`,
+  //       {
+  //         headers: { Authorization: `Bearer ${access_token}` },
+  //       }
+  //     )
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         setUserData(res.data);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, []);
+
   return (
     <div style={{ maxWidth: "100%" }}>
       <MaterialTable
@@ -82,7 +104,29 @@ const UserTable = () => {
             editable: "never",
           },
         ]}
-        data={userData}
+        data={(query) =>
+          new Promise((resolve, reject) => {
+            let url = process.env.REACT_APP_API_URL + "/user/users?";
+            url += "per_page=" + query.pageSize;
+            url += "&page=" + (query.page + 1);
+            url += "&createdAt=" + (query.orderDirection || "desc");
+            url += "&search=" + query.search || "";
+            fetch(url, {
+              headers: {
+                Authorization: `Bearer ${access_token}`,
+              },
+            })
+              .then((response) => response.json())
+              .then((result) => {
+                setUserData(result.data)
+                resolve({
+                  data: result.data,
+                  page: result.page - 1,
+                  totalCount: result.total,
+                });
+              });
+          })
+        }
         title="Users"
         actions={[
           {
@@ -96,11 +140,31 @@ const UserTable = () => {
                 icon: () => <LockOpenIcon sx={{ color: "#0c9723" }} />,
                 tooltip: "Unlock User",
                 onClick: (event, rowData) => {
+                  rowData.status = "Active";
                   setUserData(
                     userData.map((dat) =>
                       dat.id === rowData.id ? { ...dat, status: "Active" } : dat
                     )
                   );
+                  axios
+                    .put(
+                      process.env.REACT_APP_API_URL +
+                      `/user/update-status`,
+                      {
+                        rowData
+                      },
+                      {
+                        headers: { Authorization: `Bearer ${access_token}` },
+                      }
+                    )
+                    .then((res) => {
+                      if (res.status === 200) {
+                        // setUserData(res.data);
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    });
                 },
               };
             else {
@@ -108,11 +172,31 @@ const UserTable = () => {
                 icon: () => <LockIcon sx={{ color: "red" }} />,
                 tooltip: "Lock User",
                 onClick: (event, rowData) => {
+                  rowData.status = "Locked";
                   setUserData(
                     userData.map((dat) =>
                       dat.id === rowData.id ? { ...dat, status: "Locked" } : dat
                     )
                   );
+                  axios
+                    .put(
+                      process.env.REACT_APP_API_URL +
+                      `/user/update-status`,
+                      {
+                        rowData
+                      },
+                      {
+                        headers: { Authorization: `Bearer ${access_token}` },
+                      }
+                    )
+                    .then((res) => {
+                      if (res.status === 200) {
+                        // setUserData(res.data);
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    });
                 },
               };
             }
@@ -126,11 +210,28 @@ const UserTable = () => {
             new Promise((resolve, reject) => {
               setTimeout(() => {
                 const dataUpdate = [...userData];
-                console.log(oldData);
                 const index = oldData.tableData.id;
                 dataUpdate[index] = newData;
                 setUserData([...dataUpdate]);
+                axios
+                  .put(
+                    process.env.REACT_APP_API_URL +
+                    `/user/update-student-code`,
+                    {
+                      newData
+                    },
+                    {
+                      headers: { Authorization: `Bearer ${access_token}` },
+                    }
+                  )
+                  .then((res) => {
+                    if (res.status === 200) {
 
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
                 resolve();
               }, 1000);
             }),
@@ -142,7 +243,7 @@ const UserTable = () => {
             <section class="user-detail">
               <div class="profile-info">
                 <img
-                  src="https://source.unsplash.com/100x100/?face"
+                  src={user.avatar ? user.avatar : "https://source.unsplash.com/100x100/?face"}
                   alt={user.first_name + " " + user.last_name}
                 />
                 <div class="desc">

@@ -18,6 +18,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import CreateClassDialog from "../classroom/CreateClassDialog";
+import JoinClassDialog from "../classroom/JoinClassDialog";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import CssBaseline from "@mui/material/CssBaseline";
 import Notification from "./Notification";
@@ -74,6 +75,7 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass, isHaveSide
   const [anchorEl2, setAnchorEl2] = React.useState(null);
 
   const [open, setOpen] = React.useState(false);
+  const [openJoin, setOpenJoin] = React.useState(false);
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = React.useContext(UserProvider.context);
   const navigate = useNavigate();
@@ -95,10 +97,15 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass, isHaveSide
   };
   const handleJoinClass = () => {
     setAnchorEl2(null);
+    setOpenJoin(true);
   };
 
   const handleCloseDialog = () => {
     setOpen(false);
+  };
+
+  const handleCloseJoinDialog = () => {
+    setOpenJoin(false);
   };
 
   const handleProfile = () => {
@@ -260,6 +267,7 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass, isHaveSide
                     >
                       {/* <MenuItem onClick={handleJoinClass}>Join class</MenuItem> */}
                       <MenuItem onClick={handleAddClass}>Create class</MenuItem>
+                      <MenuItem onClick={handleJoinClass}>Join class</MenuItem>
                     </Menu>
                   </div>
                 )}
@@ -269,6 +277,7 @@ const MenuAppBar = ({ name, route_list, isHaveHeaderTab, canAddClass, isHaveSide
         </Box>
         {/* dialog */}
         {canAddClass && <CreateClassDialog open={open} handleClose={handleCloseDialog} />}
+        {canAddClass && <JoinClassDialog open={openJoin} handleClose={handleCloseJoinDialog} />}
       </ThemeProvider>
     </React.Fragment>
   );

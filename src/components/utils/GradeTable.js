@@ -111,6 +111,24 @@ export default function CustomizedTables({ data }) {
   const access_token = localStorage.getItem("access_token");
   const navigate = useNavigate();
 
+  const exportGradeTable = () => {
+    axios({
+      url: process.env.REACT_APP_API_URL + "/upload/download/grade-table?class_id=" + data.id, //your url
+      method: "GET",
+      responseType: "blob", // important
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    }).then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "Grade List Template.xlsx"); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+    });
+  };
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -411,6 +429,9 @@ export default function CustomizedTables({ data }) {
       >
         <Button variant="contained" onClick={handleClickOpen}>
           Manage Review
+        </Button>
+        <Button variant="contained" onClick={exportGradeTable} sx={{mr:1, ml: 1}}>
+          Export Grade
         </Button>
         <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
           <AppBar sx={{ position: "relative" }} color="secondary">

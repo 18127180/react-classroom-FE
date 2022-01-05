@@ -98,6 +98,7 @@ const data = [
 ];
 
 const ClassTable = () => {
+  const access_token = localStorage.getItem("access_token");
   return (
     <div style={{ maxWidth: "100%" }}>
       <MaterialTable
@@ -107,8 +108,37 @@ const ClassTable = () => {
           { title: "Name", field: "name" },
           { title: "Section", field: "section" },
           { title: "Topic", field: "topic" },
+          {
+            title: "Created at",
+            field: "created_date",
+            type: "date",
+            searchable: false,
+            editable: "never",
+          },
         ]}
-        data={data}
+        data={(query) =>
+          new Promise((resolve, reject) => {
+            let url = process.env.REACT_APP_API_URL + "/classroom/all-classrooms?";
+            url += "per_page=" + query.pageSize;
+            url += "&page=" + (query.page + 1);
+            url += "&createdAt=" + (query.orderDirection || "desc");
+            url += "&search=" + query.search || "";
+            fetch(url, {
+              headers: {
+                Authorization: `Bearer ${access_token}`,
+              },
+            })
+              .then((response) => response.json())
+              .then((result) => {
+                // setUserData(result.data)
+                resolve({
+                  data: result.data,
+                  page: result.page - 1,
+                  totalCount: result.total,
+                });
+              });
+          })
+        }
         title="Classrooms"
         onRowClick={(event, rowData, togglePanel) => togglePanel()}
         detailPanel={(rowData) => {

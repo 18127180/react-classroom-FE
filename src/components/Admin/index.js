@@ -19,6 +19,7 @@ const drawerWidth = 200;
 
 const Admin = () => {
   const navigate = useNavigate();
+  const [now, setNow] = React.useState(0);
   React.useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user.role) {
@@ -30,6 +31,7 @@ const Admin = () => {
       <MenuAppBar name="Admin" isHaveSidebar={false} />
       <Box style={{ maxWidth: "100%", display: "flex" }}>
         <Drawer
+          id="admin-drawer"
           sx={{
             width: drawerWidth,
             flexShrink: 0,
@@ -46,13 +48,27 @@ const Admin = () => {
           </Toolbar>
           <Divider />
           <List>
-            <ListItem button className="side-list-item" onClick={() => navigate("/admin/admins")}>
+            <ListItem
+              button
+              className={`side-list-item ${now === 1 ? "now" : ""}`}
+              onClick={() => {
+                setNow(1);
+                navigate("/admin/admins");
+              }}
+            >
               <ListItemIcon>
                 <AdminPanelSettingsIcon sx={{ ml: 2 }} />
               </ListItemIcon>
               <ListItemText primary="Admin" />
             </ListItem>
-            <ListItem button className="side-list-item" onClick={() => navigate("/admin/users")}>
+            <ListItem
+              button
+              className={`side-list-item ${now === 2 ? "now" : ""}`}
+              onClick={() => {
+                setNow(2);
+                navigate("/admin/users");
+              }}
+            >
               <ListItemIcon>
                 <SupervisorAccountIcon sx={{ ml: 2 }} />
               </ListItemIcon>
@@ -60,8 +76,9 @@ const Admin = () => {
             </ListItem>
             <ListItem
               button
-              className="side-list-item"
+              className={`side-list-item ${now === 3 ? "now" : ""}`}
               onClick={() => {
+                setNow(3);
                 navigate("/admin/classes");
               }}
             >

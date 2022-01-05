@@ -118,7 +118,7 @@ const UserTable = () => {
             })
               .then((response) => response.json())
               .then((result) => {
-                setUserData(result.data)
+                setUserData(result.data);
                 resolve({
                   data: result.data,
                   page: result.page - 1,
@@ -148,10 +148,9 @@ const UserTable = () => {
                   );
                   axios
                     .put(
-                      process.env.REACT_APP_API_URL +
-                      `/user/update-status`,
+                      process.env.REACT_APP_API_URL + `/user/update-status`,
                       {
-                        rowData
+                        rowData,
                       },
                       {
                         headers: { Authorization: `Bearer ${access_token}` },
@@ -180,10 +179,9 @@ const UserTable = () => {
                   );
                   axios
                     .put(
-                      process.env.REACT_APP_API_URL +
-                      `/user/update-status`,
+                      process.env.REACT_APP_API_URL + `/user/update-status`,
                       {
-                        rowData
+                        rowData,
                       },
                       {
                         headers: { Authorization: `Bearer ${access_token}` },
@@ -215,10 +213,9 @@ const UserTable = () => {
                 setUserData([...dataUpdate]);
                 axios
                   .put(
-                    process.env.REACT_APP_API_URL +
-                    `/user/update-student-code`,
+                    process.env.REACT_APP_API_URL + `/user/update-student-code`,
                     {
-                      newData
+                      newData,
                     },
                     {
                       headers: { Authorization: `Bearer ${access_token}` },
@@ -226,7 +223,6 @@ const UserTable = () => {
                   )
                   .then((res) => {
                     if (res.status === 200) {
-
                     }
                   })
                   .catch((err) => {
@@ -244,14 +240,15 @@ const UserTable = () => {
               <div class="profile-info">
                 <img
                   src={user.avatar ? user.avatar : "https://source.unsplash.com/100x100/?face"}
-                  alt={user.first_name + " " + user.last_name}
+                  alt={(user.first_name || "") + " " + (user.last_name || "")}
                 />
                 <div class="desc">
-                  <h3 class="name">{user.first_name + " " + user.last_name}</h3>
+                  <h3 class="name">{(user.first_name || "") + " " + (user.last_name || "")}</h3>
                   <h5>{user.role}</h5>
                   <h5>
                     {" "}
-                    Date joined: <strong>{user.createdAt}</strong>{" "}
+                    Date joined:{" "}
+                    <strong>{new Date(user.createdAt).toLocaleString().split(" ")[1]}</strong>{" "}
                   </h5>
                 </div>
               </div>

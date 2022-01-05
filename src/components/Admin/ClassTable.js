@@ -42,61 +42,6 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const data = [
-  {
-    id: 1,
-    name: "Web programming",
-    section: "Web",
-    teachers: [
-      {
-        name: "Narui",
-        avatar:
-          "https://scontent-sin6-1.xx.fbcdn.net/v/t1.6435-1/p100x100/97291515_2722794567830001_9103251667125534720_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=7206a8&_nc_ohc=v8cE8PXj8PMAX8rIu6z&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent-sin6-1.xx&oh=00_AT8mrP9GcmuQsglOtUbR-cdJ7qxv9OV8smvBsZ-mEtEmEw&oe=61F89ACF",
-      },
-      {
-        name: "Phuc map",
-        avatar:
-          "https://scontent-sin6-1.xx.fbcdn.net/v/t1.6435-1/p100x100/97291515_2722794567830001_9103251667125534720_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=7206a8&_nc_ohc=v8cE8PXj8PMAX8rIu6z&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent-sin6-1.xx&oh=00_AT8mrP9GcmuQsglOtUbR-cdJ7qxv9OV8smvBsZ-mEtEmEw&oe=61F89ACF",
-      },
-    ],
-    students: [
-      {
-        name: "Son Map",
-        avatar:
-          "https://scontent-sin6-1.xx.fbcdn.net/v/t1.6435-1/p100x100/97291515_2722794567830001_9103251667125534720_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=7206a8&_nc_ohc=v8cE8PXj8PMAX8rIu6z&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent-sin6-1.xx&oh=00_AT8mrP9GcmuQsglOtUbR-cdJ7qxv9OV8smvBsZ-mEtEmEw&oe=61F89ACF",
-      },
-      {
-        name: "Thanh Oni",
-        avatar:
-          "https://scontent-sin6-1.xx.fbcdn.net/v/t1.6435-1/p100x100/97291515_2722794567830001_9103251667125534720_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=7206a8&_nc_ohc=v8cE8PXj8PMAX8rIu6z&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent-sin6-1.xx&oh=00_AT8mrP9GcmuQsglOtUbR-cdJ7qxv9OV8smvBsZ-mEtEmEw&oe=61F89ACF",
-      },
-    ],
-    grade_structure: [
-      {
-        name: "Midterm",
-        max: 100,
-      },
-      {
-        name: "Final",
-        max: 456,
-      },
-    ],
-    topic: "Bla bla bla",
-  },
-  {
-    id: 2,
-    name: "NFT",
-    section: "Blockchain",
-    topic: "Bla bla bla",
-  },
-  {
-    id: 3,
-    name: "Automation Testing",
-    section: "Test",
-    topic: "Bla bla bla",
-  },
-];
-
 const ClassTable = () => {
   const access_token = localStorage.getItem("access_token");
   return (
@@ -153,14 +98,20 @@ const ClassTable = () => {
                           <Typography variant="h6">Teachers</Typography>
                         </Grid>
                         <Grid item>
-                          <Stack direction="row" spacing={1.5}>
+                          <Stack direction="row" spacing={1.5} flexWrap="wrap">
                             {rowData.teachers.map((teacher) => (
                               <Chip
                                 avatar={<Avatar alt={teacher.name} src={teacher.avatar} />}
                                 label={teacher.name}
                                 size="medium"
                                 variant="outlined"
-                                sx={{ backgroundColor: "#e04646", color: "white" }}
+                                sx={{
+                                  backgroundColor: "#e04646",
+                                  color: "white",
+                                  marginLeft: "0 !important",
+                                  marginRight: "12px !important",
+                                  marginBottom: "8px",
+                                }}
                               />
                             ))}
                           </Stack>
@@ -173,14 +124,20 @@ const ClassTable = () => {
                           <Typography variant="h6">Students</Typography>
                         </Grid>
                         <Grid item>
-                          <Stack direction="row" spacing={1.5}>
+                          <Stack direction="row" spacing={1.5} flexWrap="wrap">
                             {rowData.students.map((student) => (
                               <Chip
                                 avatar={<Avatar alt={student.name} src={student.avatar} />}
                                 label={student.name}
                                 size="medium"
                                 variant="outlined"
-                                sx={{ backgroundColor: "#cdc6c6", color: "black" }}
+                                sx={{
+                                  backgroundColor: "#cdc6c6",
+                                  color: "black",
+                                  marginLeft: "0 !important",
+                                  marginRight: "12px !important",
+                                  marginBottom: "8px",
+                                }}
                               />
                             ))}
                           </Stack>

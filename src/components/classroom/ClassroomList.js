@@ -67,6 +67,13 @@ export default function ClassroomList() {
     <Box className={styles.grid}>
       {loading ? (
         <CircularProgress className={styles.circularProgress} />
+      ) : classes.length === 0 ? (
+        <div>
+          <img
+            src="https://cdn.dribbble.com/users/1507491/screenshots/4945826/media/116a8ebc414c519ad1cfc0fe63f79d3e.jpg?compress=1&resize=800x600&vertical=top"
+            style={{ position: "fixed", top: "64px", left: "50%", transform: `translateX(-50%)` }}
+          ></img>
+        </div>
       ) : (
         classes.map((c, index) => {
           return (

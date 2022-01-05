@@ -89,7 +89,7 @@ const MemberTab = ({ data }) => {
             dataClass={data}
             FormDialog={<FormStudentDialog data={data} />}
           />
-          <UserBarInClass list={data.studentList} />
+          <UserBarInClass list={data.studentList} role="student" />
         </Grid>
       </Grid>
       <Grid item xs={3}>

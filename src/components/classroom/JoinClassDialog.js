@@ -50,7 +50,6 @@ export default function JoinClassDialog({ open, handleClose }) {
                         } else {
                             setError(res.data.msg);
                             const time = setTimeout(() => {
-                                console.log("chạy");
                                 setError("");
                             }, 3000);
                             return () => {

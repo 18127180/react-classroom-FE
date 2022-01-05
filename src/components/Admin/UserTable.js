@@ -223,12 +223,12 @@ const UserTable = () => {
                   )
                   .then((res) => {
                     if (res.status === 200) {
+                      resolve();
                     }
                   })
                   .catch((err) => {
                     console.log(err);
                   });
-                resolve();
               }, 1000);
             }),
         }}

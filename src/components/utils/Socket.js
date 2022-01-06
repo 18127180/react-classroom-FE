@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 import axios from "axios";
-const socket = io.connect('http://localhost:3001');
+const socket = io.connect(process.env.REACT_APP_SOCKET_URL);
 const access_token = localStorage.getItem("access_token");
 const user = JSON.parse(localStorage.getItem("user"));
 axios

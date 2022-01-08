@@ -24,14 +24,14 @@ import * as yup from "yup";
 import "../../../styles/assignment.css";
 import ReviewComment from "./ReviewComment";
 import socket from "../../utils/Socket";
-import uuid from 'react-native-uuid';
+import uuid from "react-native-uuid";
 // const socket = io.connect("http://localhost:3001");
 
 const theme1 = createMuiTheme({
   palette: {
     text: {
-      disabled: '#757575'
-    }
+      disabled: "#757575",
+    },
   },
 });
 
@@ -55,7 +55,7 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
       axios
         .get(
           process.env.REACT_APP_API_URL +
-          `/classroom/grade-personal?class_id=${classId}&user_id=${user.id}`,
+            `/classroom/grade-personal?class_id=${classId}&user_id=${user.id}`,
           {
             headers: { Authorization: `Bearer ${access_token}` },
           }
@@ -81,12 +81,21 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container spacing={0} direction="column" alignItems="center" justifyContent="center">
+      <Grid
+        container
+        spacing={0}
+        direction="column"
+        justifyContent="center"
+        sx={{
+          alignSelf: commenting ? "flex-start" : "center",
+          width: commenting ? "calc(100% - 520px)" : "100%",
+        }}
+      >
         <Container
           sx={{
             maxWidth: "650px !important",
             mt: 2,
-            ml: commenting ? "50px" : "auto",
+            ml: "auto",
             transition: commenting ? "margin-left 1000ms linear" : "",
           }}
         >
@@ -244,7 +253,13 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
                                   letterSpacing: "normal",
                                 }}
                               >
-                                <ReviewComment setCommenting={setCommenting} syllabus={syl} review_id={syl.review_id} socket={socket} data={data} />
+                                <ReviewComment
+                                  setCommenting={setCommenting}
+                                  syllabus={syl}
+                                  review_id={syl.review_id}
+                                  socket={socket}
+                                  data={data}
+                                />
                               </Grid>
                             </Grid>
                           </Form>
@@ -281,14 +296,21 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
                                 const notification = {
                                   uuid: uuid.v1(),
                                   sender_name: "Student " + user.last_name + " " + user.first_name,
-                                  sender_avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194931.png",
-                                  message: "Student " + user.last_name + " " + user.first_name + ` requests a grade review for ${arr[index].syllabus_name} grade`,
+                                  sender_avatar: user.avatar
+                                    ? user.avatar
+                                    : "https://cdn-icons-png.flaticon.com/512/194/194931.png",
+                                  message:
+                                    "Student " +
+                                    user.last_name +
+                                    " " +
+                                    user.first_name +
+                                    ` requests a grade review for ${arr[index].syllabus_name} grade`,
                                   has_read: false,
                                   link_navigate: `/detail-classroom/${data.id}/grades`,
                                   time: Date.now(),
                                   class_id: data.id,
-                                  to_role_name: 'teacher'
-                                }
+                                  to_role_name: "teacher",
+                                };
                                 socket.emit("send_notification", notification);
                                 arr[index].review_id = res.data.id;
                                 arr[index].expect_score = res.data.expect_score;

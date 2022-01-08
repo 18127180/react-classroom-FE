@@ -29,15 +29,18 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BackdropProvider from "../../contexts/BackdropProvider";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import Button from "@mui/material/Button";
 import { Dialog, Toolbar, AppBar, Slide } from "@mui/material";
 import { Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import style from "../../styles/accordion.css";
 import TeacherReviewComment from "../DetailClassroom/TeacherReviewGrade";
-import uuid from 'react-native-uuid'
-import socket from './Socket'
-import PublicIcon from '@mui/icons-material/Public';
+import uuid from "react-native-uuid";
+import socket from "./Socket";
+import PublicIcon from "@mui/icons-material/Public";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme/theme";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -162,7 +165,7 @@ export default function CustomizedTables({ data }) {
             if (res.status === 200) {
             }
           })
-          .catch((err) => { });
+          .catch((err) => {});
       }
     }
     // const arr = [...listScore];
@@ -263,14 +266,21 @@ export default function CustomizedTables({ data }) {
           const notification = {
             uuid: uuid.v1(),
             sender_name: "Teacher " + user.last_name + " " + user.first_name,
-            sender_avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
-            message: "Teacher " + user.last_name + " " + user.first_name + ` has finalized ${header.subject_name} grade`,
+            sender_avatar: user.avatar
+              ? user.avatar
+              : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
+            message:
+              "Teacher " +
+              user.last_name +
+              " " +
+              user.first_name +
+              ` has finalized ${header.subject_name} grade`,
             has_read: false,
             link_navigate: `/detail-classroom/${data.id}/grades`,
             time: Date.now(),
             class_id: data.id,
-            to_role_name: 'student'
-          }
+            to_role_name: "student",
+          };
           socket.emit("send_notification", notification);
 
           const tempList = listHeader.map((h) => {
@@ -392,223 +402,239 @@ export default function CustomizedTables({ data }) {
   }, [reload]);
 
   return (
-    <Grid container>
-      <Grid
-        item
-        xs={12}
-        sx={{
-          maxHeight: 40,
-          display: "flex",
-          justifyContent: "flex-end",
-          mr: 2,
-        }}
-      >
-        <input
-          type="file"
-          hidden
-          name="file"
-          ref={importRef}
-          onChange={onChangeImportHandler}
-          onClick={(e) => (e.target.value = null)}
-        ></input>
-        <Tooltip title="Import student list">
-          <IconButton aria-label="import">
-            <UploadIcon onClick={onClickHandler} />
-          </IconButton>
-        </Tooltip>
-        <FormExportDialog class_id={data.id} />
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        sx={{
-          maxHeight: 40,
-          display: "flex",
-          justifyContent: "flex-end",
-          mr: 2,
-        }}
-      >
-        <Button variant="contained" onClick={handleClickOpen}>
-          Manage Review
-        </Button>
-        <Button variant="contained" onClick={exportGradeTable} sx={{ mr: 1, ml: 1 }}>
-          Export Grade
-        </Button>
-        <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-          <AppBar sx={{ position: "relative" }} color="secondary">
-            <Toolbar>
-              <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-                <CloseIcon />
-              </IconButton>
-              <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                Grade review
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          <Grid container direction="column" alignItems="center" justifyContent="space-between">
-            <TeacherReviewComment data={data} />
-          </Grid>
-        </Dialog>
-      </Grid>
-      <Grid item xs={12}>
-        <TableContainer sx={{ maxHeight: 500 }}>
-          {/* bo width = unset de table full width */}
-          <Table aria-label="customized table" stickyHeader sx={{ width: "unset" }}>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell sx={{ fontWeight: "bold", fontSize: 15 }} align="center">
-                  Student
-                </StyledTableCell>
-                {listHeader.map((row) => (
-                  <StyledTableCell key={row.id} align="center" sx={{ maxWidth: "200px" }}>
-                    <Box sx={{ fontWeight: "bold", fontSize: 18 }}>{row.subject_name}</Box>
-                    <Box>
-                      <IconButton
-                        aria-label="more"
-                        sx={{ position: "absolute", right: 1, top: 1 }}
-                        data-id={row.id}
-                        onClick={handleClickMenu}
-                      >
-                        <MoreVertIcon
-                          sx={{
-                            color: "#f2f2f2",
-                            "&:hover, &:focus-within": { color: "black" },
-                          }}
-                        />
-                      </IconButton>
-                    </Box>
-                    {
-                      row.finalize ? (
+    <ThemeProvider theme={theme}>
+      <Grid container>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            maxHeight: 40,
+            display: "flex",
+            justifyContent: "flex-end",
+            mr: 2,
+          }}
+        >
+          <input
+            type="file"
+            hidden
+            name="file"
+            ref={importRef}
+            onChange={onChangeImportHandler}
+            onClick={(e) => (e.target.value = null)}
+          ></input>
+          <Tooltip title="Import student list">
+            <IconButton aria-label="import">
+              <UploadIcon onClick={onClickHandler} />
+            </IconButton>
+          </Tooltip>
+          <FormExportDialog class_id={data.id} />
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            maxHeight: 40,
+            display: "flex",
+            justifyContent: "flex-end",
+            mr: 2,
+          }}
+        >
+          <Button variant="contained" onClick={handleClickOpen}>
+            Manage Review
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={exportGradeTable}
+            sx={{ mr: 1, ml: 1 }}
+            startIcon={<UploadFileRoundedIcon />}
+          >
+            Export Grade
+          </Button>
+          <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+            <AppBar sx={{ position: "fixed" }} color="primary">
+              <Toolbar>
+                <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+                  <CloseIcon />
+                </IconButton>
+                <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                  Grade review
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <Grid
+              container
+              direction="column"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{ marginTop: "64px" }}
+            >
+              <TeacherReviewComment data={data} />
+            </Grid>
+          </Dialog>
+        </Grid>
+        <Grid item xs={12}>
+          <TableContainer sx={{ maxHeight: 500 }}>
+            {/* bo width = unset de table full width */}
+            <Table aria-label="customized table" stickyHeader sx={{ width: "unset" }}>
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell sx={{ fontWeight: "bold", fontSize: 15 }} align="center">
+                    Student
+                  </StyledTableCell>
+                  {listHeader.map((row) => (
+                    <StyledTableCell key={row.id} align="center" sx={{ maxWidth: "200px" }}>
+                      <Box sx={{ fontWeight: "bold", fontSize: 18 }}>{row.subject_name}</Box>
+                      <Box>
+                        <IconButton
+                          aria-label="more"
+                          sx={{ position: "absolute", right: 1, top: 1 }}
+                          data-id={row.id}
+                          onClick={handleClickMenu}
+                        >
+                          <MoreVertIcon
+                            sx={{
+                              color: "#f2f2f2",
+                              "&:hover, &:focus-within": { color: "black" },
+                            }}
+                          />
+                        </IconButton>
+                      </Box>
+                      {row.finalize ? (
                         <Box sx={{ position: "absolute", left: 1, top: 1, mt: 1, ml: 1 }}>
                           <PublicIcon
                             sx={{
                               color: "black",
                             }}
                           />
-                        </Box>) : (<Box></Box>)
-                    }
+                        </Box>
+                      ) : (
+                        <Box></Box>
+                      )}
+                      <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+                        <Divider sx={{ backgroundColor: "white", height: 2, width: 100 }} />
+                      </Box>
+                      <Box>(total/{row.grade})</Box>
+                    </StyledTableCell>
+                  ))}
+                  <StyledTableCell key="totalFinal" align="center" sx={{ maxWidth: "200px" }}>
+                    <Box sx={{ fontWeight: "bold", fontSize: 18 }}>Total</Box>
                     <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
                       <Divider sx={{ backgroundColor: "white", height: 2, width: 100 }} />
                     </Box>
-                    <Box>(total/{row.grade})</Box>
+                    <Box>
+                      (total/
+                      {listMaxScore.reduce(function (acc, val) {
+                        return acc + val;
+                      }, 0)}
+                      )
+                    </Box>
                   </StyledTableCell>
-                ))}
-                <StyledTableCell key="totalFinal" align="center" sx={{ maxWidth: "200px" }}>
-                  <Box sx={{ fontWeight: "bold", fontSize: 18 }}>Total</Box>
-                  <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                    <Divider sx={{ backgroundColor: "white", height: 2, width: 100 }} />
-                  </Box>
-                  <Box>
-                    (total/
-                    {listMaxScore.reduce(function (acc, val) {
-                      return acc + val;
-                    }, 0)}
-                    )
-                  </Box>
-                </StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {listScore.map((row, index) => (
-                <StyledTableRow key={row.student_code}>
-                  <StyledTableCell align="center" sx={{ width: 300 }}>
-                    {row.isexist ? (
-                      <List dense={true}>
-                        <ListItem>
-                          <ListItemAvatar>
-                            <Avatar src={row.avatar}></Avatar>
-                          </ListItemAvatar>
-                          <Box sx={{ display: "flex", flexDirection: "column" }}>
-                            <ListItemText primary={row.full_name} />
-                            <ListItemText primary={row.student_code} />
-                          </Box>
-                        </ListItem>
-                      </List>
-                    ) : (
-                      <List dense={true}>
-                        <ListItem>
-                          <ListItemAvatar>
-                            <Avatar sx={{ backGroundColor: "red" }}>
-                              <AccountCircleIcon />
-                            </Avatar>
-                          </ListItemAvatar>
-                          <Box sx={{ display: "flex", flexDirection: "column" }}>
-                            <ListItemText sx={{ color: "#bdbdbd" }} primary={row.full_name} />
-                            <ListItemText sx={{ color: "#bdbdbd" }} primary={row.student_code} />
-                          </Box>
-                        </ListItem>
-                      </List>
-                    )}
-                  </StyledTableCell>
-                  {row.list_score.map((subRow, subIndex) => {
-                    if (listMaxScore.length - subIndex === 0) {
-                      return (
-                        <StyledTableCell align="center">
-                          <FormControl variant="standard">
-                            <Input
-                              sx={{ width: "8ch" }}
-                              id="standard-adornment-weight"
-                              value={subRow}
-                              endAdornment={
-                                <InputAdornment position="end">
-                                  /
-                                  {listMaxScore.reduce(function (acc, val) {
-                                    return acc + val;
-                                  }, 0)}
-                                </InputAdornment>
-                              }
-                              aria-describedby="standard-weight-helper-text"
-                              disabled={true}
-                            />
-                          </FormControl>
-                        </StyledTableCell>
-                      );
-                    } else {
-                      if (subRow != null) {
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {listScore.map((row, index) => (
+                  <StyledTableRow key={row.student_code}>
+                    <StyledTableCell align="center" sx={{ width: 300 }}>
+                      {row.isexist ? (
+                        <List dense={true}>
+                          <ListItem>
+                            <ListItemAvatar>
+                              <Avatar src={row.avatar}></Avatar>
+                            </ListItemAvatar>
+                            <Box sx={{ display: "flex", flexDirection: "column" }}>
+                              <ListItemText primary={row.full_name} />
+                              <ListItemText primary={row.student_code} />
+                            </Box>
+                          </ListItem>
+                        </List>
+                      ) : (
+                        <List dense={true}>
+                          <ListItem>
+                            <ListItemAvatar>
+                              <Avatar sx={{ backGroundColor: "red" }}>
+                                <AccountCircleIcon />
+                              </Avatar>
+                            </ListItemAvatar>
+                            <Box sx={{ display: "flex", flexDirection: "column" }}>
+                              <ListItemText sx={{ color: "#bdbdbd" }} primary={row.full_name} />
+                              <ListItemText sx={{ color: "#bdbdbd" }} primary={row.student_code} />
+                            </Box>
+                          </ListItem>
+                        </List>
+                      )}
+                    </StyledTableCell>
+                    {row.list_score.map((subRow, subIndex) => {
+                      if (listMaxScore.length - subIndex === 0) {
                         return (
-                          <ClickAwayListener onClickAway={(e) => handleClickAway(index, subIndex)}>
-                            <StyledTableCell align="center">
-                              <FormControl variant="standard">
-                                <Input
-                                  sx={{ width: "8ch" }}
-                                  id="standard-adornment-weight"
-                                  value={subRow}
-                                  endAdornment={
-                                    <InputAdornment position="end">
-                                      /{listMaxScore[subIndex]}
-                                    </InputAdornment>
-                                  }
-                                  onChange={(e) =>
-                                    handleChangeInput(index, e, subIndex, listMaxScore[subIndex])
-                                  }
-                                  aria-describedby="standard-weight-helper-text"
-                                />
-                              </FormControl>
-                            </StyledTableCell>
-                          </ClickAwayListener>
+                          <StyledTableCell align="center">
+                            <FormControl variant="standard">
+                              <Input
+                                sx={{ width: "8ch" }}
+                                id="standard-adornment-weight"
+                                value={subRow}
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                    /
+                                    {listMaxScore.reduce(function (acc, val) {
+                                      return acc + val;
+                                    }, 0)}
+                                  </InputAdornment>
+                                }
+                                aria-describedby="standard-weight-helper-text"
+                                disabled={true}
+                              />
+                            </FormControl>
+                          </StyledTableCell>
                         );
                       } else {
-                        return <StyledTableCell align="center"></StyledTableCell>;
+                        if (subRow != null) {
+                          return (
+                            <ClickAwayListener
+                              onClickAway={(e) => handleClickAway(index, subIndex)}
+                            >
+                              <StyledTableCell align="center">
+                                <FormControl variant="standard">
+                                  <Input
+                                    sx={{ width: "8ch" }}
+                                    id="standard-adornment-weight"
+                                    value={subRow}
+                                    endAdornment={
+                                      <InputAdornment position="end">
+                                        /{listMaxScore[subIndex]}
+                                      </InputAdornment>
+                                    }
+                                    onChange={(e) =>
+                                      handleChangeInput(index, e, subIndex, listMaxScore[subIndex])
+                                    }
+                                    aria-describedby="standard-weight-helper-text"
+                                  />
+                                </FormControl>
+                              </StyledTableCell>
+                            </ClickAwayListener>
+                          );
+                        } else {
+                          return <StyledTableCell align="center"></StyledTableCell>;
+                        }
                       }
-                    }
-                    // <StyledTableCell align="center">
-                    //   <FormControl variant="standard">
-                    //     <Input
-                    //       sx={{ width: "8ch" }}
-                    //       id="standard-adornment-weight"
-                    //       value={subRow}
-                    //       // onChange={handleChange('weight')}
-                    //       endAdornment={
-                    //         <InputAdornment position="end">
-                    //           /{listMaxScore[subIndex]}
-                    //         </InputAdornment>
-                    //       }
-                    //       aria-describedby="standard-weight-helper-text"
-                    //     />
-                    //   </FormControl>
+                      // <StyledTableCell align="center">
+                      //   <FormControl variant="standard">
+                      //     <Input
+                      //       sx={{ width: "8ch" }}
+                      //       id="standard-adornment-weight"
+                      //       value={subRow}
+                      //       // onChange={handleChange('weight')}
+                      //       endAdornment={
+                      //         <InputAdornment position="end">
+                      //           /{listMaxScore[subIndex]}
+                      //         </InputAdornment>
+                      //       }
+                      //       aria-describedby="standard-weight-helper-text"
+                      //     />
+                      //   </FormControl>
 
-                    {
-                      /* {subRow.isClickAway ? (
+                      {
+                        /* {subRow.isClickAway ? (
                           <ClickAwayListener onClickAway={(e) => handleClickAway(index, subIndex)}>
                             <FormControl variant="standard">
                               <Input
@@ -649,41 +675,42 @@ export default function CustomizedTables({ data }) {
                             />
                           </FormControl>
                         )} */
-                    }
-                    // </StyledTableCell>
-                  })}
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                      }
+                      // </StyledTableCell>
+                    })}
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+        {/* upload section */}
+        <input
+          type="file"
+          hidden
+          name="file"
+          ref={inputRef}
+          onChange={onChangeHandler}
+          onClick={(e) => (e.target.value = null)}
+        ></input>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleCloseMenu}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <MenuItem onClick={handleImport}>Import Grade</MenuItem>
+          <MenuItem onClick={handleFinalize}>Finalize Score</MenuItem>
+        </Menu>
       </Grid>
-      {/* upload section */}
-      <input
-        type="file"
-        hidden
-        name="file"
-        ref={inputRef}
-        onChange={onChangeHandler}
-        onClick={(e) => (e.target.value = null)}
-      ></input>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleCloseMenu}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-      >
-        <MenuItem onClick={handleImport}>Import Grade</MenuItem>
-        <MenuItem onClick={handleFinalize}>Finalize Score</MenuItem>
-      </Menu>
-    </Grid>
+    </ThemeProvider>
   );
 }

@@ -10,7 +10,7 @@ import {
   Box,
   IconButton,
 } from "@mui/material";
-import Badge from "@mui/material/Badge";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -26,7 +26,7 @@ import TeacherReviewComment from "./TeacherReviewComment";
 import socket from "../../utils/Socket";
 import { width } from "@mui/system";
 import moment from "moment-timezone";
-import uuid from 'react-native-uuid';
+import uuid from "react-native-uuid";
 // const socket = io.connect("http://localhost:3001");
 
 const TeacherReviewGrade = ({ data }) => {
@@ -35,7 +35,6 @@ const TeacherReviewGrade = ({ data }) => {
   const [commenting, setCommenting] = useState(false);
   const access_token = localStorage.getItem("access_token");
   const user = JSON.parse(localStorage.getItem("user"));
-
 
   // console.log(moment.tz.names());
   //handle the current accordion
@@ -49,25 +48,32 @@ const TeacherReviewGrade = ({ data }) => {
       const notification = {
         uuid: uuid.v1(),
         sender_name: "Teacher " + user.last_name + " " + user.first_name,
-        sender_avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
-        message: "Teacher " + user.last_name + " " + user.first_name + ` has marked final score in your review for ${arr[index].syllabus_name} grade`,
+        sender_avatar: user.avatar
+          ? user.avatar
+          : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
+        message:
+          "Teacher " +
+          user.last_name +
+          " " +
+          user.first_name +
+          ` has marked final score in your review for ${arr[index].syllabus_name} grade`,
         has_read: false,
         link_navigate: `/detail-classroom/${data.id}/grades`,
         time: Date.now(),
         class_id: data.id,
-        to_user: arr[index].student_id
-      }
+        to_user: arr[index].student_id,
+      };
       socket.emit("send_notification_private", notification);
     }
-    arr[index].final_mark = !syllabus[index].final_mark
+    arr[index].final_mark = !syllabus[index].final_mark;
     setSyllabus(arr);
-  }
+  };
 
   const theme = createMuiTheme({
     palette: {
       text: {
-        disabled: '#757575'
-      }
+        disabled: "#757575",
+      },
     },
   });
 
@@ -89,13 +95,9 @@ const TeacherReviewGrade = ({ data }) => {
     //     }
     //   ]);
     axios
-      .get(
-        process.env.REACT_APP_API_URL +
-        `/classroom/all-review?class_id=${data.id}`,
-        {
-          headers: { Authorization: `Bearer ${access_token}` },
-        }
-      )
+      .get(process.env.REACT_APP_API_URL + `/classroom/all-review?class_id=${data.id}`, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      })
       .then((res) => {
         if (res.status === 200) {
           setSyllabus(res.data);
@@ -108,12 +110,21 @@ const TeacherReviewGrade = ({ data }) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container spacing={0} direction="column" alignItems="center" justifyContent="center">
+      <Grid
+        container
+        spacing={0}
+        direction="column"
+        justifyContent="center"
+        sx={{
+          alignSelf: commenting ? "flex-start" : "center",
+          width: commenting ? "calc(100% - 520px)" : "100%",
+        }}
+      >
         <Container
           sx={{
             maxWidth: "650px !important",
             mt: 2,
-            ml: commenting ? "50px" : "auto",
+            ml: "auto",
             transition: commenting ? "margin-left 1000ms linear" : "",
           }}
         >
@@ -130,9 +141,15 @@ const TeacherReviewGrade = ({ data }) => {
                   // disableGutters={true}
                   sx={{
                     mb: 0.5,
-                    boxShadow: "0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%)",
                     borderRadius: "0.5rem",
-                    "&:not(:hover)": { boxShadow: "none" },
+                    boxShadow:
+                      expanded === "panel" + index
+                        ? "0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%)"
+                        : "none",
+                    "&:hover": {
+                      boxShadow:
+                        "0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%)",
+                    },
                   }}
                   className="assignment"
                   expanded={expanded === "panel" + index}
@@ -140,22 +157,22 @@ const TeacherReviewGrade = ({ data }) => {
                 >
                   <AccordionSummary>
                     <Grid container>
-                      <Grid container sx={{ justifyContent: 'space-between', display: 'flex' }}>
-                        {syl.final_mark ? (
-                          <Box style={{ fontSize: 14 }}>
-                            Has marked
-                          </Box>
-                        ) : (<Box></Box>)}
+                      <Grid container sx={{ justifyContent: "space-between", display: "flex" }}>
+                        <Box></Box>
                         <Box>
                           <Typography
                             sx={{
-                              ml: 2,
-                              fontWeight: 'bold',
-                              fontSize: "1.0rem",
+                              fontWeight: "bold",
+                              fontSize: "13px",
                               letterSpacing: ".01785714em",
+                              ml: 2,
+                              mb: -1,
+                              color: "#898989",
                             }}
                           >
-                            {moment.tz(syl.created_at, "Asia/Saigon").format("HH:mm:ss DD/MM/YYYY ")}
+                            {moment
+                              .tz(syl.created_at, "Asia/Saigon")
+                              .format("HH:mm:ss DD/MM/YYYY ")}
                           </Typography>
                         </Box>
                       </Grid>
@@ -163,12 +180,24 @@ const TeacherReviewGrade = ({ data }) => {
                         <Avatar sx={{ backgroundColor: "#ff2c03" }}>
                           <AssignmentOutlinedIcon />
                         </Avatar>
+                        {syl.final_mark && (
+                          <CheckCircleIcon
+                            color="success"
+                            sx={{
+                              position: "absolute",
+                              top: expanded === "panel" + index ? "20px" : "10px",
+                              left: "40px",
+                              zIndex: 1000,
+                              transition: "top linear 0s",
+                            }}
+                          />
+                        )}
                         <Typography
                           sx={{
                             ml: 2,
                             color: "#3c404a",
                             fontSize: "0.875rem",
-                            fontWeight: 'bold',
+                            fontWeight: "bold",
                             letterSpacing: ".01785714em",
                           }}
                         >
@@ -195,13 +224,15 @@ const TeacherReviewGrade = ({ data }) => {
                       initialValues={{
                         [`expected-${syl.syllabus_id}`]: `${syl.grade}`,
                         [`reason-${syl.syllabus_id}`]: `${syl.reason}`,
-                        [`final-${syl.syllabus_id}`]: `${syl.final_mark ? syl.final_score : syl.maxgrade}`,
+                        [`final-${syl.syllabus_id}`]: `${
+                          syl.final_mark ? syl.final_score : syl.maxgrade
+                        }`,
                       }}
                       onSubmit={(values) => {
                         const form = {
                           expect_score: parseInt(values[`expected-${syl.syllabus_id}`], 10),
                           reason: values[`reason-${syl.syllabus_id}`],
-                          final_score: parseInt(values[`final-${syl.syllabus_id}`], 10)
+                          final_score: parseInt(values[`final-${syl.syllabus_id}`], 10),
                         };
                         axios
                           .put(
@@ -244,7 +275,10 @@ const TeacherReviewGrade = ({ data }) => {
                       {(props) => (
                         <Form onSubmit={props.handleSubmit}>
                           <Grid container direction="column">
-                            <Grid container style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Grid
+                              container
+                              style={{ display: "flex", justifyContent: "space-between" }}
+                            >
                               <Box
                                 item
                                 xs={12}
@@ -279,7 +313,7 @@ const TeacherReviewGrade = ({ data }) => {
                                 sx={{
                                   p: 2,
                                   pl: 4,
-                                  letterSpacing: "normal"
+                                  letterSpacing: "normal",
                                 }}
                               >
                                 <TextField
@@ -347,13 +381,29 @@ const TeacherReviewGrade = ({ data }) => {
                                 letterSpacing: "normal",
                               }}
                             >
-                              <TeacherReviewComment setCommenting={setCommenting} syllabus={syl} socket={socket} review_id={syl.id} class_id={data.id} />
+                              <TeacherReviewComment
+                                setCommenting={setCommenting}
+                                syllabus={syl}
+                                socket={socket}
+                                review_id={syl.id}
+                                class_id={data.id}
+                              />
                               {!syl.final_mark ? (
-                                <Button onClick={(e) => handleSubmitButton(index)} variant="contained" sx={{ float: "right" }}>
+                                <Button
+                                  onClick={(e) => handleSubmitButton(index)}
+                                  variant="contained"
+                                  sx={{ float: "right" }}
+                                >
                                   Xác nhận
                                 </Button>
                               ) : (
-                                <Button type="submit" onClick={(e) => handleSubmitButton(index)} variant="contained" sx={{ float: "right" }}>
+                                <Button
+                                  type="submit"
+                                  onClick={(e) => handleSubmitButton(index)}
+                                  variant="contained"
+                                  color="error"
+                                  sx={{ float: "right" }}
+                                >
                                   Hủy bỏ
                                 </Button>
                               )}

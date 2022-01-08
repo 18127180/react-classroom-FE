@@ -28,7 +28,6 @@ const DetailClassroom = () => {
   const [loadEffect, setEffect] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  const { search } = useLocation();
   const [open, setOpen] = React.useState(false);
 
   const handleClose = (event, reason) => {
@@ -44,8 +43,6 @@ const DetailClassroom = () => {
     setEffect(false);
 
     console.log("location - ", location);
-    const query = new URLSearchParams(search);
-    const invite_code = query.get("cjc");
     const access_token = localStorage.getItem("access_token");
     const user = JSON.parse(localStorage.getItem("user"));
     //Join class
@@ -57,6 +54,7 @@ const DetailClassroom = () => {
         if (res.status === 200) {
           //console.log(res.data);
           const data = res.data;
+          console.log(data);
           data["isTeacher"] = data.teacherList?.find((t) => t.id === user.id);
           setDetailClassData(data);
           setEffect(true);

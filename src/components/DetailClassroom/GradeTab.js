@@ -159,6 +159,7 @@ const GradeTab = ({ data, openState }) => {
                 value={item.subject_name}
                 onChange={(e) => handleChangeName(index, e)}
                 placeholder="Topic"
+                disabled={!visable}
               />
             </FormControl>
             <Box sx={{ flex: 1 }}>
@@ -171,6 +172,7 @@ const GradeTab = ({ data, openState }) => {
                 }}
                 value={item.grade}
                 onChange={(e) => handleChangeGrade(index, e)}
+                disabled={!visable}
               />
             </Box>
             <IconButton aria-label="delete" onClick={() => handleRemove(item.id)}>

@@ -281,7 +281,7 @@ const TeacherReviewGrade = ({ data }) => {
                                   onBlur={props.handleBlur}
                                   value={props.values[`expected-${syl.syllabus_id}`]}
                                   name={`expected-${syl.syllabus_id}`}
-                                  label={`Số điểm phúc khảo cho ${syl.syllabus_name}`}
+                                  label={`Expected grade for ${syl.syllabus_name}`}
                                   error={
                                     props.touched[`expected-${syl.syllabus_id}`] &&
                                     Boolean(props.errors[`expected-${syl.syllabus_id}`])
@@ -310,7 +310,7 @@ const TeacherReviewGrade = ({ data }) => {
                                   onBlur={props.handleBlur}
                                   value={props.values[`final-${syl.syllabus_id}`]}
                                   name={`final-${syl.syllabus_id}`}
-                                  label={`Số điêm cuối cùng cho ${syl.syllabus_name}`}
+                                  label={`Final score for ${syl.syllabus_name}`}
                                   error={
                                     props.touched[`final-${syl.syllabus_id}`] &&
                                     Boolean(props.errors[`final-${syl.syllabus_id}`])
@@ -382,7 +382,7 @@ const TeacherReviewGrade = ({ data }) => {
                                   variant="contained"
                                   sx={{ float: "right" }}
                                 >
-                                  Xác nhận
+                                  Confirm
                                 </Button>
                               ) : (
                                 <Button
@@ -392,7 +392,7 @@ const TeacherReviewGrade = ({ data }) => {
                                   color="error"
                                   sx={{ float: "right" }}
                                 >
-                                  Hủy bỏ
+                                  Cancel
                                 </Button>
                               )}
                             </Grid>

@@ -11,6 +11,7 @@ import Admin from "./components/Admin";
 import Error from "./components/error/Error";
 import InviteTab from "./components/DetailClassroom/InviteTab";
 import BackdropProvider from "./contexts/BackdropProvider";
+import Verified from "./components/Verified"
 
 ReactDOM.render(
   <BackdropProvider>
@@ -22,6 +23,7 @@ ReactDOM.render(
         <Route path="register" element={<RegisterForm />} />
         <Route path="profile" element={<Profile />} />
         <Route path="classroom" element={<Home />} />
+        <Route path="verified" element={<Verified />} />
         <Route path="/admin/*" element={<Admin />} />
         <Route path="/detail-classroom/:id*" element={<DetailClassroom />} />
         <Route path="error" element={<Error />} />

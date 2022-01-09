@@ -4,13 +4,13 @@ import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import AddCommentOutlined from "@mui/icons-material/AddCommentOutlined";
 import { Badge, Typography } from "@mui/material";
-import { styled, useTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useState, useRef } from "react";
 import { ChatController, MuiChat } from "chat-ui-react";
 import "./ReviewComment.css";
 import axios from "axios";
-import uuid from 'react-native-uuid';
+import uuid from "react-native-uuid";
 
 const drawerWidth = 520;
 const cssName = {
@@ -31,7 +31,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 export default function ReviewComment({ setCommenting, syllabus, review_id, socket, data }) {
-  const theme = useTheme();
   const [state, setState] = useState(false);
   const { syllabus_name, syllabus_id } = syllabus;
   let numberOfComment = useRef(0);
@@ -87,7 +86,11 @@ export default function ReviewComment({ setCommenting, syllabus, review_id, sock
           </div>
         ),
         self: data.user_id === user.id,
-        avatar: data.avatar ?  data.avatar : (data.is_student ? "https://cdn-icons-png.flaticon.com/512/194/194931.png" : "https://cdn-icons-png.flaticon.com/512/194/194935.png"),
+        avatar: data.avatar
+          ? data.avatar
+          : data.is_student
+          ? "https://cdn-icons-png.flaticon.com/512/194/194931.png"
+          : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
         createdAt: new Date(data.created_at),
       });
       numberOfComment.current++;
@@ -111,7 +114,7 @@ export default function ReviewComment({ setCommenting, syllabus, review_id, sock
           </div>
         ),
         self: true,
-        avatar: user.avatar ?  user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194931.png",
+        avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194931.png",
         createdAt: new Date(),
       });
       const messageData = {
@@ -119,22 +122,29 @@ export default function ReviewComment({ setCommenting, syllabus, review_id, sock
         comment: response.value,
         user_id: user.id,
         name_user: user.last_name + " " + user.first_name,
-        avatar: user.avatar ?  user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194931.png",
-        is_student: true
-      }
+        avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194931.png",
+        is_student: true,
+      };
       numberOfComment.current++;
       socket.emit("send_comment", messageData);
       const notification = {
         uuid: uuid.v1(),
         sender_name: "Student " + user.last_name + " " + user.first_name,
-        sender_avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194931.png",
-        message: "Student " + user.last_name + " " + user.first_name + ` has replied your ${syllabus_name} grade`,
+        sender_avatar: user.avatar
+          ? user.avatar
+          : "https://cdn-icons-png.flaticon.com/512/194/194931.png",
+        message:
+          "Student " +
+          user.last_name +
+          " " +
+          user.first_name +
+          ` has replied your ${syllabus_name} grade`,
         has_read: false,
         link_navigate: `/detail-classroom/${data.id}/grades`,
         time: Date.now(),
         class_id: data.id,
-        to_role_name: 'teacher'
-      }
+        to_role_name: "teacher",
+      };
       socket.emit("send_notification", notification);
     }
   );
@@ -148,10 +158,9 @@ export default function ReviewComment({ setCommenting, syllabus, review_id, sock
       const access_token = localStorage.getItem("access_token");
       axios
         .put(
-          process.env.REACT_APP_API_URL +
-          `/classroom/update-comment-status`,
+          process.env.REACT_APP_API_URL + `/classroom/update-comment-status`,
           {
-            review_id: review_id
+            review_id: review_id,
           },
           {
             headers: { Authorization: `Bearer ${access_token}` },
@@ -160,8 +169,8 @@ export default function ReviewComment({ setCommenting, syllabus, review_id, sock
         .then((res) => {
           if (res.status === 200) {
             let newCommentList = [...commentList];
-            for (let item of newCommentList){
-              item.status = false
+            for (let item of newCommentList) {
+              item.status = false;
             }
             setCommentList(newCommentList);
           }
@@ -179,7 +188,7 @@ export default function ReviewComment({ setCommenting, syllabus, review_id, sock
     //generate messages
     socket.on("receive_comment_" + review_id, (data) => {
       fetchData(data);
-    })
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
@@ -188,18 +197,14 @@ export default function ReviewComment({ setCommenting, syllabus, review_id, sock
     socket.emit("join_room", review_id);
     const access_token = localStorage.getItem("access_token");
     axios
-      .get(
-        process.env.REACT_APP_API_URL +
-        `/classroom/all-comment?review_id=${review_id}`,
-        {
-          headers: { Authorization: `Bearer ${access_token}` },
-        }
-      )
+      .get(process.env.REACT_APP_API_URL + `/classroom/all-comment?review_id=${review_id}`, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      })
       .then((res) => {
         if (res.status === 200) {
           setCommentList(res.data);
           numberOfComment.current = res.data.length;
-          for (const message of res.data){
+          for (const message of res.data) {
             chatCtl.addMessage({
               type: "text",
               content: (
@@ -210,8 +215,13 @@ export default function ReviewComment({ setCommenting, syllabus, review_id, sock
                   <span>{message.comment}</span>
                 </div>
               ),
+              // eslint-disable-next-line eqeqeq
               self: message.user_id == user.id,
-              avatar: message.avatar ?  message.avatar : (message.is_student ? "https://cdn-icons-png.flaticon.com/512/194/194931.png" : "https://cdn-icons-png.flaticon.com/512/194/194935.png"),
+              avatar: message.avatar
+                ? message.avatar
+                : message.is_student
+                ? "https://cdn-icons-png.flaticon.com/512/194/194931.png"
+                : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
               createdAt: new Date(message.created_at),
             });
           }

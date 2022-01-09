@@ -1,15 +1,5 @@
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
-import {
-  Avatar,
-  Container,
-  TextField,
-  Menu,
-  MenuItem,
-  Typography,
-  Button,
-  Box,
-  IconButton,
-} from "@mui/material";
+import { Avatar, Container, TextField, Typography, Button, Box } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -18,13 +8,11 @@ import Grid from "@mui/material/Grid";
 import { createMuiTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import React, { useState } from "react";
-import theme from "../../../theme/theme";
 import { Formik, Form } from "formik";
 import * as yup from "yup";
 import "../../../styles/assignment.css";
 import TeacherReviewComment from "./TeacherReviewComment";
 import socket from "../../utils/Socket";
-import { width } from "@mui/system";
 import moment from "moment-timezone";
 import uuid from "react-native-uuid";
 // const socket = io.connect("http://localhost:3001");

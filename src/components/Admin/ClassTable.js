@@ -17,9 +17,7 @@ import Remove from "@mui/icons-material/Remove";
 import SaveAlt from "@mui/icons-material/SaveAlt";
 import Search from "@mui/icons-material/Search";
 import ViewColumn from "@mui/icons-material/ViewColumn";
-import SaveIcon from "@mui/icons-material/Save";
 import { Avatar, Chip, Grid, Stack, Typography } from "@mui/material";
-import { Box } from "@mui/system";
 import { Fragment } from "react";
 
 const tableIcons = {
@@ -85,7 +83,7 @@ const ClassTable = () => {
           })
         }
         title="Classrooms"
-        onRowClick={(event, rowData, togglePanel) => togglePanel()}
+        onRowClick={(_event, _rowData, togglePanel) => togglePanel()}
         detailPanel={(rowData) => {
           return (
             <section style={{ padding: "16px" }}>

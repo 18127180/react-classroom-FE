@@ -72,6 +72,7 @@ export default function ClassroomList() {
           <img
             src="https://cdn.dribbble.com/users/1507491/screenshots/4945826/media/116a8ebc414c519ad1cfc0fe63f79d3e.jpg?compress=1&resize=800x600&vertical=top"
             style={{ position: "fixed", top: "64px", left: "50%", transform: `translateX(-50%)` }}
+            alt="Empty classlist"
           ></img>
         </div>
       ) : (

@@ -3,16 +3,15 @@ import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import AddCommentOutlined from "@mui/icons-material/AddCommentOutlined";
-import { Badge, Box, Typography } from "@mui/material";
+import { Badge, Typography } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { ChatController, MuiChat } from "chat-ui-react";
 import "./TeacherReviewComment.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import uuid from 'react-native-uuid';
-
+import uuid from "react-native-uuid";
 
 const drawerWidth = 520;
 
@@ -25,25 +24,21 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-start",
 }));
 
-const cssName = { position: "absolute", top: "-24px", fontSize: "12px", color: "rgba(0,0,0,0.87)", whiteSpace: "nowrap" };
+const cssName = {
+  position: "absolute",
+  top: "-24px",
+  fontSize: "12px",
+  color: "rgba(0,0,0,0.87)",
+  whiteSpace: "nowrap",
+};
 
-
-const mock = [
-  {
-    id: 1,
-    syllabus_id: 4,
-    content: "Mong thay xem xet",
-    is_student: false
-  },
-  {
-    id: 2,
-    syllabus_id: 4,
-    comment: "Toi ko thich day",
-    is_student: false
-  },
-];
-
-export default function TeacherReviewComment({ setCommenting, syllabus, review_id, socket, class_id }) {
+export default function TeacherReviewComment({
+  setCommenting,
+  syllabus,
+  review_id,
+  socket,
+  class_id,
+}) {
   const theme = useTheme();
   const [state, setState] = useState(false);
   const { syllabus_name, syllabus_id, student_id } = syllabus;
@@ -78,7 +73,11 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
           </div>
         ),
         self: data.user_id === user.id,
-        avatar: data.avatar ? data.avatar : (data.is_student ? "https://cdn-icons-png.flaticon.com/512/194/194931.png" : "https://cdn-icons-png.flaticon.com/512/194/194935.png"),
+        avatar: data.avatar
+          ? data.avatar
+          : data.is_student
+          ? "https://cdn-icons-png.flaticon.com/512/194/194931.png"
+          : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
         createdAt: new Date(data.created_at),
       });
       numberOfComment.current++;
@@ -90,8 +89,9 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
   chatCtl.setActionRequest(
     {
       type: "text",
-      always: true
-    }, (response) => {
+      always: true,
+    },
+    (response) => {
       chatCtl.updateMessage(numberOfComment.current, {
         type: "text",
         content: (
@@ -102,7 +102,7 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
         ),
         self: true,
         avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
-        createdAt: new Date()
+        createdAt: new Date(),
       });
       numberOfComment.current++;
       const messageData = {
@@ -111,25 +111,33 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
         user_id: user.id,
         name_user: user.last_name + " " + user.first_name,
         avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
-        is_student: false
-      }
+        is_student: false,
+      };
       socket.emit("send_comment", messageData);
       const notification = {
         uuid: uuid.v1(),
         sender_name: "Teacher " + user.last_name + " " + user.first_name,
-        sender_avatar: user.avatar ? user.avatar : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
-        message: "Teacher " + user.last_name + " " + user.first_name + ` has replied your ${syllabus_name} grade`,
+        sender_avatar: user.avatar
+          ? user.avatar
+          : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
+        message:
+          "Teacher " +
+          user.last_name +
+          " " +
+          user.first_name +
+          ` has replied your ${syllabus_name} grade`,
         has_read: false,
         link_navigate: `/detail-classroom/${class_id}/grades`,
         time: Date.now(),
         class_id: class_id,
-        to_user: student_id
-      }
+        to_user: student_id,
+      };
       socket.emit("send_notification_private", notification);
       // fetchData(messageData);
       // const user = JSON.parse(localStorage.getItem("user"));
       // console.log(user);
-    });
+    }
+  );
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
@@ -140,10 +148,9 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
       const access_token = localStorage.getItem("access_token");
       axios
         .put(
-          process.env.REACT_APP_API_URL +
-          `/classroom/update-comment-status`,
+          process.env.REACT_APP_API_URL + `/classroom/update-comment-status`,
           {
-            review_id: review_id
+            review_id: review_id,
           },
           {
             headers: { Authorization: `Bearer ${access_token}` },
@@ -153,7 +160,7 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
           if (res.status === 200) {
             let newCommentList = [...commentList];
             for (let item of newCommentList) {
-              item.status = false
+              item.status = false;
             }
             setCommentList(newCommentList);
           }
@@ -172,22 +179,18 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
     socket.on("receive_comment_" + review_id, (data) => {
       console.log(data);
       fetchData(data);
-    })
+    });
   }, [socket]);
 
   React.useEffect(() => {
     //generate messages
     socket.emit("join_room", review_id);
-    socket.emit("join_room", "class_private_" +  student_id);
+    socket.emit("join_room", "class_private_" + student_id);
     const access_token = localStorage.getItem("access_token");
     axios
-      .get(
-        process.env.REACT_APP_API_URL +
-        `/classroom/all-comment?review_id=${review_id}`,
-        {
-          headers: { Authorization: `Bearer ${access_token}` },
-        }
-      )
+      .get(process.env.REACT_APP_API_URL + `/classroom/all-comment?review_id=${review_id}`, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      })
       .then((res) => {
         if (res.status === 200) {
           setCommentList(res.data);
@@ -204,7 +207,11 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
                 </div>
               ),
               self: message.user_id == user.id,
-              avatar: message.avatar ? message.avatar : (message.is_student ? "https://cdn-icons-png.flaticon.com/512/194/194931.png" : "https://cdn-icons-png.flaticon.com/512/194/194935.png"),
+              avatar: message.avatar
+                ? message.avatar
+                : message.is_student
+                ? "https://cdn-icons-png.flaticon.com/512/194/194931.png"
+                : "https://cdn-icons-png.flaticon.com/512/194/194935.png",
               createdAt: new Date(message.created_at),
             });
           }
@@ -227,7 +234,7 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
               width: drawerWidth,
             },
             height: "100%",
-            mt: 0
+            mt: 0,
           }}
           variant="persistent"
           anchor="right"
@@ -253,7 +260,9 @@ export default function TeacherReviewComment({ setCommenting, syllabus, review_i
           onClick={toggleDrawer(true)}
         >
           <Badge
-            badgeContent={commentList.filter((message) => message.status && message.user_id !== user.id).length}
+            badgeContent={
+              commentList.filter((message) => message.status && message.user_id !== user.id).length
+            }
             color="info"
           >
             <AddCommentOutlined />

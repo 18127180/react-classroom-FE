@@ -158,10 +158,10 @@ const AdminTable = () => {
             icon: () => <AddIcon />,
             tooltip: "Add User",
             isFreeAction: true,
-            onClick: (event) => handleClickOpen(),
+            onClick: (_event) => handleClickOpen(),
           },
         ]}
-        onRowClick={(event, rowData, togglePanel) => togglePanel()}
+        onRowClick={(_event, _rowData, togglePanel) => togglePanel()}
         detailPanel={(rowData) => {
           return (
             <section class="user-detail">

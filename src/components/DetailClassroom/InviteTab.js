@@ -6,6 +6,7 @@ import FaceOutlinedIcon from "@mui/icons-material/FaceOutlined";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
+import socket from "../utils/Socket";
 
 const InviteTab = () => {
   const { id } = useParams();
@@ -34,6 +35,7 @@ const InviteTab = () => {
         )
         .then((res) => {
           if (res.status === 200) {
+            socket.emit("join_room", "class_" + id);
             navigate(`/detail-classroom/${id}/stream`);
           }
         })
@@ -63,6 +65,7 @@ const InviteTab = () => {
         )
         .then((res) => {
           if (res.status === 200) {
+            socket.emit("join_room", "class_" + id);
             navigate(`/detail-classroom/${id}/stream`);
           }
         })

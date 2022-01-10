@@ -84,15 +84,6 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
         .then((res) => {
           if (res.status === 200) {
             setSyllabus(res.data);
-            let temp1 = 0;
-            let temp2 = 0;
-            for (let item of res.data) {
-              temp1 += item.grade;
-              temp2 += item.maxgrade;
-            }
-            setStudentTotal(temp1);
-            setTotal(temp2);
-            setColor(getColorForPercentage(temp1 / temp2));
             const tempVisited = visited;
             tempVisited[3] = true;
             setVisited(tempVisited);
@@ -105,6 +96,18 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  React.useEffect(() => {
+    let temp1 = 0;
+    let temp2 = 0;
+    for (let item of syllabus) {
+      temp1 += item.grade;
+      temp2 += item.maxgrade;
+    }
+    setStudentTotal(temp1);
+    setTotal(temp2);
+    setColor(getColorForPercentage(temp1 / temp2));
+  });
 
   return (
     <ThemeProvider theme={theme}>
@@ -134,7 +137,7 @@ const StudentGrade = ({ data, classId, visitedState, syllabusState, setEffect })
               mb: 5,
             }}
           >
-            {total > 0 && (
+            {syllabus.length > 0 && (
               <div
                 style={{
                   width: 200,

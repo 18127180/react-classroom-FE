@@ -128,7 +128,7 @@ const Notification = ({ data }) => {
         tempListNotfication.current.filter((noti) => noti.has_read === false).length
       );
     });
-  }, []);
+  }, [socket]);
   return (
     <Fragment>
       <IconButton

@@ -9,6 +9,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
 import ClassProvider from "../../contexts/ClassProvider";
+import socket from "../utils/Socket";
 
 const validationSchema = yup.object({
   name: yup.string("Enter class name").required("Class name is required"),
@@ -49,6 +50,7 @@ export default function CreateClassDialog({ open, handleClose }) {
         .then((res) => {
           // console.log(res.data);
           if (res.status === 201) {
+            socket.emit("join_room", "class_" + res.data.id); 
             const user = JSON.parse(localStorage.getItem("user"));
             const new_class = res.data;
             new_class["student"] = null;
